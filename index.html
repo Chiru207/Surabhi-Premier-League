@@ -36,19 +36,23 @@
       background: #111827;
       border: 2px solid #334155;
       border-radius: 16px;
-      padding: 20px;
+      padding: clamp(10px, 2vw, 20px);
       margin: 20px auto;
       max-width: 100%;
+      width: 100%;
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+      box-sizing: border-box;
     }
     
     .flyer-image {
-      max-width: 100%;
+      width: 100%;
+      max-width: 1200px;
       height: auto;
       border-radius: 12px;
       display: block;
       margin: 0 auto;
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+      object-fit: contain;
     }
     
     .live-link {
@@ -79,7 +83,13 @@
     
     @media (max-width: 768px) {
       .flyer-container {
-        padding: 12px;
+        padding: 8px;
+        margin: 10px auto;
+      }
+      
+      .flyer-image {
+        max-width: 100%;
+        border-radius: 8px;
       }
       
       h1 {
@@ -90,6 +100,36 @@
       .live-link {
         padding: 12px 24px;
         font-size: 16px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+      
+      .flyer-container {
+        padding: 6px;
+        margin: 8px auto;
+      }
+      
+      .flyer-image {
+        border-radius: 6px;
+      }
+      
+      h1 {
+        font-size: 20px;
+        margin-bottom: 15px;
+      }
+    }
+    
+    @media (min-width: 1400px) {
+      .flyer-image {
+        max-width: 1400px;
+      }
+      
+      .container {
+        max-width: 1400px;
       }
     }
   </style>
