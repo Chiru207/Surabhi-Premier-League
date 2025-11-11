@@ -1,0 +1,829 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"/>
+  <title>Live Auction - {{EVENT_NAME}}</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+  /* Responsive font sizing for live page */
+  .live-h3 { font-size: clamp(20px, 4vw, 28px); }
+  .live-h2 { font-size: clamp(24px, 5vw, 40px); }
+  .live-h4 { font-size: clamp(16px, 3vw, 22px); }
+  .live-p { font-size: clamp(16px, 3vw, 22px); }
+  .live-tag { font-size: clamp(12px, 2vw, 16px); }
+  .live-countdown { font-size: clamp(20px, 4vw, 32px); }
+  .live-bid-amount { font-size: clamp(18px, 3.5vw, 26px); }
+  .live-caption { font-size: clamp(14px, 2.5vw, 18px); }
+  
+  @media (min-width: 768px) {
+    .live-h3 { font-size: 28px; }
+    .live-h2 { font-size: 40px; }
+    .live-h4 { font-size: 22px; }
+    .live-p { font-size: 22px; }
+    .live-tag { font-size: 16px; }
+    .live-countdown { font-size: 32px; }
+    .live-bid-amount { font-size: 26px; }
+    .live-caption { font-size: 18px; }
+  }
+  
+  @media (min-width: 1024px) {
+    .live-h3 { font-size: 32px; }
+    .live-h2 { font-size: 48px; }
+    .live-h4 { font-size: 24px; }
+    .live-p { font-size: 24px; }
+    .live-tag { font-size: 18px; }
+    .live-countdown { font-size: 36px; }
+    .live-bid-amount { font-size: 30px; }
+    .live-caption { font-size: 20px; }
+  }
+  
+  /* Responsive bidding log - stack on mobile */
+  @media (max-width: 1023px) {
+    #biddingLogContainer {
+      flex: 1 1 100% !important;
+      min-width: 100% !important;
+      max-width: 100% !important;
+      margin-top: 16px;
+    }
+  }
+  
+  /* Larger fonts for captain status banner on live page */
+  #captainBanner .banner-captain-name {
+    font-size: clamp(16px, 3vw, 24px) !important;
+    font-weight: 700 !important;
+  }
+  #captainBanner .banner-captain-stat {
+    font-size: clamp(14px, 2.5vw, 20px) !important;
+  }
+  #captainBanner .banner-captain-stat strong {
+    font-size: clamp(16px, 3vw, 22px) !important;
+    font-weight: 700 !important;
+  }
+  #captainBanner .banner-title {
+    font-size: clamp(16px, 3vw, 22px) !important;
+    font-weight: 700 !important;
+  }
+  
+  @media (min-width: 768px) {
+    #captainBanner .banner-captain-name { font-size: 22px !important; }
+    #captainBanner .banner-captain-stat { font-size: 18px !important; }
+    #captainBanner .banner-captain-stat strong { font-size: 20px !important; }
+    #captainBanner .banner-title { font-size: 20px !important; }
+  }
+  
+  @media (min-width: 1024px) {
+    #captainBanner .banner-captain-name { font-size: 24px !important; }
+    #captainBanner .banner-captain-stat { font-size: 20px !important; }
+    #captainBanner .banner-captain-stat strong { font-size: 22px !important; }
+    #captainBanner .banner-title { font-size: 22px !important; }
+  }
+  
+  /* Connection status indicator */
+  #connectionStatus {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 1000;
+    transition: all 0.3s;
+  }
+  #connectionStatus.connected {
+    background: #10b981;
+    color: white;
+  }
+  #connectionStatus.disconnected {
+    background: #ef4444;
+    color: white;
+  }
+  #connectionStatus.connecting {
+    background: #fbbf24;
+    color: #000;
+  }
+  </style>
+</head>
+<body>
+  <div id="connectionStatus" class="connecting">Connecting...</div>
+  <header>
+    <h2>Live Viewer - <span id="eventName">Surabhi Premier League 2025</span></h2>
+    <div style="margin-top:8px">
+      <a href="index.html" style="color:#60a5fa;text-decoration:none;font-size:14px">← Back to Home</a>
+    </div>
+  </header>
+  <div class="banner" id="captainBanner">
+    <div class="banner-title">Captain Status</div>
+    <div class="banner-captains" id="bannerCaptains"></div>
+  </div>
+  <main>
+  <!-- Current Bidding - Top with larger font -->
+  <div class="card" id="now" style="margin-bottom:24px"></div>
+  <div class="card" id="announcement" style="display:none;margin-bottom:24px">
+    <div id="announcementContent"></div>
+  </div>
+  <!-- Teams Information - Below -->
+  <div class="card" id="teamsCard" style="display:none;margin-bottom:24px">
+    <h3 class="live-h3">Team Rosters</h3>
+    <div id="teamTabs" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;border-bottom:2px solid #334155;padding-bottom:12px"></div>
+    <div id="teamContent"></div>
+  </div>
+  <div class="card"><h3 class="live-h3">Recent Results</h3><div id="recent"></div></div>
+  <div class="card"><h3 class="live-h3">Logs</h3><div id="logs" style="max-height:400px;overflow-y:auto;font-size:14px;line-height:1.6"></div></div>
+  </main>
+  
+  <!-- Socket.IO Client Library - Load from CDN -->
+  <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+  <script>
+  // Configuration: Get server URL from URL parameter, window variable, or use default
+  // Examples:
+  // - Access with parameter: ?server=https://abc123.ngrok.io
+  // - Or set window.SERVER_URL before loading page
+  // - Or edit this default value
+  const urlParams = new URLSearchParams(window.location.search);
+  const SERVER_URL = urlParams.get('server') || 
+                     window.SERVER_URL || 
+                     'http://localhost:3000';
+  
+  console.log('Connecting to server:', SERVER_URL);
+  
+  // Initialize Socket.IO connection to remote server
+  const sock = io(SERVER_URL, {
+    transports: ['websocket', 'polling'],
+    reconnection: true,
+    reconnectionDelay: 1000,
+    reconnectionAttempts: Infinity,
+    timeout: 20000
+  });
+  
+  // Connection status management
+  const statusEl = document.getElementById('connectionStatus');
+  
+  sock.on('connect', () => {
+    statusEl.textContent = 'Connected';
+    statusEl.className = 'connected';
+    console.log('Connected to server:', SERVER_URL);
+    sock.emit('hello', { role: 'viewer' });
+  });
+  
+  sock.on('disconnect', () => {
+    statusEl.textContent = 'Disconnected';
+    statusEl.className = 'disconnected';
+    console.log('Disconnected from server');
+  });
+  
+  sock.on('connect_error', (error) => {
+    statusEl.textContent = 'Connection Error';
+    statusEl.className = 'disconnected';
+    console.error('Connection error:', error);
+  });
+  
+  sock.on('reconnect', (attemptNumber) => {
+    statusEl.textContent = 'Reconnected';
+    statusEl.className = 'connected';
+    console.log('Reconnected after', attemptNumber, 'attempts');
+    sock.emit('hello', { role: 'viewer' });
+  });
+  
+  sock.on('reconnect_attempt', () => {
+    statusEl.textContent = 'Reconnecting...';
+    statusEl.className = 'connecting';
+  });
+  
+  // Track current player serial for bidding log
+  let currentPlayerSerial = null;
+  
+  // Track previous state for sound triggers
+  let previousState = {
+    currentIndex: null,
+    players: [],
+    logs: [],
+    lastTimerSecond: null,
+    soldPlayers: new Set()
+  };
+  
+  // Shared audio context for better performance
+  let audioContext = null;
+  function getAudioContext() {
+    if (!audioContext) {
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioContext.state === 'suspended') {
+      audioContext.resume();
+    }
+    return audioContext;
+  }
+  
+  // Sound effects using Web Audio API
+  function playSound(type) {
+    try {
+      const ctx = getAudioContext();
+      
+      if (type === 'bid') {
+        // Short beep for bid
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(ctx.destination);
+        oscillator.frequency.value = 800;
+        oscillator.type = 'sine';
+        gainNode.gain.setValueAtTime(0.3, ctx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+        oscillator.start(ctx.currentTime);
+        oscillator.stop(ctx.currentTime + 0.1);
+      } else if (type === 'sold') {
+        // Clapping-like sound
+        playClappingSound(ctx);
+      } else if (type === 'timerWarning') {
+        // Warning beep
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(ctx.destination);
+        oscillator.frequency.value = 600;
+        oscillator.type = 'sine';
+        gainNode.gain.setValueAtTime(0.4, ctx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+        oscillator.start(ctx.currentTime);
+        oscillator.stop(ctx.currentTime + 0.2);
+      } else if (type === 'adminAction') {
+        // Admin action sound
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(ctx.destination);
+        oscillator.frequency.value = 400;
+        oscillator.type = 'triangle';
+        gainNode.gain.setValueAtTime(0.3, ctx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+        oscillator.start(ctx.currentTime);
+        oscillator.stop(ctx.currentTime + 0.3);
+      }
+    } catch (e) {
+      console.log('Sound playback not available:', e);
+    }
+  }
+  
+  function playClappingSound(audioContext) {
+    const chord1 = [523, 659, 784];
+    const chord2 = [523, 659, 784, 1047];
+    
+    chord1.forEach((freq, index) => {
+      setTimeout(() => {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        oscillator.frequency.value = freq;
+        oscillator.type = 'sine';
+        gainNode.gain.setValueAtTime(0.25, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.2);
+      }, index * 50);
+    });
+    
+    setTimeout(() => {
+      chord2.forEach((freq, index) => {
+        setTimeout(() => {
+          const oscillator = audioContext.createOscillator();
+          const gainNode = audioContext.createGain();
+          oscillator.connect(gainNode);
+          gainNode.connect(audioContext.destination);
+          oscillator.frequency.value = freq;
+          oscillator.type = 'sine';
+          gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+          oscillator.start(audioContext.currentTime);
+          oscillator.stop(audioContext.currentTime + 0.3);
+        }, index * 50);
+      });
+    }, 200);
+  }
+  
+  // Text-to-speech function
+  function speak(text, priority = 'normal') {
+    if (!('speechSynthesis' in window)) return;
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = priority === 'high' ? 1.1 : 0.9;
+    utterance.pitch = priority === 'high' ? 1.2 : 1.0;
+    utterance.volume = priority === 'high' ? 1.0 : 0.8;
+    
+    window.speechSynthesis.speak(utterance);
+  }
+  
+  // Initialize audio on user interaction
+  document.addEventListener('click', function initAudio() {
+    getAudioContext();
+  }, { once: true });
+  
+  function updateBanner(st) {
+    const bannerEl = document.getElementById('bannerCaptains');
+    if(!bannerEl) return;
+    if(!st.captains || st.captains.length === 0) {
+      bannerEl.innerHTML = '<div style="color:#94a3b8;padding:8px">No captains joined yet</div>';
+      return;
+    }
+    bannerEl.innerHTML = st.captains.map(c => 
+      '<div class="banner-captain">' +
+        '<div class="banner-captain-name">' + c.name + '</div>' +
+        '<div class="banner-captain-stat">Players: <strong>' + c.teamCount + '</strong></div>' +
+        '<div class="banner-captain-stat">Remaining: <strong>' + c.remaining + '</strong></div>' +
+        '<div class="banner-captain-stat">Max Bid: <strong>' + c.maxAllowedBid + '</strong></div>' +
+      '</div>'
+    ).join('');
+  }
+  
+  function renderTeams(st) {
+    if (!st.captains || st.captains.length === 0) {
+      const teamsCard = document.getElementById('teamsCard');
+      if (teamsCard) teamsCard.style.display = 'none';
+      return;
+    }
+    
+    const teamsCard = document.getElementById('teamsCard');
+    const teamTabs = document.getElementById('teamTabs');
+    const teamContent = document.getElementById('teamContent');
+    
+    if (!teamsCard || !teamTabs || !teamContent) return;
+    
+    teamsCard.style.display = 'block';
+    
+    // Create tabs for each captain + "Next Round" tab
+    const tabs = st.captains.map(c => ({
+      id: c.id,
+      name: c.name,
+      active: false
+    }));
+    
+    // Add "Next Round" tab
+    tabs.push({ id: 'nextRound', name: 'Next Round', active: false });
+    
+    // Set first tab as active
+    if (tabs.length > 0) tabs[0].active = true;
+    
+    teamTabs.innerHTML = tabs.map(tab => 
+      '<button class="btn ' + (tab.active ? '' : 'alt') + '" onclick="switchTeamTab(\'' + tab.id + '\')" style="margin-bottom:8px">' + tab.name + '</button>'
+    ).join('');
+    
+    // Render team content
+    function renderTeamContent(activeTabId) {
+      if (activeTabId === 'nextRound') {
+        // Show players moved to next round
+        const nextRoundPlayers = st.players.filter(p => p.status === 'queued');
+        if (nextRoundPlayers.length === 0) {
+          teamContent.innerHTML = '<div style="color:#94a3b8;padding:16px;text-align:center">No players in next round yet</div>';
+        } else {
+          teamContent.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">' +
+            nextRoundPlayers.map(p => {
+              const img = p.photoFile && st.photoBase ? '<img class="photo" src="' + st.photoBase + encodeURIComponent(p.photoFile) + '" onerror="this.remove()" style="width:100%;height:auto;border-radius:8px;margin-bottom:8px"/>' : '';
+              return '<div class="card" style="padding:12px">' +
+                img +
+                '<div class="tag">#' + p.serial + '</div>' +
+                '<div class="tag">' + (p.role||'') + '</div>' +
+                '<h4>' + p.name + '</h4>' +
+                '<div style="color:#fbbf24;font-weight:600">Round ' + (p.round || 1) + '</div>' +
+              '</div>';
+            }).join('') +
+          '</div>';
+        }
+      } else {
+        // Show captain's team
+        const captain = st.captains.find(c => c.id === activeTabId);
+        if (!captain) {
+          teamContent.innerHTML = '<div style="color:#94a3b8;padding:16px">Captain not found</div>';
+          return;
+        }
+        
+        const teamSerials = st.teams && st.teams[captain.id] ? st.teams[captain.id] : [];
+        const teamPlayers = teamSerials.map(serial => st.players.find(p => p.serial == serial)).filter(Boolean);
+        
+        if (teamPlayers.length === 0) {
+          teamContent.innerHTML = '<div style="color:#94a3b8;padding:16px;text-align:center">No players yet</div>';
+        } else {
+          teamContent.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">' +
+            teamPlayers.map(p => {
+              const img = p.photoFile && st.photoBase ? '<img class="photo" src="' + st.photoBase + encodeURIComponent(p.photoFile) + '" onerror="this.remove()" style="width:100%;height:auto;border-radius:8px;margin-bottom:8px"/>' : '';
+              return '<div class="card" style="padding:12px">' +
+                img +
+                '<div class="tag">#' + p.serial + '</div>' +
+                '<div class="tag">' + (p.role||'') + '</div>' +
+                '<h4>' + p.name + '</h4>' +
+                '<div style="color:#10b981;font-weight:600">' + (p.currentBid || p.basePrice) + '</div>' +
+              '</div>';
+            }).join('') +
+          '</div>';
+        }
+      }
+    }
+    
+    // Store active tab and render function
+    window.activeTeamTab = tabs[0].id;
+    window.switchTeamTab = function(tabId) {
+      window.activeTeamTab = tabId;
+      tabs.forEach(t => t.active = (t.id === tabId));
+      teamTabs.innerHTML = tabs.map(tab => 
+        '<button class="btn ' + (tab.active ? '' : 'alt') + '" onclick="switchTeamTab(\'' + tab.id + '\')" style="margin-bottom:8px">' + tab.name + '</button>'
+      ).join('');
+      renderTeamContent(tabId);
+    };
+    
+    renderTeamContent(window.activeTeamTab);
+  }
+  
+  function getBiddingLogHtml(st) {
+    if (st.currentIndex == null || currentPlayerSerial == null) {
+      return '';
+    }
+    
+    const p = st.players[st.currentIndex];
+    if (!p) {
+      return '';
+    }
+    
+    const playerLogs = (st.logs || []).filter(log => {
+      const msg = log.msg || '';
+      const serial = p.serial;
+      const name = p.name;
+      
+      return msg.includes('Serial ' + serial) || 
+             msg.includes('Serial #' + serial) ||
+             msg.includes('(' + name + ')') ||
+             msg.includes(name + ' (Serial') ||
+             (msg.includes('BID:') && msg.includes(name)) ||
+             (msg.includes('BASE PRICE') && msg.includes(name)) ||
+             (msg.includes('DROP:') && msg.includes(name)) ||
+             (msg.includes('SOLD:') && msg.includes(name)) ||
+             (msg.includes('FINISHED') && msg.includes(name)) ||
+             (msg.includes('MOVED TO NEXT ROUND') && msg.includes(name));
+    }).slice(-20).reverse();
+    
+    if (playerLogs.length === 0) {
+      return '';
+    }
+    
+    return '<div style="background:#1e293b;border:1px solid #334155;border-radius:8px;padding:12px;max-height:400px;overflow-y:auto">' +
+      '<div style="color:#fbbf24;font-weight:600;margin-bottom:8px;font-size:14px">Bidding Log</div>' +
+      '<div id="biddingLogContent" style="font-size:12px;line-height:1.8;color:#cbd5e1">' +
+        playerLogs.map(log => {
+          let msg = log.msg || '';
+          // Clean up log messages for display
+          msg = msg.replace(/BID: /g, '💰 ');
+          msg = msg.replace(/BASE PRICE CLAIMED: /g, '✅ ');
+          msg = msg.replace(/DROP: /g, '❌ ');
+          msg = msg.replace(/SOLD: /g, '🎉 ');
+          msg = msg.replace(/FINISHED \(Admin\): /g, '🏁 ');
+          msg = msg.replace(/MOVED TO NEXT ROUND/g, '⏭️ ');
+          msg = msg.replace(/TIMER PAUSED by /g, '⏸️ ');
+          msg = msg.replace(/TIMER RESUMED by /g, '▶️ ');
+          return '<div style="margin-bottom:4px;padding:4px;border-left:2px solid #334155;padding-left:8px">' +
+            '<span style="color:#94a3b8;font-size:11px">' + (log.ts || '') + '</span> ' +
+            '<span>' + msg + '</span>' +
+          '</div>';
+        }).join('') +
+      '</div>' +
+    '</div>';
+  }
+  
+  function scrollBiddingLog() {
+    const logContent = document.getElementById('biddingLogContent');
+    if (logContent) {
+      setTimeout(() => {
+        logContent.scrollTop = logContent.scrollHeight;
+      }, 100);
+    }
+  }
+  
+  function render(st){
+    window.currentState = st;
+    updateBanner(st);
+    
+    // Update event name
+    if (st.eventName) {
+      document.getElementById('eventName').textContent = st.eventName;
+    }
+    
+    // Check for state changes and trigger sounds/announcements
+    checkStateChanges(st);
+    
+    // Check if player changed - reset bidding log
+    const newPlayerSerial = st.currentIndex != null ? st.players[st.currentIndex]?.serial : null;
+    if (newPlayerSerial !== currentPlayerSerial) {
+      currentPlayerSerial = newPlayerSerial;
+      const logEl = document.getElementById('biddingLogContent');
+      if (logEl) logEl.innerHTML = '';
+    }
+    
+    const curHtml = (()=>{
+      if(st.currentIndex==null) return '<h3 class="live-h3" style="margin-bottom:16px">Waiting for next player…</h3>';
+      const p = st.players[st.currentIndex];
+      
+      const isReady = p.status === 'ready';
+      const img = p.photoFile && st.photoBase ? '<img class="photo" src="' + st.photoBase + encodeURIComponent(p.photoFile) + '" onerror="this.remove()"/>' : '';
+      const left = p.biddingEndsAt ? Math.max(0, p.biddingEndsAt - Date.now()) : 0;
+      const secs = Math.ceil(left/1000);
+      
+      if (isReady) {
+        return '<h3 class="live-h3" style="margin-bottom:16px">Player Ready</h3>' +
+          '<div style="padding:16px;background:#1e293b;border:1px solid #334155;border-radius:8px;margin-bottom:16px;color:#fbbf24;" class="live-caption">' +
+            '<strong>⏸️ Waiting for admin to start bidding...</strong>' +
+          '</div>' +
+          '<div class="row">' +
+            (img ? '<div style="min-width:220px;max-width:220px">' + img + '</div>' : '') +
+            '<div style="flex:1">' +
+              '<div class="tag live-tag" style="padding:4px 10px">Serial #' + p.serial + '</div>' +
+              '<div class="tag live-tag" style="padding:4px 10px">' + (p.role||'') + '</div>' +
+              '<h2 class="live-h2" style="margin:12px 0">' + p.name + '</h2>' +
+              '<p class="live-p">Base: <b class="live-bid-amount">' + p.basePrice + '</b></p>' +
+            '</div>' +
+          '</div>';
+      }
+      
+      const biddingLogHtml = getBiddingLogHtml(st);
+      const isPaused = p.pausedBy && Object.keys(p.pausedBy).length > 0;
+      const isFrozen = st.frozen || false;
+      let pausedByCaptainName = null;
+      if (isPaused) {
+        const pausedByCaptainId = Object.keys(p.pausedBy)[0];
+        const pausedByCaptain = st.captains.find(c => c.id === pausedByCaptainId);
+        pausedByCaptainName = pausedByCaptain ? pausedByCaptain.name : pausedByCaptainId;
+      }
+      
+      return '<h3 class="live-h3" style="margin-bottom:16px">Now Bidding</h3>' +
+        '<div class="row" style="align-items:flex-start;gap:20px">' +
+          '<div style="flex:1;min-width:0">' +
+            '<div class="row">' +
+              (img ? '<div style="min-width:220px;max-width:220px;flex-shrink:0">' + img + '</div>' : '') +
+              '<div style="flex:1;min-width:0">' +
+                '<div class="tag live-tag" style="padding:4px 10px">Serial #' + p.serial + '</div>' +
+                '<div class="tag live-tag" style="padding:4px 10px">' + (p.role||'') + '</div>' +
+                '<h2 class="live-h2" style="margin:12px 0">' + p.name + '</h2>' +
+                '<p class="live-p">Base: <b class="live-bid-amount">' + p.basePrice + '</b> | Current: <b class="live-bid-amount" style="color:#60a5fa">' + Math.max(p.currentBid||0, p.basePrice||0) + '</b></p>' +
+                '<p class="live-p">Leader: <b class="live-bid-amount" style="color:#10b981">' + ((st.captains.find(c=>c.id===p.currentBidderId)||{}).name||'-') + '</b></p>' +
+                '<p class="live-p">Time left: <span class="counter live-countdown" style="color:#fbbf24"><b id="viewerCountdown">' + secs + (isPaused ? 's (PAUSED)' : isFrozen ? 's (FROZEN)' : 's') + '</b></span> <span id="pausedByInfo" style="color:#fbbf24;font-size:14px;margin-left:8px"></span></p>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          (biddingLogHtml ? '<div style="flex:0 0 350px;min-width:300px;max-width:400px" id="biddingLogContainer">' + biddingLogHtml + '</div>' : '') +
+        '</div>';
+    })();
+    document.getElementById('now').innerHTML = curHtml;
+    
+    scrollBiddingLog();
+    
+    // Update logs display
+    const logsEl = document.getElementById('logs');
+    if (logsEl) {
+      logsEl.innerHTML = (st.logs || []).slice().reverse().map(l => 
+        '<div class="tag" style="display:inline-block;margin-right:8px;margin-bottom:4px">' + l.ts + '</div> ' + l.msg
+      ).join('<br/>');
+      logsEl.scrollTop = 0;
+    }
+    
+    // Announcement card
+    const announcementCard = document.getElementById('announcement');
+    const announcementContent = document.getElementById('announcementContent');
+    if (announcementCard && announcementContent) {
+      const recentLogs = (st.logs || []).slice(-5).reverse();
+      const adminActionLogs = recentLogs.filter(log => 
+        log.msg && (log.msg.includes('MOVED TO NEXT ROUND (Admin)') || log.msg.includes('FINISHED (Admin)'))
+      );
+      
+      if (adminActionLogs.length > 0) {
+        const latestAction = adminActionLogs[0];
+        let announcementHtml = '';
+        
+        if (latestAction.msg.includes('MOVED TO NEXT ROUND (Admin)')) {
+          const match = latestAction.msg.match(/(.+?)\s+\(Serial\s+(\d+)\)/);
+          if (match) {
+            const playerName = match[1].replace('MOVED TO NEXT ROUND (Admin):', '').trim();
+            const serial = match[2];
+            announcementHtml = '<div style="background:#fbbf24;color:#0f172a;padding:12px;border-radius:8px;font-weight:600">' +
+              '📢 Admin Action: <span style="color:#92400e">' + playerName + ' (Serial #' + serial + ')</span> has been moved to next round' +
+            '</div>';
+          }
+        } else if (latestAction.msg.includes('FINISHED (Admin)')) {
+          const match = latestAction.msg.match(/FINISHED \(Admin\): (.+?) \(Serial \d+\) to (.+?) for (\d+)/);
+          if (match) {
+            announcementHtml = '<div style="background:#10b981;color:#fff;padding:12px;border-radius:8px;font-weight:600">' +
+              '🏁 Admin Action: <span>' + match[1] + '</span> sold to <span style="font-weight:700">' + match[2] + '</span> for <span style="font-weight:700">' + match[3] + '</span>' +
+            '</div>';
+          }
+        }
+        
+        if (announcementHtml) {
+          announcementContent.innerHTML = announcementHtml;
+          announcementCard.style.display = 'block';
+        } else {
+          announcementCard.style.display = 'none';
+        }
+      } else {
+        announcementCard.style.display = 'none';
+      }
+    }
+    
+    const sold = st.players.filter(p=>p.status==='sold').reverse().slice(0, 10);
+    document.getElementById('recent').innerHTML = sold.map(p=>{
+      const winnerName = ((st.captains.find(c=>c.id===p.soldToCaptainId)||{}).name||'-');
+      return '<div style="background:#1e293b;border:1px solid #334155;border-radius:8px;padding:10px;margin-bottom:8px">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;gap:12px">' +
+          '<div style="flex:1;min-width:0">' +
+            '<div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">' +
+              '<span class="tag live-tag" style="padding:2px 6px">#' + p.serial + '</span>' +
+              '<h4 class="live-h4" style="margin:0;word-wrap:break-word">' + p.name + '</h4>' +
+            '</div>' +
+          '</div>' +
+          '<div style="text-align:right;flex-shrink:0;white-space:nowrap">' +
+            '<div class="live-caption" style="color:#60a5fa;font-weight:600;margin-bottom:2px">' + winnerName + '</div>' +
+            '<div class="live-caption" style="color:#94a3b8">(' + p.currentBid + ')</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+    
+    renderTeams(st);
+  }
+  
+  function checkStateChanges(newState) {
+    // Check for new sold players
+    if (newState.players) {
+      newState.players.forEach(p => {
+        if (p.status === 'sold' && !previousState.soldPlayers.has(p.serial)) {
+          previousState.soldPlayers.add(p.serial);
+          const winner = newState.captains.find(c => c.id === p.soldToCaptainId);
+          if (winner) {
+            playSound('sold');
+            setTimeout(() => {
+              speak(`${winner.name} won ${p.name} for ${p.currentBid || p.basePrice}`, 'high');
+            }, 300);
+          }
+        }
+      });
+    }
+    
+    // Check for new log entries (bids, drops, admin actions)
+    if (newState.logs && newState.logs.length > previousState.logs.length) {
+      const newLogs = newState.logs.slice(previousState.logs.length);
+      newLogs.forEach(log => {
+        const msg = log.msg || '';
+        if (msg.includes('BID:') && !msg.includes('BASE PRICE')) {
+          playSound('bid');
+        } else if (msg.includes('BASE PRICE CLAIMED:')) {
+          playSound('bid');
+          const match = msg.match(/BASE PRICE CLAIMED: (.+?) → (.+?)\s/);
+          if (match) {
+            setTimeout(() => {
+              speak(`${match[1]} claimed base price for ${match[2]}`, 'normal');
+            }, 200);
+          }
+        } else if (msg.includes('SOLD:') || msg.includes('FINISHED (Admin)')) {
+          playSound('sold');
+        } else if (msg.includes('PLAYER BROUGHT TO AUCTION')) {
+          playSound('adminAction');
+          const match = msg.match(/PLAYER BROUGHT TO AUCTION: (.+?)\s/);
+          if (match) {
+            setTimeout(() => {
+              speak(`Next player: ${match[1]}`, 'high');
+            }, 200);
+          }
+        } else if (msg.includes('BIDDING STARTED')) {
+          playSound('adminAction');
+        } else if (msg.includes('VOIDED')) {
+          playSound('adminAction');
+        } else if (msg.includes('MOVED TO NEXT ROUND')) {
+          playSound('adminAction');
+        } else if (msg.includes('FINISHED (Admin)')) {
+          playSound('adminAction');
+          const match = msg.match(/FINISHED \(Admin\): (.+?) \(Serial \d+\) to (.+?) for (\d+)/);
+          if (match) {
+            setTimeout(() => {
+              speak(`Admin finished: ${match[2]} won ${match[1]} for ${match[3]}`, 'high');
+            }, 200);
+          }
+        }
+      });
+    }
+    
+    // Check for timer warnings
+    if (newState.currentIndex != null) {
+      const p = newState.players[newState.currentIndex];
+      if (p && p.biddingEndsAt && p.status === 'bidding') {
+        const timeLeft = Math.max(0, p.biddingEndsAt - Date.now());
+        const secondsLeft = Math.ceil(timeLeft / 1000);
+        
+        if (secondsLeft !== previousState.lastTimerSecond && 
+            (secondsLeft === 10 || secondsLeft === 5 || secondsLeft === 3 || secondsLeft === 2 || secondsLeft === 1)) {
+          playSound('timerWarning');
+          if (secondsLeft <= 3) {
+            speak(`${secondsLeft} second${secondsLeft !== 1 ? 's' : ''} remaining`, 'high');
+          }
+          previousState.lastTimerSecond = secondsLeft;
+        }
+      } else {
+        previousState.lastTimerSecond = null;
+      }
+    } else {
+      previousState.lastTimerSecond = null;
+    }
+    
+    previousState = {
+      currentIndex: newState.currentIndex,
+      players: [...newState.players],
+      logs: [...(newState.logs || [])],
+      lastTimerSecond: previousState.lastTimerSecond,
+      soldPlayers: previousState.soldPlayers
+    };
+  }
+  
+  // Timer countdown - synchronized with server state
+  function updateViewerTimer() {
+    const c = document.getElementById('viewerCountdown'); 
+    const pausedByEl = document.getElementById('pausedByInfo');
+    if(!c) return; 
+    
+    if (st && st.currentIndex != null) {
+      const p = st.players[st.currentIndex];
+      if (p && p.biddingEndsAt) {
+        const isPaused = p.pausedBy && Object.keys(p.pausedBy).length > 0;
+        const isFrozen = st.frozen || false;
+        let remainingSeconds = 0;
+        let pausedByCaptainName = null;
+        
+        if (isFrozen && st.frozenTimerRemaining != null) {
+          remainingSeconds = Math.ceil(st.frozenTimerRemaining / 1000);
+        } else if (isPaused) {
+          const pausedByCaptainId = Object.keys(p.pausedBy)[0];
+          const pausedByCaptain = st.captains.find(c => c.id === pausedByCaptainId);
+          pausedByCaptainName = pausedByCaptain ? pausedByCaptain.name : pausedByCaptainId;
+          
+          const pauseInfo = p.pausedBy[pausedByCaptainId];
+          if (pauseInfo && typeof pauseInfo === 'object' && pauseInfo.remainingAtPause !== undefined) {
+            remainingSeconds = Math.ceil(pauseInfo.remainingAtPause / 1000);
+          } else {
+            remainingSeconds = Math.ceil(Math.max(0, p.biddingEndsAt - Date.now()) / 1000);
+          }
+        } else {
+          remainingSeconds = Math.ceil(Math.max(0, p.biddingEndsAt - Date.now()) / 1000);
+        }
+        
+        if (pausedByEl) {
+          if (isFrozen) {
+            pausedByEl.innerText = '(Frozen by Admin)';
+            pausedByEl.style.display = 'inline';
+          } else if (isPaused && pausedByCaptainName) {
+            pausedByEl.innerText = '(Paused by ' + pausedByCaptainName + ')';
+            pausedByEl.style.display = 'inline';
+          } else {
+            pausedByEl.innerText = '';
+            pausedByEl.style.display = 'none';
+          }
+        }
+        
+        if (isFrozen) {
+          c.innerText = remainingSeconds + 's (FROZEN)';
+        } else if (isPaused) {
+          c.innerText = remainingSeconds + 's (PAUSED)';
+        } else {
+          c.innerText = remainingSeconds + 's';
+        }
+        return;
+      }
+    }
+    
+    c.innerText = '0s';
+    if (pausedByEl) {
+      pausedByEl.innerText = '';
+      pausedByEl.style.display = 'none';
+    }
+  }
+  
+  let st = null;
+  sock.on('state:update', (state) => {
+    st = state;
+    render(state);
+    updateViewerTimer();
+  });
+  
+  // Update timer frequently
+  setInterval(updateViewerTimer, 100);
+  
+  // Listen for admin read-out announcements
+  sock.on('announcement:readOut', (data) => {
+    if (data && data.text) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      speak(data.text, data.priority || 'high');
+    }
+  });
+  
+  // Initialize audio on user interaction
+  document.addEventListener('click', function initAudio() {
+    getAudioContext();
+  }, { once: true });
+  </script>
+</body>
+</html>
+
