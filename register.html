@@ -531,7 +531,7 @@
       
       <div class="form-group">
         <label for="photo">Upload Photo *</label>
-        <input type="file" id="photo" name="photo" accept="image/*,.jpg,.jpeg,.png,.gif,.webp" required>
+        <input type="file" id="photo" name="photo" accept="image/*,.jpg,.jpeg,.png,.gif,.webp">
         <small class="help-text">Supported formats: JPG, PNG, GIF, WebP. Maximum size: 10MB</small>
         <div id="photoPreview" class="photo-preview"></div>
       </div>
@@ -653,8 +653,60 @@
     // Form submission - show confirmation first
     document.getElementById('registrationForm').addEventListener('submit', function(e) {
       e.preventDefault();
+      console.log('=== FORM SUBMIT TRIGGERED ===');
       
-      // Validate photo size
+      // Validate all required fields first
+      const name = document.getElementById('name').value.trim();
+      const fatherName = document.getElementById('fatherName').value.trim();
+      const category = document.getElementById('category').value;
+      const mobile = document.getElementById('mobile').value.trim();
+      const captaincy = document.getElementById('captaincy').value;
+      const jerseyName = document.getElementById('jerseyName').value.trim();
+      const jerseyNumber = document.getElementById('jerseyNumber').value.trim();
+      const tshirtSize = document.getElementById('tshirtSize').value;
+      const trouserSize = document.getElementById('trouserSize').value;
+      
+      // Validate required fields
+      if (!name) {
+        alert('Please enter your name.');
+        return;
+      }
+      if (!fatherName) {
+        alert('Please enter father name.');
+        return;
+      }
+      if (!category) {
+        alert('Please select a category.');
+        return;
+      }
+      if (!mobile || mobile.length !== 10) {
+        alert('Please enter a valid 10-digit mobile number.');
+        return;
+      }
+      if (!captaincy) {
+        alert('Please select captaincy option.');
+        return;
+      }
+      if (!jerseyName) {
+        alert('Please enter jersey name.');
+        return;
+      }
+      if (!jerseyNumber) {
+        alert('Please enter jersey number.');
+        return;
+      }
+      if (!tshirtSize) {
+        alert('Please select T-shirt size.');
+        return;
+      }
+      if (!trouserSize) {
+        alert('Please select trouser size.');
+        return;
+      }
+      
+      console.log('All validations passed');
+      
+      // Validate photo size if provided
       const photoInput = document.getElementById('photo');
       const file = photoInput.files[0];
       const maxSize = 10 * 1024 * 1024; // 10MB
@@ -664,61 +716,72 @@
         return;
       }
       
-      // Validate mobile number
-      const mobile = document.getElementById('mobile').value;
-      if (mobile.length !== 10) {
-        alert('Please enter a valid 10-digit mobile number.');
-        return;
-      }
-      
       // Calculate registration fee
-      const captaincy = document.getElementById('captaincy').value;
       const registrationFee = captaincy === 'Yes' ? 2000 : 500;
       
       // Get all form data
       const formData = new FormData(this);
       pendingFormData = {
-        name: formData.get('name'),
-        fatherName: formData.get('fatherName'),
-        category: formData.get('category'),
-        mobile: formData.get('mobile'),
-        captaincy: formData.get('captaincy'),
+        name: name,
+        fatherName: fatherName,
+        category: category,
+        mobile: mobile,
+        captaincy: captaincy,
         registrationFee: registrationFee.toString(),
-        jerseyName: formData.get('jerseyName'),
-        jerseyNumber: formData.get('jerseyNumber'),
-        tshirtSize: formData.get('tshirtSize'),
-        trouserSize: formData.get('trouserSize')
+        jerseyName: jerseyName,
+        jerseyNumber: jerseyNumber,
+        tshirtSize: tshirtSize,
+        trouserSize: trouserSize
       };
+      
+      console.log('Pending form data prepared:', pendingFormData);
       
       // Convert photo to base64 if exists
       if (file) {
+        console.log('Photo file found, converting to base64...');
         const reader = new FileReader();
         reader.onload = function(e) {
+          console.log('Photo converted to base64');
           pendingPhotoBase64 = e.target.result.split(',')[1];
           pendingPhotoName = file.name;
           pendingPhotoType = file.type;
           pendingPhotoPreview = e.target.result; // Full data URL for preview
           
           // Show confirmation
+          console.log('Calling showConfirmation with photo...');
           showConfirmation(pendingFormData, registrationFee, pendingPhotoPreview);
+        };
+        reader.onerror = function(error) {
+          console.error('Error reading photo:', error);
+          alert('Error reading photo file. Please try again.');
         };
         reader.readAsDataURL(file);
       } else {
+        console.log('No photo file, proceeding without photo...');
         pendingPhotoBase64 = '';
         pendingPhotoName = '';
         pendingPhotoType = '';
         pendingPhotoPreview = null;
         
-        // Show confirmation
+        // Show confirmation immediately (no photo to process)
+        console.log('Calling showConfirmation without photo...');
         showConfirmation(pendingFormData, registrationFee, null);
       }
     });
     
     // Show confirmation overlay
     function showConfirmation(data, fee, photoPreview) {
+      console.log('showConfirmation called with data:', data);
       const overlay = document.getElementById('confirmationOverlay');
       const detailsDiv = document.getElementById('confirmationDetails');
       const feeDiv = document.getElementById('confirmationFee');
+      
+      if (!overlay) {
+        console.error('Confirmation overlay not found!');
+        return;
+      }
+      
+      console.log('Showing confirmation overlay...');
       
       // Build confirmation details HTML
       let detailsHTML = '';
@@ -809,47 +872,96 @@
       }
     });
     
-    // Confirm button - submit to Google Sheets
-    document.getElementById('confirmBtn').addEventListener('click', function() {
-      if (!pendingFormData) return;
+    // Wait for DOM to be ready, then attach event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM loaded, attaching event listeners...');
+      
+      const confirmBtn = document.getElementById('confirmBtn');
+      if (!confirmBtn) {
+        console.error('Confirm button not found!');
+        return;
+      }
+      console.log('Confirm button found, attaching click handler...');
+      
+      confirmBtn.addEventListener('click', function() {
+      console.log('Confirm button clicked!');
+      console.log('Pending form data:', pendingFormData);
+      
+      if (!pendingFormData) {
+        console.error('No pending form data!');
+        alert('Error: No form data to submit. Please fill out the form again.');
+        return;
+      }
       
       const confirmBtn = this;
       const originalText = confirmBtn.textContent;
       confirmBtn.textContent = 'Submitting...';
       confirmBtn.disabled = true;
       
+      console.log('Starting submission process...');
+      
       // Prepare submission data
       const submissionData = {
-        name: pendingFormData.name,
-        fatherName: pendingFormData.fatherName,
-        category: pendingFormData.category,
-        mobile: pendingFormData.mobile,
-        captaincy: pendingFormData.captaincy,
-        registrationFee: pendingFormData.registrationFee,
-        jerseyName: pendingFormData.jerseyName,
-        jerseyNumber: pendingFormData.jerseyNumber,
-        tshirtSize: pendingFormData.tshirtSize,
-        trouserSize: pendingFormData.trouserSize,
+        name: pendingFormData.name || '',
+        fatherName: pendingFormData.fatherName || '',
+        category: pendingFormData.category || '',
+        mobile: pendingFormData.mobile || '',
+        captaincy: pendingFormData.captaincy || '',
+        registrationFee: pendingFormData.registrationFee || '',
+        jerseyName: pendingFormData.jerseyName || '',
+        jerseyNumber: pendingFormData.jerseyNumber || '',
+        tshirtSize: pendingFormData.tshirtSize || '',
+        trouserSize: pendingFormData.trouserSize || '',
         photo: pendingPhotoBase64 || '',
         photoName: pendingPhotoName || '',
         photoType: pendingPhotoType || ''
       };
       
+      // Log what we're sending (for debugging)
+      console.log('=== FORM SUBMISSION START ===');
+      console.log('Submitting data:', {
+        name: submissionData.name,
+        mobile: submissionData.mobile,
+        category: submissionData.category,
+        photoSize: submissionData.photo ? submissionData.photo.length + ' chars' : 'no photo'
+      });
+      console.log('Google Script URL:', GOOGLE_SCRIPT_URL);
+      
+      // Check if photo is too large (base64 can be very long)
+      const photoSize = submissionData.photo ? submissionData.photo.length : 0;
+      if (photoSize > 5000000) { // ~5MB base64 = ~3.75MB actual file
+        alert('Photo is too large. Please use a smaller image (under 5MB).');
+        confirmBtn.textContent = originalText;
+        confirmBtn.disabled = false;
+        return;
+      }
+      
       // Submit to Google Apps Script
+      // Use FormData for better handling of large data
+      const formDataToSend = new URLSearchParams();
+      Object.keys(submissionData).forEach(key => {
+        formDataToSend.append(key, submissionData[key]);
+      });
+      
       fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: Object.keys(submissionData).map(key => encodeURIComponent(key) + '=' + encodeURIComponent(submissionData[key])).join('&')
+        body: formDataToSend.toString()
       })
       .then(() => {
+        // With no-cors, we can't read response, but assume success
+        // Wait a moment then check if data appeared (optional - can remove)
+        console.log('Form submitted, waiting for processing...');
+        
         // Show success message
         const fee = parseInt(pendingFormData.registrationFee);
         alert('Registration submitted successfully!\n\n' + 
               'Please pay the registration fee of ₹' + fee + ' to organisers to confirm the registration.\n\n' +
-              'Your registration details have been saved.');
+              'Your registration details have been saved.\n\n' +
+              'Note: If data doesn\'t appear in the sheet, check the script logs.');
         
         // Close overlay
         document.getElementById('confirmationOverlay').classList.remove('active');
@@ -871,12 +983,143 @@
         confirmBtn.disabled = false;
       })
       .catch(error => {
-        console.error('Error:', error);
-        alert('Error submitting registration. Please check your connection and try again.');
+        console.error('Error submitting:', error);
+        alert('Error submitting registration. Please check:\n' +
+              '1. Your internet connection\n' +
+              '2. The script URL is correct\n' +
+              '3. Check browser console (F12) for details');
         confirmBtn.textContent = originalText;
         confirmBtn.disabled = false;
       });
+      });
     });
+    
+    // Also attach immediately if DOM is already loaded
+    if (document.readyState === 'loading') {
+      // DOM is still loading, wait for DOMContentLoaded (handled above)
+    } else {
+      // DOM is already loaded, attach immediately
+      console.log('DOM already loaded, attaching event listeners immediately...');
+      const confirmBtn = document.getElementById('confirmBtn');
+      if (confirmBtn) {
+        console.log('Confirm button found, attaching click handler...');
+        confirmBtn.addEventListener('click', function() {
+          console.log('Confirm button clicked!');
+          console.log('Pending form data:', pendingFormData);
+          
+          if (!pendingFormData) {
+            console.error('No pending form data!');
+            alert('Error: No form data to submit. Please fill out the form again.');
+            return;
+          }
+          
+          const confirmBtn = this;
+          const originalText = confirmBtn.textContent;
+          confirmBtn.textContent = 'Submitting...';
+          confirmBtn.disabled = true;
+          
+          console.log('Starting submission process...');
+          
+          // Prepare submission data
+          const submissionData = {
+            name: pendingFormData.name || '',
+            fatherName: pendingFormData.fatherName || '',
+            category: pendingFormData.category || '',
+            mobile: pendingFormData.mobile || '',
+            captaincy: pendingFormData.captaincy || '',
+            registrationFee: pendingFormData.registrationFee || '',
+            jerseyName: pendingFormData.jerseyName || '',
+            jerseyNumber: pendingFormData.jerseyNumber || '',
+            tshirtSize: pendingFormData.tshirtSize || '',
+            trouserSize: pendingFormData.trouserSize || '',
+            photo: pendingPhotoBase64 || '',
+            photoName: pendingPhotoName || '',
+            photoType: pendingPhotoType || ''
+          };
+          
+          // Log what we're sending (for debugging)
+          console.log('=== FORM SUBMISSION START ===');
+          console.log('Submitting data:', {
+            name: submissionData.name,
+            mobile: submissionData.mobile,
+            category: submissionData.category,
+            photoSize: submissionData.photo ? submissionData.photo.length + ' chars' : 'no photo'
+          });
+          console.log('Google Script URL:', GOOGLE_SCRIPT_URL);
+          
+          // Check if photo is too large (base64 can be very long)
+          const photoSize = submissionData.photo ? submissionData.photo.length : 0;
+          if (photoSize > 5000000) { // ~5MB base64 = ~3.75MB actual file
+            alert('Photo is too large. Please use a smaller image (under 5MB).');
+            confirmBtn.textContent = originalText;
+            confirmBtn.disabled = false;
+            return;
+          }
+          
+          // Submit to Google Apps Script
+          // Use FormData for better handling of large data
+          const formDataToSend = new URLSearchParams();
+          Object.keys(submissionData).forEach(key => {
+            formDataToSend.append(key, submissionData[key]);
+          });
+          
+          console.log('Sending fetch request to:', GOOGLE_SCRIPT_URL);
+          console.log('Request body length:', formDataToSend.toString().length);
+          console.log('Request body preview (first 200 chars):', formDataToSend.toString().substring(0, 200));
+          
+          fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: formDataToSend.toString()
+          })
+          .then(() => {
+            // With no-cors, we can't read response, but assume success
+            console.log('=== FETCH REQUEST COMPLETED ===');
+            console.log('Form submitted, waiting for processing...');
+            
+            // Show success message
+            const fee = parseInt(pendingFormData.registrationFee);
+            alert('Registration submitted successfully!\n\n' + 
+                  'Please pay the registration fee of ₹' + fee + ' to organisers to confirm the registration.\n\n' +
+                  'Your registration details have been saved.\n\n' +
+                  'Note: If data doesn\'t appear in the sheet, check the script logs.');
+            
+            // Close overlay
+            document.getElementById('confirmationOverlay').classList.remove('active');
+            
+            // Reset form
+            document.getElementById('registrationForm').reset();
+            document.getElementById('photoPreview').classList.remove('active');
+            document.getElementById('photoPreview').innerHTML = '';
+            document.getElementById('registrationFeeGroup').style.display = 'none';
+            
+            // Clear pending data
+            pendingFormData = null;
+            pendingPhotoBase64 = null;
+            pendingPhotoName = null;
+            pendingPhotoType = null;
+            pendingPhotoPreview = null;
+            
+            confirmBtn.textContent = originalText;
+            confirmBtn.disabled = false;
+          })
+          .catch(error => {
+            console.error('Error submitting:', error);
+            alert('Error submitting registration. Please check:\n' +
+                  '1. Your internet connection\n' +
+                  '2. The script URL is correct\n' +
+                  '3. Check browser console (F12) for details');
+            confirmBtn.textContent = originalText;
+            confirmBtn.disabled = false;
+          });
+        });
+      } else {
+        console.error('Confirm button not found when trying to attach handler!');
+      }
+    }
   </script>
 </body>
 </html>
