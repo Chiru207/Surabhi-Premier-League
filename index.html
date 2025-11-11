@@ -11,42 +11,55 @@
       color: #e2e8f0;
       font-family: system-ui, Arial, Helvetica, sans-serif;
       margin: 0;
-      padding: 20px;
+      padding: clamp(10px, 2vh, 20px);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      box-sizing: border-box;
     }
     
     .container {
       max-width: 1200px;
       width: 100%;
       text-align: center;
+      max-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
     }
     
     h1 {
-      font-size: clamp(28px, 5vw, 48px);
-      margin-bottom: 30px;
+      font-size: clamp(20px, 4vw, 48px);
+      margin-bottom: clamp(10px, 2vh, 30px);
       color: #60a5fa;
       font-weight: 700;
+      flex-shrink: 0;
     }
     
     .flyer-container {
       background: #111827;
       border: 2px solid #334155;
       border-radius: 16px;
-      padding: clamp(10px, 2vw, 20px);
-      margin: 20px auto;
+      padding: clamp(6px, 1.5vw, 20px);
+      margin: clamp(8px, 1.5vh, 20px) auto;
       max-width: 100%;
       width: 100%;
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
       box-sizing: border-box;
+      flex: 1 1 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 0;
+      overflow: hidden;
     }
     
     .flyer-image {
       width: 100%;
       max-width: 1200px;
+      max-height: calc(100vh - 200px);
       height: auto;
       border-radius: 12px;
       display: block;
@@ -57,16 +70,17 @@
     
     .live-link {
       display: inline-block;
-      margin-top: 30px;
-      padding: 16px 32px;
+      margin-top: clamp(10px, 2vh, 30px);
+      padding: clamp(12px, 2vh, 16px) clamp(24px, 4vw, 32px);
       background: #10b981;
       color: white;
       text-decoration: none;
       border-radius: 12px;
-      font-size: 18px;
+      font-size: clamp(14px, 3vw, 18px);
       font-weight: 600;
       transition: all 0.3s;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+      flex-shrink: 0;
     }
     
     .live-link:hover {
@@ -76,60 +90,101 @@
     }
     
     .info {
-      margin-top: 20px;
+      margin-top: clamp(8px, 1.5vh, 20px);
       color: #94a3b8;
-      font-size: 16px;
+      font-size: clamp(12px, 2.5vw, 16px);
+      flex-shrink: 0;
     }
     
     @media (max-width: 768px) {
+      body {
+        padding: clamp(5px, 1vh, 10px);
+      }
+      
       .flyer-container {
-        padding: 8px;
-        margin: 10px auto;
+        padding: 4px;
+        margin: 5px auto;
       }
       
       .flyer-image {
         max-width: 100%;
+        max-height: calc(100vh - 150px);
         border-radius: 8px;
       }
       
       h1 {
-        font-size: 24px;
-        margin-bottom: 20px;
+        font-size: clamp(18px, 5vw, 24px);
+        margin-bottom: clamp(8px, 2vh, 15px);
       }
       
       .live-link {
-        padding: 12px 24px;
-        font-size: 16px;
+        padding: 10px 20px;
+        font-size: 14px;
+        margin-top: clamp(8px, 1.5vh, 15px);
+      }
+      
+      .info {
+        font-size: 12px;
+        margin-top: clamp(5px, 1vh, 10px);
       }
     }
     
     @media (max-width: 480px) {
       body {
-        padding: 10px;
+        padding: 5px;
       }
       
       .flyer-container {
-        padding: 6px;
-        margin: 8px auto;
+        padding: 3px;
+        margin: 3px auto;
       }
       
       .flyer-image {
+        max-height: calc(100vh - 120px);
         border-radius: 6px;
       }
       
       h1 {
-        font-size: 20px;
-        margin-bottom: 15px;
+        font-size: clamp(16px, 6vw, 20px);
+        margin-bottom: clamp(5px, 1.5vh, 10px);
+      }
+      
+      .live-link {
+        padding: 8px 16px;
+        font-size: 12px;
       }
     }
     
     @media (min-width: 1400px) {
       .flyer-image {
         max-width: 1400px;
+        max-height: calc(100vh - 250px);
       }
       
       .container {
         max-width: 1400px;
+      }
+    }
+    
+    @media (orientation: landscape) and (max-height: 600px) {
+      .flyer-image {
+        max-height: calc(100vh - 100px);
+      }
+      
+      h1 {
+        font-size: clamp(16px, 3vw, 24px);
+        margin-bottom: 5px;
+      }
+      
+      .live-link {
+        margin-top: 5px;
+        padding: 8px 16px;
+        font-size: 14px;
+      }
+      
+      .info {
+        margin-top: 5px;
+        font-size: 12px;
       }
     }
   </style>
