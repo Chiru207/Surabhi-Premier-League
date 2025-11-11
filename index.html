@@ -21,13 +21,43 @@
     }
     
     .container {
-      max-width: 1200px;
+      max-width: 1400px;
       width: 100%;
       text-align: center;
       max-height: 100vh;
       display: flex;
       flex-direction: column;
       box-sizing: border-box;
+      padding: clamp(10px, 2vh, 20px);
+    }
+    
+    .content-wrapper {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(20px, 4vw, 40px);
+      width: 100%;
+      flex: 1;
+      min-height: 0;
+    }
+    
+    .flyer-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-width: 0;
+    }
+    
+    .buttons-section {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
     }
     
     h1 {
@@ -42,24 +72,21 @@
       background: #111827;
       border: 2px solid #334155;
       border-radius: 16px;
-      padding: clamp(6px, 1.5vw, 20px);
-      margin: clamp(8px, 1.5vh, 20px) auto;
+      padding: clamp(10px, 2vw, 30px);
+      margin: 0 auto;
       max-width: 100%;
       width: 100%;
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
       box-sizing: border-box;
-      flex: 1 1 auto;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 0;
-      overflow: hidden;
+      overflow: visible;
     }
     
     .flyer-image {
       width: 100%;
-      max-width: 1200px;
-      max-height: calc(100vh - 200px);
+      max-width: 100%;
       height: auto;
       border-radius: 12px;
       display: block;
@@ -68,23 +95,39 @@
       object-fit: contain;
     }
     
-    .live-link {
+    .live-link, .register-link {
       display: inline-block;
-      margin-top: clamp(10px, 2vh, 30px);
-      padding: clamp(12px, 2vh, 16px) clamp(24px, 4vw, 32px);
-      background: #10b981;
+      padding: clamp(14px, 2.5vh, 18px) clamp(28px, 5vw, 36px);
       color: white;
       text-decoration: none;
       border-radius: 12px;
-      font-size: clamp(14px, 3vw, 18px);
+      font-size: clamp(16px, 3.5vw, 20px);
       font-weight: 600;
       transition: all 0.3s;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
       flex-shrink: 0;
+      width: 100%;
+      max-width: 280px;
+      text-align: center;
+      box-sizing: border-box;
+    }
+    
+    .live-link {
+      background: #10b981;
     }
     
     .live-link:hover {
       background: #059669;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.3);
+    }
+    
+    .register-link {
+      background: #3b82f6;
+    }
+    
+    .register-link:hover {
+      background: #2563eb;
       transform: translateY(-2px);
       box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.3);
     }
@@ -96,19 +139,40 @@
       flex-shrink: 0;
     }
     
+    @media (max-width: 1024px) {
+      .content-wrapper {
+        flex-direction: column;
+        gap: clamp(15px, 3vh, 30px);
+      }
+      
+      .buttons-section {
+        width: 100%;
+        max-width: 400px;
+        flex-direction: row;
+        gap: 15px;
+      }
+      
+      .live-link, .register-link {
+        width: auto;
+        flex: 1;
+        max-width: none;
+      }
+    }
+    
     @media (max-width: 768px) {
       body {
         padding: clamp(5px, 1vh, 10px);
       }
       
+      .container {
+        padding: clamp(5px, 1vh, 10px);
+      }
+      
       .flyer-container {
-        padding: 4px;
-        margin: 5px auto;
+        padding: clamp(8px, 1.5vw, 20px);
       }
       
       .flyer-image {
-        max-width: 100%;
-        max-height: calc(100vh - 150px);
         border-radius: 8px;
       }
       
@@ -117,10 +181,17 @@
         margin-bottom: clamp(8px, 2vh, 15px);
       }
       
-      .live-link {
-        padding: 10px 20px;
-        font-size: 14px;
-        margin-top: clamp(8px, 1.5vh, 15px);
+      .buttons-section {
+        flex-direction: column;
+        width: 100%;
+        gap: 12px;
+      }
+      
+      .live-link, .register-link {
+        width: 100%;
+        max-width: 100%;
+        padding: 12px 20px;
+        font-size: 16px;
       }
       
       .info {
@@ -134,13 +205,15 @@
         padding: 5px;
       }
       
+      .container {
+        padding: 5px;
+      }
+      
       .flyer-container {
-        padding: 3px;
-        margin: 3px auto;
+        padding: 6px;
       }
       
       .flyer-image {
-        max-height: calc(100vh - 120px);
         border-radius: 6px;
       }
       
@@ -149,37 +222,31 @@
         margin-bottom: clamp(5px, 1.5vh, 10px);
       }
       
-      .live-link {
-        padding: 8px 16px;
-        font-size: 12px;
+      .live-link, .register-link {
+        padding: 10px 16px;
+        font-size: 14px;
       }
     }
     
-    @media (min-width: 1400px) {
-      .flyer-image {
-        max-width: 1400px;
-        max-height: calc(100vh - 250px);
+    @media (min-width: 1025px) {
+      .content-wrapper {
+        align-items: flex-start;
       }
       
-      .container {
-        max-width: 1400px;
+      .flyer-section {
+        flex: 1.2;
+      }
+      
+      .buttons-section {
+        flex: 0.3;
+        min-width: 250px;
       }
     }
     
     @media (orientation: landscape) and (max-height: 600px) {
-      .flyer-image {
-        max-height: calc(100vh - 100px);
-      }
-      
       h1 {
         font-size: clamp(16px, 3vw, 24px);
         margin-bottom: 5px;
-      }
-      
-      .live-link {
-        margin-top: 5px;
-        padding: 8px 16px;
-        font-size: 14px;
       }
       
       .info {
@@ -192,10 +259,17 @@
 <body>
   <div class="container">
     <h1>Surabhi Premier League - 2025</h1>
-    <div class="flyer-container">
-      <img src="flyer.png" alt="Surabhi Premier League 2025 Flyer" class="flyer-image" />
+    <div class="content-wrapper">
+      <div class="flyer-section">
+        <div class="flyer-container">
+          <img src="flyer.png" alt="Surabhi Premier League 2025 Flyer" class="flyer-image" />
+        </div>
+      </div>
+      <div class="buttons-section">
+        <a href="live-standalone.html" class="live-link">🔴 Go to Live Auction</a>
+        <a href="register.html" class="register-link">📝 Register</a>
+      </div>
     </div>
-    <a href="live-standalone.html" class="live-link">🔴 Go to Live Auction</a>
     <div class="info">
       <p>Organised by Surabhi Yuvasena, Surabhi Colony</p>
     </div>
