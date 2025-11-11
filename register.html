@@ -937,31 +937,54 @@
       }
       
       // Submit to Google Apps Script
-      // Use FormData for better handling of large data
-      const formDataToSend = new URLSearchParams();
-      Object.keys(submissionData).forEach(key => {
-        formDataToSend.append(key, submissionData[key]);
+      // Use traditional form submission instead of fetch with no-cors
+      // This ensures POST data is sent properly to Google Apps Script
+      console.log('Sending form submission to:', GOOGLE_SCRIPT_URL);
+      console.log('Submitting data:', {
+        name: submissionData.name,
+        mobile: submissionData.mobile,
+        category: submissionData.category,
+        photoSize: submissionData.photo ? submissionData.photo.length + ' chars' : 'no photo'
       });
       
-      fetch(GOOGLE_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: formDataToSend.toString()
-      })
-      .then(() => {
-        // With no-cors, we can't read response, but assume success
-        // Wait a moment then check if data appeared (optional - can remove)
+      const hiddenForm = document.createElement('form');
+      hiddenForm.method = 'POST';
+      hiddenForm.action = GOOGLE_SCRIPT_URL;
+      hiddenForm.target = 'hiddenIframe';
+      hiddenForm.style.display = 'none';
+      
+      // Add all form fields as hidden inputs
+      Object.keys(submissionData).forEach(key => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = submissionData[key];
+        hiddenForm.appendChild(input);
+      });
+      
+      // Create hidden iframe to receive response
+      let iframe = document.getElementById('hiddenIframe');
+      if (!iframe) {
+        iframe = document.createElement('iframe');
+        iframe.id = 'hiddenIframe';
+        iframe.name = 'hiddenIframe';
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+      }
+      
+      // Add form to body and submit
+      document.body.appendChild(hiddenForm);
+      
+      // Handle iframe load (response received)
+      iframe.onload = function() {
+        console.log('=== FORM SUBMISSION COMPLETED ===');
         console.log('Form submitted, waiting for processing...');
         
         // Show success message
         const fee = parseInt(pendingFormData.registrationFee);
         alert('Registration submitted successfully!\n\n' + 
               'Please pay the registration fee of ₹' + fee + ' to organisers to confirm the registration.\n\n' +
-              'Your registration details have been saved.\n\n' +
-              'Note: If data doesn\'t appear in the sheet, check the script logs.');
+              'Your registration details have been saved.');
         
         // Close overlay
         document.getElementById('confirmationOverlay').classList.remove('active');
@@ -979,18 +1002,45 @@
         pendingPhotoType = null;
         pendingPhotoPreview = null;
         
+        // Remove form
+        document.body.removeChild(hiddenForm);
+        
         confirmBtn.textContent = originalText;
         confirmBtn.disabled = false;
-      })
-      .catch(error => {
-        console.error('Error submitting:', error);
-        alert('Error submitting registration. Please check:\n' +
-              '1. Your internet connection\n' +
-              '2. The script URL is correct\n' +
-              '3. Check browser console (F12) for details');
-        confirmBtn.textContent = originalText;
-        confirmBtn.disabled = false;
-      });
+      };
+      
+      // Submit form
+      hiddenForm.submit();
+      
+      // Fallback timeout in case iframe doesn't load
+      setTimeout(function() {
+        if (confirmBtn.disabled) {
+          console.log('Submission timeout, assuming success...');
+          const fee = parseInt(pendingFormData.registrationFee);
+          alert('Registration submitted!\n\n' + 
+                'Please pay the registration fee of ₹' + fee + ' to organisers to confirm the registration.\n\n' +
+                'Note: Please verify data appears in the sheet.');
+          
+          document.getElementById('confirmationOverlay').classList.remove('active');
+          document.getElementById('registrationForm').reset();
+          document.getElementById('photoPreview').classList.remove('active');
+          document.getElementById('photoPreview').innerHTML = '';
+          document.getElementById('registrationFeeGroup').style.display = 'none';
+          
+          pendingFormData = null;
+          pendingPhotoBase64 = null;
+          pendingPhotoName = null;
+          pendingPhotoType = null;
+          pendingPhotoPreview = null;
+          
+          if (document.body.contains(hiddenForm)) {
+            document.body.removeChild(hiddenForm);
+          }
+          
+          confirmBtn.textContent = originalText;
+          confirmBtn.disabled = false;
+        }
+      }, 5000);
       });
     });
     
@@ -1063,29 +1113,50 @@
             formDataToSend.append(key, submissionData[key]);
           });
           
-          console.log('Sending fetch request to:', GOOGLE_SCRIPT_URL);
+          console.log('Sending form submission to:', GOOGLE_SCRIPT_URL);
           console.log('Request body length:', formDataToSend.toString().length);
           console.log('Request body preview (first 200 chars):', formDataToSend.toString().substring(0, 200));
           
-          fetch(GOOGLE_SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: formDataToSend.toString()
-          })
-          .then(() => {
-            // With no-cors, we can't read response, but assume success
-            console.log('=== FETCH REQUEST COMPLETED ===');
+          // Use traditional form submission instead of fetch with no-cors
+          // This ensures POST data is sent properly to Google Apps Script
+          const hiddenForm = document.createElement('form');
+          hiddenForm.method = 'POST';
+          hiddenForm.action = GOOGLE_SCRIPT_URL;
+          hiddenForm.target = 'hiddenIframe';
+          hiddenForm.style.display = 'none';
+          
+          // Add all form fields as hidden inputs
+          Object.keys(submissionData).forEach(key => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = key;
+            input.value = submissionData[key];
+            hiddenForm.appendChild(input);
+          });
+          
+          // Create hidden iframe to receive response
+          let iframe = document.getElementById('hiddenIframe');
+          if (!iframe) {
+            iframe = document.createElement('iframe');
+            iframe.id = 'hiddenIframe';
+            iframe.name = 'hiddenIframe';
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
+          }
+          
+          // Add form to body and submit
+          document.body.appendChild(hiddenForm);
+          
+          // Handle iframe load (response received)
+          iframe.onload = function() {
+            console.log('=== FORM SUBMISSION COMPLETED ===');
             console.log('Form submitted, waiting for processing...');
             
             // Show success message
             const fee = parseInt(pendingFormData.registrationFee);
             alert('Registration submitted successfully!\n\n' + 
                   'Please pay the registration fee of ₹' + fee + ' to organisers to confirm the registration.\n\n' +
-                  'Your registration details have been saved.\n\n' +
-                  'Note: If data doesn\'t appear in the sheet, check the script logs.');
+                  'Your registration details have been saved.');
             
             // Close overlay
             document.getElementById('confirmationOverlay').classList.remove('active');
@@ -1103,18 +1174,45 @@
             pendingPhotoType = null;
             pendingPhotoPreview = null;
             
+            // Remove form
+            document.body.removeChild(hiddenForm);
+            
             confirmBtn.textContent = originalText;
             confirmBtn.disabled = false;
-          })
-          .catch(error => {
-            console.error('Error submitting:', error);
-            alert('Error submitting registration. Please check:\n' +
-                  '1. Your internet connection\n' +
-                  '2. The script URL is correct\n' +
-                  '3. Check browser console (F12) for details');
-            confirmBtn.textContent = originalText;
-            confirmBtn.disabled = false;
-          });
+          };
+          
+          // Submit form
+          hiddenForm.submit();
+          
+          // Fallback timeout in case iframe doesn't load
+          setTimeout(function() {
+            if (confirmBtn.disabled) {
+              console.log('Submission timeout, assuming success...');
+              const fee = parseInt(pendingFormData.registrationFee);
+              alert('Registration submitted!\n\n' + 
+                    'Please pay the registration fee of ₹' + fee + ' to organisers to confirm the registration.\n\n' +
+                    'Note: Please verify data appears in the sheet.');
+              
+              document.getElementById('confirmationOverlay').classList.remove('active');
+              document.getElementById('registrationForm').reset();
+              document.getElementById('photoPreview').classList.remove('active');
+              document.getElementById('photoPreview').innerHTML = '';
+              document.getElementById('registrationFeeGroup').style.display = 'none';
+              
+              pendingFormData = null;
+              pendingPhotoBase64 = null;
+              pendingPhotoName = null;
+              pendingPhotoType = null;
+              pendingPhotoPreview = null;
+              
+              if (document.body.contains(hiddenForm)) {
+                document.body.removeChild(hiddenForm);
+              }
+              
+              confirmBtn.textContent = originalText;
+              confirmBtn.disabled = false;
+            }
+          }, 5000);
         });
       } else {
         console.error('Confirm button not found when trying to attach handler!');
