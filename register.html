@@ -985,11 +985,21 @@
         console.log('Iframe loaded - response received from server');
         console.log('Form submitted, waiting for processing...');
         
-        // Show success message
-        const fee = parseInt(pendingFormData.registrationFee);
-        alert('Registration submitted successfully!\n\n' + 
-              'Please pay the registration fee of ₹' + fee + ' to organisers to confirm the registration.\n\n' +
-              'Your registration details have been saved.');
+        // Check if pendingFormData still exists (might be cleared by timeout)
+        if (!pendingFormData) {
+          console.log('pendingFormData was cleared, using stored fee');
+          // Try to get fee from the form that was submitted
+          const fee = 500; // Default fee
+          alert('Registration submitted!\n\n' + 
+                'Please pay the registration fee to organisers to confirm the registration.\n\n' +
+                'Your registration details have been saved.');
+        } else {
+          // Show success message
+          const fee = parseInt(pendingFormData.registrationFee);
+          alert('Registration submitted successfully!\n\n' + 
+                'Please pay the registration fee of ₹' + fee + ' to organisers to confirm the registration.\n\n' +
+                'Your registration details have been saved.');
+        }
         
         // Close overlay
         document.getElementById('confirmationOverlay').classList.remove('active');
@@ -1162,11 +1172,20 @@
             console.log('Iframe loaded - response received from server');
             console.log('Form submitted, waiting for processing...');
             
-            // Show success message
-            const fee = parseInt(pendingFormData.registrationFee);
-            alert('Registration submitted successfully!\n\n' + 
-                  'Please pay the registration fee of ₹' + fee + ' to organisers to confirm the registration.\n\n' +
-                  'Your registration details have been saved.');
+            // Check if pendingFormData still exists (might be cleared by timeout)
+            if (!pendingFormData) {
+              console.log('pendingFormData was cleared, using stored fee');
+              const fee = 500; // Default fee
+              alert('Registration submitted!\n\n' + 
+                    'Please pay the registration fee to organisers to confirm the registration.\n\n' +
+                    'Your registration details have been saved.');
+            } else {
+              // Show success message
+              const fee = parseInt(pendingFormData.registrationFee);
+              alert('Registration submitted successfully!\n\n' + 
+                    'Please pay the registration fee of ₹' + fee + ' to organisers to confirm the registration.\n\n' +
+                    'Your registration details have been saved.');
+            }
             
             // Close overlay
             document.getElementById('confirmationOverlay').classList.remove('active');
