@@ -975,9 +975,14 @@
       // Add form to body and submit
       document.body.appendChild(hiddenForm);
       
+      console.log('Hidden form created with', Object.keys(submissionData).length, 'fields');
+      console.log('Form action:', hiddenForm.action);
+      console.log('Submitting form now...');
+      
       // Handle iframe load (response received)
       iframe.onload = function() {
         console.log('=== FORM SUBMISSION COMPLETED ===');
+        console.log('Iframe loaded - response received from server');
         console.log('Form submitted, waiting for processing...');
         
         // Show success message
@@ -1147,9 +1152,14 @@
           // Add form to body and submit
           document.body.appendChild(hiddenForm);
           
+          console.log('Hidden form created with', Object.keys(submissionData).length, 'fields');
+          console.log('Form action:', hiddenForm.action);
+          console.log('Submitting form now...');
+          
           // Handle iframe load (response received)
           iframe.onload = function() {
             console.log('=== FORM SUBMISSION COMPLETED ===');
+            console.log('Iframe loaded - response received from server');
             console.log('Form submitted, waiting for processing...');
             
             // Show success message
