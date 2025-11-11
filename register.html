@@ -531,7 +531,7 @@
       
       <div class="form-group">
         <label for="photo">Upload Photo *</label>
-        <input type="file" id="photo" name="photo" accept="image/*,.jpg,.jpeg,.png,.gif,.webp">
+        <input type="file" id="photo" name="photo" accept="image/*,.jpg,.jpeg,.png,.gif,.webp" required>
         <small class="help-text">Supported formats: JPG, PNG, GIF, WebP. Maximum size: 10MB</small>
         <div id="photoPreview" class="photo-preview"></div>
       </div>
@@ -557,8 +557,8 @@
   
   <script>
     // Google Sheets configuration
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxBPR-onenOPpruhW6gtr0GkyX4p6o_pt4k7OTADa7WEgl0Ph4toB5KDZdcERUakUtZ/exec'; // Will be set after deploying Apps Script
-    
+    //const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxBPR-onenOPpruhW6gtr0GkyX4p6o_pt4k7OTADa7WEgl0Ph4toB5KDZdcERUakUtZ/exec'; // Will be set after deploying Apps Script
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxY-Hoq9xCwO2i_rixEmDzThNVe8m4yDLWhAewhM9Vs8fq4TFYbNRAff87-0E9sR2NQ/exec';
     // Name validation - only alphabets
     document.getElementById('name').addEventListener('input', function(e) {
       this.value = this.value.replace(/[^A-Za-z\s]/g, '');
@@ -985,20 +985,65 @@
         console.log('Iframe loaded - response received from server');
         console.log('Form submitted, waiting for processing...');
         
+        // Try to read ORN from iframe response
+        let orn = null;
+        try {
+          const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+          const responseText = iframeDoc.body ? iframeDoc.body.textContent || iframeDoc.body.innerText : '';
+          console.log('Iframe response:', responseText);
+          
+          if (responseText) {
+            try {
+              const response = JSON.parse(responseText);
+              if (response.orn) {
+                orn = response.orn;
+                console.log('ORN received:', orn);
+              }
+            } catch (e) {
+              // Response might not be JSON, try to extract ORN from text
+              const ornMatch = responseText.match(/ORN-\d{8}-\d{4}/);
+              if (ornMatch) {
+                orn = ornMatch[0];
+                console.log('ORN extracted from text:', orn);
+              }
+            }
+          }
+        } catch (e) {
+          console.log('Could not read iframe response (CORS):', e);
+        }
+        
+        // Check for error messages in response
+        try {
+          const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+          const responseText = iframeDoc.body ? iframeDoc.body.textContent || iframeDoc.body.innerText : '';
+          if (responseText && responseText.includes('Error:')) {
+            const errorMatch = responseText.match(/Error: ([^\n]+)/);
+            if (errorMatch) {
+              alert('Registration Error:\n\n' + errorMatch[1] + '\n\nPlease correct the issue and try again.');
+              confirmBtn.textContent = originalText;
+              confirmBtn.disabled = false;
+              return;
+            }
+          }
+        } catch (e) {
+          // Ignore CORS errors when checking for errors
+        }
+        
         // Check if pendingFormData still exists (might be cleared by timeout)
         if (!pendingFormData) {
           console.log('pendingFormData was cleared, using stored fee');
-          // Try to get fee from the form that was submitted
           const fee = 500; // Default fee
+          const ornMessage = orn ? `\n\nYour Online Registration Number (ORN) is: ${orn}\nPlease quote this ORN when paying the registration fee.` : '\n\nYour Online Registration Number (ORN) has been generated and saved. Please check your email or contact organizers for your ORN.';
           alert('Registration submitted!\n\n' + 
-                'Please pay the registration fee to organisers to confirm the registration.\n\n' +
-                'Your registration details have been saved.');
+                'Please pay the registration fee of ₹' + fee + ' to organisers to confirm the registration.' +
+                ornMessage);
         } else {
           // Show success message
           const fee = parseInt(pendingFormData.registrationFee);
+          const ornMessage = orn ? `\n\nYour Online Registration Number (ORN) is: ${orn}\nPlease quote this ORN when paying the registration fee.` : '\n\nYour Online Registration Number (ORN) has been generated and saved. Please check your email or contact organizers for your ORN.';
           alert('Registration submitted successfully!\n\n' + 
-                'Please pay the registration fee of ₹' + fee + ' to organisers to confirm the registration.\n\n' +
-                'Your registration details have been saved.');
+                'Please pay the registration fee of ₹' + fee + ' to organisers to confirm the registration.' +
+                ornMessage);
         }
         
         // Close overlay
@@ -1031,9 +1076,10 @@
       setTimeout(function() {
         if (confirmBtn.disabled) {
           console.log('Submission timeout, assuming success...');
-          const fee = parseInt(pendingFormData.registrationFee);
+          const fee = parseInt(pendingFormData ? pendingFormData.registrationFee : 500);
           alert('Registration submitted!\n\n' + 
                 'Please pay the registration fee of ₹' + fee + ' to organisers to confirm the registration.\n\n' +
+                'Your Online Registration Number (ORN) has been generated and saved. Please check your email or contact organizers for your ORN.\n\n' +
                 'Note: Please verify data appears in the sheet.');
           
           document.getElementById('confirmationOverlay').classList.remove('active');
@@ -1172,19 +1218,65 @@
             console.log('Iframe loaded - response received from server');
             console.log('Form submitted, waiting for processing...');
             
+            // Try to read ORN from iframe response
+            let orn = null;
+            try {
+              const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+              const responseText = iframeDoc.body ? iframeDoc.body.textContent || iframeDoc.body.innerText : '';
+              console.log('Iframe response:', responseText);
+              
+              if (responseText) {
+                try {
+                  const response = JSON.parse(responseText);
+                  if (response.orn) {
+                    orn = response.orn;
+                    console.log('ORN received:', orn);
+                  }
+                } catch (e) {
+                  // Response might not be JSON, try to extract ORN from text
+                  const ornMatch = responseText.match(/ORN-\d{8}-\d{4}/);
+                  if (ornMatch) {
+                    orn = ornMatch[0];
+                    console.log('ORN extracted from text:', orn);
+                  }
+                }
+              }
+            } catch (e) {
+              console.log('Could not read iframe response (CORS):', e);
+            }
+            
+            // Check for error messages in response
+            try {
+              const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+              const responseText = iframeDoc.body ? iframeDoc.body.textContent || iframeDoc.body.innerText : '';
+              if (responseText && responseText.includes('Error:')) {
+                const errorMatch = responseText.match(/Error: ([^\n]+)/);
+                if (errorMatch) {
+                  alert('Registration Error:\n\n' + errorMatch[1] + '\n\nPlease correct the issue and try again.');
+                  confirmBtn.textContent = originalText;
+                  confirmBtn.disabled = false;
+                  return;
+                }
+              }
+            } catch (e) {
+              // Ignore CORS errors when checking for errors
+            }
+            
             // Check if pendingFormData still exists (might be cleared by timeout)
             if (!pendingFormData) {
               console.log('pendingFormData was cleared, using stored fee');
               const fee = 500; // Default fee
+              const ornMessage = orn ? `\n\nYour Online Registration Number (ORN) is: ${orn}\nPlease quote this ORN when paying the registration fee.` : '\n\nYour Online Registration Number (ORN) has been generated and saved. Please check your email or contact organizers for your ORN.';
               alert('Registration submitted!\n\n' + 
-                    'Please pay the registration fee to organisers to confirm the registration.\n\n' +
-                    'Your registration details have been saved.');
+                    'Please pay the registration fee of ₹' + fee + ' to organisers to confirm the registration.' +
+                    ornMessage);
             } else {
               // Show success message
               const fee = parseInt(pendingFormData.registrationFee);
+              const ornMessage = orn ? `\n\nYour Online Registration Number (ORN) is: ${orn}\nPlease quote this ORN when paying the registration fee.` : '\n\nYour Online Registration Number (ORN) has been generated and saved. Please check your email or contact organizers for your ORN.';
               alert('Registration submitted successfully!\n\n' + 
-                    'Please pay the registration fee of ₹' + fee + ' to organisers to confirm the registration.\n\n' +
-                    'Your registration details have been saved.');
+                    'Please pay the registration fee of ₹' + fee + ' to organisers to confirm the registration.' +
+                    ornMessage);
             }
             
             // Close overlay
