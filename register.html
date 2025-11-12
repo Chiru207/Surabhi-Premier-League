@@ -755,7 +755,7 @@
         <div id="photoPreview" class="photo-preview"></div>
       </div>
       
-      <button type="submit" class="submit-btn">Review Registration</button>
+      <button type="button" id="reviewBtn" class="submit-btn">Review Registration</button>
     </form>
     
     <!-- Confirmation Overlay -->
@@ -1296,17 +1296,25 @@
     
     function attachFormListener() {
       const form = document.getElementById('registrationForm');
+      const reviewBtn = document.getElementById('reviewBtn');
+      
       if (!form) {
         console.error('Registration form not found!');
         return;
       }
       
-      // Form submission - show confirmation first
-      form.addEventListener('submit', function(e) {
-        console.log('=== FORM SUBMIT TRIGGERED ===');
+      if (!reviewBtn) {
+        console.error('Review button not found!');
+        return;
+      }
+      
+      console.log('Attaching event listener to Review button...');
+      
+      // Attach click handler to Review button directly (more reliable than form submit)
+      reviewBtn.addEventListener('click', function(e) {
+        console.log('=== REVIEW BUTTON CLICKED ===');
         e.preventDefault();
         e.stopPropagation();
-        e.stopImmediatePropagation();
         
         // Validate all required fields first
         const name = document.getElementById('name').value.trim();
@@ -1434,8 +1442,14 @@
           console.log('Calling showConfirmation without photo...');
           showConfirmation(pendingFormData, registrationFee, null);
         }
-        
-        return false; // Prevent form submission
+      });
+      
+      // Also handle form submit as backup
+      form.addEventListener('submit', function(e) {
+        console.log('=== FORM SUBMIT EVENT (BACKUP) ===');
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
       });
     }
     
