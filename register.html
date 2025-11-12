@@ -818,6 +818,69 @@
     // Store registration data for success page
     let registrationData = null;
     
+    // Flag to track if we've received postMessage (to prevent duplicate processing)
+    let postMessageReceived = false;
+    
+    // Listen for postMessage from iframe (Google Apps Script response)
+    // This avoids CORS issues when reading iframe content
+    window.addEventListener('message', function(event) {
+      // Verify message is from Google Apps Script (script.google.com)
+      if (event.origin.includes('script.google.com') || event.origin.includes('script.googleusercontent.com')) {
+        if (event.data && event.data.type === 'registration-success' && !postMessageReceived) {
+          postMessageReceived = true;
+          console.log('✅ Received postMessage from Google Apps Script:', event.data);
+          const orn = event.data.orn || null;
+          
+          // Find the confirmation button to restore its state
+          const confirmBtn = document.querySelector('#confirmationOverlay .confirm-btn');
+          const originalText = confirmBtn ? confirmBtn.textContent : 'Confirm Registration';
+          
+          const successData = {
+            name: pendingFormData ? pendingFormData.name : '',
+            fatherName: pendingFormData ? pendingFormData.fatherName : '',
+            category: pendingFormData ? pendingFormData.category : '',
+            mobile: pendingFormData ? pendingFormData.mobile : '',
+            captaincy: pendingFormData ? pendingFormData.captaincy : '',
+            registrationFee: pendingFormData ? pendingFormData.registrationFee : '500',
+            jerseyName: pendingFormData ? pendingFormData.jerseyName : '',
+            jerseyNumber: pendingFormData ? pendingFormData.jerseyNumber : '',
+            tshirtSize: pendingFormData ? pendingFormData.tshirtSize : '',
+            trouserSize: pendingFormData ? pendingFormData.trouserSize : '',
+            photoPreview: pendingPhotoPreview || null
+          };
+          
+          document.getElementById('confirmationOverlay').classList.remove('active');
+          document.getElementById('registrationForm').reset();
+          document.getElementById('photoPreview').classList.remove('active');
+          document.getElementById('photoPreview').innerHTML = '';
+          document.getElementById('registrationFeeGroup').style.display = 'none';
+          
+          showSuccessPage(successData, orn);
+          
+          // Clear pending data
+          pendingFormData = null;
+          pendingPhotoBase64 = null;
+          pendingPhotoName = null;
+          pendingPhotoType = null;
+          pendingPhotoPreview = null;
+          
+          // Reset postMessage flag after a delay
+          setTimeout(() => { postMessageReceived = false; }, 5000);
+        } else if (event.data && event.data.type === 'registration-error' && !postMessageReceived) {
+          postMessageReceived = true;
+          console.log('❌ Received error from Google Apps Script:', event.data);
+          alert('Registration Error:\n\n' + (event.data.error || event.data.message || 'Registration failed') + '\n\nPlease correct the issue and try again.');
+          document.getElementById('confirmationOverlay').classList.remove('active');
+          const confirmBtn = document.querySelector('#confirmationOverlay .confirm-btn');
+          if (confirmBtn) {
+            confirmBtn.disabled = false;
+            confirmBtn.textContent = 'Confirm Registration';
+          }
+          setTimeout(() => { postMessageReceived = false; }, 5000);
+        }
+      }
+    });
+    
     // Function to show success page with all details
     function showSuccessPage(data, orn) {
       try {
@@ -1387,26 +1450,45 @@
         let hasError = false;
         
         try {
+          // First, check if iframe has loaded by checking its location
+          let iframeLoaded = false;
+          try {
+            const iframeLocation = iframe.contentWindow.location.href;
+            if (iframeLocation && iframeLocation !== 'about:blank') {
+              iframeLoaded = true;
+              console.log('Iframe loaded, location:', iframeLocation);
+            }
+          } catch (e) {
+            // Can't access location - might be CORS, but also might just be loading
+            console.log('Cannot access iframe location (attempt ' + attempt + '):', e.message);
+            // Don't treat this as CORS error yet - might still be loading
+          }
+          
           let iframeDoc = null;
+          let corsError = false;
           try {
             iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
           } catch (e) {
             // CORS error - cannot access iframe document
-            console.log('CORS error: Cannot access iframe document:', e.message);
-            if (attempt >= 3) {
-              // After a few attempts, if we still can't access, assume success
+            corsError = true;
+            console.log('CORS error accessing iframe document (attempt ' + attempt + '):', e.message);
+            
+            // Only show CORS message after many attempts AND if we're sure it's loaded
+            if (attempt >= maxAttempts) {
+              // After all attempts, if we still can't access, assume success
               // (Google Apps Script should have processed it)
-              console.log('CORS blocking iframe access after multiple attempts. Assuming registration was successful.');
+              console.log('CORS blocking iframe access after all attempts. Registration likely successful but cannot read ORN.');
               processed = true;
-              // Show a message that registration may have succeeded but we can't confirm ORN
-              alert('Registration submitted successfully!\n\nNote: We cannot confirm your ORN automatically due to browser security restrictions.\n\nPlease check your email or contact the organizers with your mobile number to get your ORN.\n\nYour registration details have been saved.');
+              
+              // Don't show alert - just show success page with note
               document.getElementById('confirmationOverlay').classList.remove('active');
               confirmBtn.textContent = originalText;
               confirmBtn.disabled = false;
               if (document.body.contains(hiddenForm)) {
                 document.body.removeChild(hiddenForm);
               }
-              // Still show success page with pending ORN
+              
+              // Show success page with pending ORN and note
               const successData = {
                 name: pendingFormData ? pendingFormData.name : '',
                 fatherName: pendingFormData ? pendingFormData.fatherName : '',
@@ -1425,6 +1507,23 @@
               document.getElementById('photoPreview').innerHTML = '';
               document.getElementById('registrationFeeGroup').style.display = 'none';
               showSuccessPage(successData, null);
+              
+              // Add a note to the success page about ORN
+              setTimeout(() => {
+                const ornNote = document.createElement('div');
+                ornNote.style.cssText = 'background: #fef3c7; color: #92400e; padding: 15px; border-radius: 8px; margin-top: 20px; border: 1px solid #fbbf24;';
+                ornNote.innerHTML = '<strong>📱 Note:</strong> Your registration was submitted successfully! However, we could not automatically retrieve your ORN due to browser security restrictions. Please contact the organizers with your mobile number (<strong>' + (successData.mobile || '') + '</strong>) to get your ORN.';
+                const successPage = document.getElementById('successPage');
+                if (successPage) {
+                  const ornSection = successPage.querySelector('.detail-item:first-child');
+                  if (ornSection) {
+                    ornSection.parentNode.insertBefore(ornNote, ornSection.nextSibling);
+                  } else {
+                    successPage.appendChild(ornNote);
+                  }
+                }
+              }, 100);
+              
               pendingFormData = null;
               pendingPhotoBase64 = null;
               pendingPhotoName = null;
@@ -1432,8 +1531,14 @@
               pendingPhotoPreview = null;
               return;
             }
-            // Retry on CORS error
-            setTimeout(() => readResponse(attempt + 1), 500);
+            // Retry on CORS error (but wait longer)
+            setTimeout(() => readResponse(attempt + 1), 800);
+            return;
+          }
+          
+          // If we got CORS error but haven't exhausted attempts, retry
+          if (corsError && attempt < maxAttempts) {
+            setTimeout(() => readResponse(attempt + 1), 800);
             return;
           }
           
