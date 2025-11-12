@@ -1441,138 +1441,190 @@
     
     // Show confirmation overlay
     function showConfirmation(data, fee, photoPreview) {
-      console.log('showConfirmation called with data:', data);
-      const overlay = document.getElementById('confirmationOverlay');
-      const detailsDiv = document.getElementById('confirmationDetails');
-      const feeDiv = document.getElementById('confirmationFee');
+      console.log('=== showConfirmation FUNCTION CALLED ===');
+      console.log('Data received:', data);
+      console.log('Fee:', fee);
+      console.log('Photo preview exists:', !!photoPreview);
       
-      if (!overlay) {
-        console.error('Confirmation overlay not found!');
-        return;
-      }
-      
-      console.log('Showing confirmation overlay...');
-      
-      // Build confirmation details HTML
-      let detailsHTML = '';
-      
-      if (photoPreview) {
-        detailsHTML += '<div class="confirmation-photo"><img src="' + photoPreview + '" alt="Photo Preview"></div>';
-      }
-      
-      detailsHTML += '<div class="confirmation-row">';
-      detailsHTML += '<span class="confirmation-label">Name:</span>';
-      detailsHTML += '<span class="confirmation-value">' + (data.name || '') + '</span>';
-      detailsHTML += '</div>';
-      
-      detailsHTML += '<div class="confirmation-row">';
-      detailsHTML += '<span class="confirmation-label">Father Name:</span>';
-      detailsHTML += '<span class="confirmation-value">' + (data.fatherName || '') + '</span>';
-      detailsHTML += '</div>';
-      
-      detailsHTML += '<div class="confirmation-row">';
-      detailsHTML += '<span class="confirmation-label">Category:</span>';
-      detailsHTML += '<span class="confirmation-value">' + (data.category || '') + '</span>';
-      detailsHTML += '</div>';
-      
-      detailsHTML += '<div class="confirmation-row">';
-      detailsHTML += '<span class="confirmation-label">Mobile:</span>';
-      detailsHTML += '<span class="confirmation-value">' + (data.mobile || '') + '</span>';
-      detailsHTML += '</div>';
-      
-      detailsHTML += '<div class="confirmation-row">';
-      detailsHTML += '<span class="confirmation-label">Captaincy:</span>';
-      detailsHTML += '<span class="confirmation-value">' + (data.captaincy || '') + '</span>';
-      detailsHTML += '</div>';
-      
-      detailsHTML += '<div class="confirmation-row">';
-      detailsHTML += '<span class="confirmation-label">Jersey Name:</span>';
-      detailsHTML += '<span class="confirmation-value">' + (data.jerseyName || '') + '</span>';
-      detailsHTML += '</div>';
-      
-      detailsHTML += '<div class="confirmation-row">';
-      detailsHTML += '<span class="confirmation-label">Jersey Number:</span>';
-      detailsHTML += '<span class="confirmation-value">' + (data.jerseyNumber || '') + '</span>';
-      detailsHTML += '</div>';
-      
-      detailsHTML += '<div class="confirmation-row">';
-      detailsHTML += '<span class="confirmation-label">T-shirt Size:</span>';
-      detailsHTML += '<span class="confirmation-value">' + (data.tshirtSize || '') + '</span>';
-      detailsHTML += '</div>';
-      
-      detailsHTML += '<div class="confirmation-row">';
-      detailsHTML += '<span class="confirmation-label">Trouser Size:</span>';
-      detailsHTML += '<span class="confirmation-value">' + (data.trouserSize || '') + '</span>';
-      detailsHTML += '</div>';
-      
-      if (!detailsDiv) {
-        console.error('Confirmation details div not found!');
-        alert('Error: Could not display confirmation. Please try again.');
-        return;
-      }
-      
-      if (!feeDiv) {
-        console.error('Confirmation fee div not found!');
-      }
-      
-      detailsDiv.innerHTML = detailsHTML;
-      if (feeDiv) {
-        feeDiv.textContent = 'Registration Fee: ₹' + fee;
-      }
-      
-      console.log('Adding active class to overlay...');
-      overlay.classList.add('active');
-      console.log('Overlay classes:', overlay.className);
-      console.log('Overlay display style:', window.getComputedStyle(overlay).display);
-      
-      // Force show the overlay
-      overlay.style.display = 'flex';
-      overlay.style.zIndex = '10000';
-      
-      // Hide the form container
-      const formContainer = document.querySelector('.container');
-      if (formContainer) {
-        formContainer.style.display = 'none';
+      try {
+        const overlay = document.getElementById('confirmationOverlay');
+        const detailsDiv = document.getElementById('confirmationDetails');
+        const feeDiv = document.getElementById('confirmationFee');
+        
+        console.log('Overlay element found:', !!overlay);
+        console.log('Details div found:', !!detailsDiv);
+        console.log('Fee div found:', !!feeDiv);
+        
+        if (!overlay) {
+          console.error('ERROR: Confirmation overlay not found in DOM!');
+          alert('Error: Confirmation overlay not found. Please refresh the page and try again.');
+          return;
+        }
+        
+        if (!detailsDiv) {
+          console.error('ERROR: Confirmation details div not found!');
+          alert('Error: Could not display confirmation details. Please refresh the page and try again.');
+          return;
+        }
+        
+        console.log('Building confirmation details HTML...');
+        
+        // Build confirmation details HTML
+        let detailsHTML = '';
+        
+        if (photoPreview) {
+          detailsHTML += '<div class="confirmation-photo"><img src="' + photoPreview + '" alt="Photo Preview"></div>';
+        }
+        
+        detailsHTML += '<div class="confirmation-row">';
+        detailsHTML += '<span class="confirmation-label">Name:</span>';
+        detailsHTML += '<span class="confirmation-value">' + (data.name || 'N/A') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="confirmation-row">';
+        detailsHTML += '<span class="confirmation-label">Father Name:</span>';
+        detailsHTML += '<span class="confirmation-value">' + (data.fatherName || 'N/A') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="confirmation-row">';
+        detailsHTML += '<span class="confirmation-label">Category:</span>';
+        detailsHTML += '<span class="confirmation-value">' + (data.category || 'N/A') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="confirmation-row">';
+        detailsHTML += '<span class="confirmation-label">Mobile:</span>';
+        detailsHTML += '<span class="confirmation-value">' + (data.mobile || 'N/A') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="confirmation-row">';
+        detailsHTML += '<span class="confirmation-label">Captaincy:</span>';
+        detailsHTML += '<span class="confirmation-value">' + (data.captaincy || 'N/A') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="confirmation-row">';
+        detailsHTML += '<span class="confirmation-label">Jersey Name:</span>';
+        detailsHTML += '<span class="confirmation-value">' + (data.jerseyName || 'N/A') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="confirmation-row">';
+        detailsHTML += '<span class="confirmation-label">Jersey Number:</span>';
+        detailsHTML += '<span class="confirmation-value">' + (data.jerseyNumber || 'N/A') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="confirmation-row">';
+        detailsHTML += '<span class="confirmation-label">T-shirt Size:</span>';
+        detailsHTML += '<span class="confirmation-value">' + (data.tshirtSize || 'N/A') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="confirmation-row">';
+        detailsHTML += '<span class="confirmation-label">Trouser Size:</span>';
+        detailsHTML += '<span class="confirmation-value">' + (data.trouserSize || 'N/A') + '</span>';
+        detailsHTML += '</div>';
+        
+        console.log('Setting details HTML...');
+        detailsDiv.innerHTML = detailsHTML;
+        
+        if (feeDiv) {
+          feeDiv.textContent = 'Registration Fee: ₹' + fee;
+        }
+        
+        console.log('Applying styles to overlay...');
+        
+        // Force show the overlay with multiple methods
+        overlay.classList.add('active');
+        overlay.style.display = 'flex';
+        overlay.style.visibility = 'visible';
+        overlay.style.opacity = '1';
+        overlay.style.zIndex = '10000';
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        
+        console.log('Overlay classes after:', overlay.className);
+        console.log('Overlay computed display:', window.getComputedStyle(overlay).display);
+        console.log('Overlay computed visibility:', window.getComputedStyle(overlay).visibility);
+        
+        // Hide the form container
+        const formContainer = document.querySelector('.container');
+        if (formContainer) {
+          console.log('Hiding form container...');
+          formContainer.style.display = 'none';
+        } else {
+          console.warn('Form container not found');
+        }
+        
+        console.log('=== OVERLAY SHOULD NOW BE VISIBLE ===');
+        
+        // Double check after a short delay
+        setTimeout(function() {
+          const computedDisplay = window.getComputedStyle(overlay).display;
+          console.log('After 100ms, overlay display:', computedDisplay);
+          if (computedDisplay === 'none') {
+            console.error('OVERLAY STILL HIDDEN! Forcing display again...');
+            overlay.style.display = 'flex !important';
+            overlay.style.visibility = 'visible !important';
+          }
+        }, 100);
+        
+      } catch (error) {
+        console.error('ERROR in showConfirmation:', error);
+        alert('Error showing confirmation: ' + error.message);
       }
     }
     
-    // Go Back button - restore form data
-    document.getElementById('goBackBtn').addEventListener('click', function() {
-      const overlay = document.getElementById('confirmationOverlay');
-      overlay.classList.remove('active');
-      overlay.style.display = 'none';
-      
-      // Show the form container again
-      const formContainer = document.querySelector('.container');
-      if (formContainer) {
-        formContainer.style.display = 'block';
+    // Go Back button - restore form data (wait for DOM)
+    function attachGoBackListener() {
+      const goBackBtn = document.getElementById('goBackBtn');
+      if (!goBackBtn) {
+        console.error('Go Back button not found!');
+        return;
       }
-      
-      // Restore form values
-      if (pendingFormData) {
-        document.getElementById('name').value = pendingFormData.name || '';
-        document.getElementById('fatherName').value = pendingFormData.fatherName || '';
-        document.getElementById('category').value = pendingFormData.category || '';
-        document.getElementById('mobile').value = pendingFormData.mobile || '';
-        document.getElementById('captaincy').value = pendingFormData.captaincy || '';
-        document.getElementById('jerseyName').value = pendingFormData.jerseyName || '';
-        document.getElementById('jerseyNumber').value = pendingFormData.jerseyNumber || '';
-        document.getElementById('tshirtSize').value = pendingFormData.tshirtSize || '';
-        document.getElementById('trouserSize').value = pendingFormData.trouserSize || '';
+      goBackBtn.addEventListener('click', function() {
+        const overlay = document.getElementById('confirmationOverlay');
+        overlay.classList.remove('active');
+        overlay.style.display = 'none';
         
-        // Trigger captaincy change to show fee
-        if (pendingFormData.captaincy) {
-          document.getElementById('captaincy').dispatchEvent(new Event('change'));
+        // Show the form container again
+        const formContainer = document.querySelector('.container');
+        if (formContainer) {
+          formContainer.style.display = 'block';
         }
         
-        // Restore photo preview if exists
-        if (pendingPhotoPreview) {
-          const preview = document.getElementById('photoPreview');
-          preview.innerHTML = '<img src="' + pendingPhotoPreview + '" alt="Photo Preview">';
-          preview.classList.add('active');
+        // Restore form values
+        if (pendingFormData) {
+          document.getElementById('name').value = pendingFormData.name || '';
+          document.getElementById('fatherName').value = pendingFormData.fatherName || '';
+          document.getElementById('category').value = pendingFormData.category || '';
+          document.getElementById('mobile').value = pendingFormData.mobile || '';
+          document.getElementById('captaincy').value = pendingFormData.captaincy || '';
+          document.getElementById('jerseyName').value = pendingFormData.jerseyName || '';
+          document.getElementById('jerseyNumber').value = pendingFormData.jerseyNumber || '';
+          document.getElementById('tshirtSize').value = pendingFormData.tshirtSize || '';
+          document.getElementById('trouserSize').value = pendingFormData.trouserSize || '';
+          
+          // Trigger captaincy change to show fee
+          if (pendingFormData.captaincy) {
+            document.getElementById('captaincy').dispatchEvent(new Event('change'));
+          }
+          
+          // Restore photo preview if exists
+          if (pendingPhotoPreview) {
+            const preview = document.getElementById('photoPreview');
+            preview.innerHTML = '<img src="' + pendingPhotoPreview + '" alt="Photo Preview">';
+            preview.classList.add('active');
+          }
         }
-      }
-    });
+      });
+    }
+    
+    // Attach go back listener when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', attachGoBackListener);
+    } else {
+      attachGoBackListener();
+    }
     
     // Helper function to read iframe response with retries
     function readIframeResponseWithRetries(iframe, confirmBtn, hiddenForm, originalText, maxAttempts = 5) {
