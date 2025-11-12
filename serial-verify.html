@@ -314,15 +314,13 @@
         document.body.appendChild(form);
         
         // Instead of form submission, let's try loading the iframe directly
-        // Build the URL first
-        const formUrl = new URL(form.action);
-        Array.from(form.elements).forEach(el => {
-          if (el.name && el.value) {
-            formUrl.searchParams.append(el.name, el.value);
-          }
-        });
-        const fullUrl = formUrl.toString();
-        console.log('🔗 Full URL to load in iframe:', fullUrl);
+        // Build the URL directly using GOOGLE_SCRIPT_URL
+        const fullUrl = new URL(GOOGLE_SCRIPT_URL);
+        fullUrl.searchParams.append('action', 'checkSerial');
+        fullUrl.searchParams.append('serialNumber', serialNumber);
+        fullUrl.searchParams.append('email', email);
+        const fullUrlString = fullUrl.toString();
+        console.log('🔗 Full URL to load in iframe:', fullUrlString);
         
         // Set up postMessage listener BEFORE loading iframe
         let postMessageReceived = false;
@@ -493,8 +491,8 @@
         // Set iframe src directly - this is more reliable than form submission
         setTimeout(() => {
           try {
-            console.log('Setting iframe src to:', fullUrl);
-            iframe.src = fullUrl;
+            console.log('Setting iframe src to:', fullUrlString);
+            iframe.src = fullUrlString;
             console.log('✅ Iframe src set, waiting for load event...');
             
             // Also check if iframe loads after delays
