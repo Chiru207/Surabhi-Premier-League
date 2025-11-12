@@ -894,7 +894,14 @@
       try {
         console.log('showSuccessPage called with data:', data, 'orn:', orn);
         
-        registrationData = { ...data, orn: orn };
+        // Ensure ORN is properly set
+        const finalOrn = orn || null;
+        console.log('Setting registrationData with ORN:', finalOrn);
+        registrationData = { ...data, orn: finalOrn };
+        
+        // Log to verify
+        console.log('registrationData after setting:', registrationData);
+        console.log('registrationData.orn:', registrationData.orn);
         
         // Hide form container
         const container = document.querySelector('.container');
@@ -1011,6 +1018,27 @@
       }
       
       console.log('Generating PDF with data:', registrationData);
+      console.log('ORN in registrationData:', registrationData.orn);
+      
+      // Try to get ORN from multiple sources
+      let ornValue = registrationData.orn;
+      
+      // If ORN is still "Pending" or null, try to get it from the success page display
+      if (!ornValue || ornValue === 'Pending' || ornValue === 'null') {
+        const ornElement = document.querySelector('.success-detail-value.orn');
+        if (ornElement) {
+          ornValue = ornElement.textContent.trim();
+          console.log('Got ORN from success page element:', ornValue);
+        }
+      }
+      
+      // Final fallback
+      if (!ornValue || ornValue === 'Pending' || ornValue === 'null') {
+        ornValue = 'Pending';
+        console.warn('⚠️ ORN not found, using "Pending"');
+      }
+      
+      console.log('Final ORN value for PDF:', ornValue);
       
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
@@ -1036,7 +1064,6 @@
       doc.setFontSize(14);
       doc.setTextColor(0, 100, 200);
       doc.setFont(undefined, 'bold');
-      const ornValue = registrationData.orn && registrationData.orn !== 'Pending' ? registrationData.orn : 'Pending';
       doc.text('Online Registration Number (ORN):', 20, yPos);
       doc.text(ornValue, 120, yPos);
       yPos += 10;
@@ -1606,6 +1633,37 @@
           console.log('Response length:', responseText.length);
           console.log('Response preview (first 500 chars):', responseText.substring(0, 500));
           
+          // FIRST: Try to extract ORN from response text immediately (even if it's HTML)
+          // This is a fallback in case postMessage doesn't work
+          if (responseText && responseText.trim().length > 0) {
+            // Try to find ORN in the response text (even if wrapped in HTML/JSON)
+            const ornPatterns = [
+              /"orn"\s*:\s*"([^"]+)"/i,  // "orn": "ORN-20251112-0001"
+              /'orn'\s*:\s*'([^']+)'/i,  // 'orn': 'ORN-20251112-0001'
+              /ORN[:\s]+([A-Z0-9-]+)/i,  // ORN: ORN-20251112-0001
+              /(ORN-\d{8}-\d{4})/i,  // ORN-20251112-0001
+              /Success.*ORN[:\s]+([A-Z0-9-]+)/i,  // Success: Data saved. ORN: ORN-20251112-0001
+              /ORN[:\s]*([A-Z0-9-]+)/i  // Flexible
+            ];
+            
+            for (let pattern of ornPatterns) {
+              const match = responseText.match(pattern);
+              if (match) {
+                let extractedOrn = (match[1] || match[0]).trim();
+                extractedOrn = extractedOrn.replace(/[\s_]/g, '-').toUpperCase();
+                if (/^ORN-\d{8}-\d{4}$/.test(extractedOrn)) {
+                  console.log('🎯 ORN extracted from iframe response:', extractedOrn);
+                  // If we found ORN and postMessage hasn't been received, use it
+                  if (!postMessageReceived && !orn) {
+                    orn = extractedOrn;
+                    console.log('✅ Using ORN from iframe response:', orn);
+                  }
+                  break;
+                }
+              }
+            }
+          }
+          
           if (responseText && responseText.trim().length > 0) {
             // FIRST: Check for error messages (before trying to extract ORN)
             const lowerResponse = responseText.toLowerCase();
@@ -1710,9 +1768,18 @@
             }
             
             // If we got a response and found ORN or no error, process it
-            if (orn || (!hasError && responseText.length > 0)) {
-              processed = true; // Mark as processed to prevent duplicate calls
+            // Make sure we use the extracted ORN if we found it
+            if (orn) {
+              console.log('✅ ORN found in response:', orn);
+              processed = true;
               processSuccess(orn, hasError);
+              return;
+            } else if (!hasError && responseText.length > 0) {
+              // Even if we didn't find ORN, if there's no error, registration likely succeeded
+              console.log('⚠️ No ORN found in response, but no error either. Registration may have succeeded.');
+              console.log('Response text:', responseText);
+              processed = true;
+              processSuccess(null, hasError); // Pass null ORN, but still show success
               return;
             }
           }
