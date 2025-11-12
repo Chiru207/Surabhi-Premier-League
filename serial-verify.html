@@ -223,9 +223,51 @@
         iframe.style.display = 'none';
         iframe.name = 'hiddenFrame';
         iframe.id = 'serialCheckIframe';
-        document.body.appendChild(iframe);
         
-        console.log('Iframe created, waiting for it to load...');
+        // Set up iframe handlers BEFORE appending to DOM
+        iframe.onload = function() {
+          console.log('✅✅✅ IFRAME ONLOAD TRIGGERED!');
+          console.log('Iframe src:', iframe.src);
+          console.log('Iframe name:', iframe.name);
+          console.log('Iframe id:', iframe.id);
+          
+          // Check iframe content after a short delay to allow script to execute
+          setTimeout(function() {
+            console.log('=== Checking iframe after onload ===');
+            try {
+              const iframeUrl = iframe.contentWindow.location.href;
+              console.log('✅ Iframe URL:', iframeUrl);
+              
+              if (iframeUrl.includes('script.google.com')) {
+                console.log('✅ Iframe loaded from Google Apps Script');
+              }
+              
+              try {
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                if (iframeDoc && iframeDoc.body) {
+                  const bodyText = iframeDoc.body.textContent || iframeDoc.body.innerText || '';
+                  console.log('Iframe body text length:', bodyText.length);
+                  if (bodyText.length > 0) {
+                    console.log('Iframe body text:', bodyText.substring(0, 500));
+                  } else {
+                    console.log('⚠️ Iframe body is empty!');
+                  }
+                }
+              } catch (docError) {
+                console.log('Cannot access iframe document (CORS - expected):', docError.message);
+              }
+            } catch (e) {
+              console.log('Cannot read iframe URL (CORS - expected):', e.message);
+            }
+          }, 1000);
+        };
+        
+        iframe.onerror = function() {
+          console.error('❌ Iframe failed to load');
+        };
+        
+        document.body.appendChild(iframe);
+        console.log('Iframe created and appended to DOM, waiting for it to load...');
         
         const form = document.createElement('form');
         form.method = 'GET';
@@ -419,52 +461,6 @@
             console.log('PostMessage was received, no fallback needed');
           }
         }, 5000); // Wait 5 seconds for postMessage
-        
-        // Also add iframe onload handler as backup
-        iframe.onload = function() {
-          console.log('✅ Iframe loaded successfully');
-          console.log('Iframe src:', iframe.src);
-          console.log('Iframe contentWindow:', iframe.contentWindow);
-          
-          // Try to check iframe content after a delay
-          setTimeout(function() {
-            if (!postMessageReceived) {
-              console.log('⚠️ Iframe loaded but postMessage not received yet. This might mean:');
-              console.log('1. Google Apps Script needs to be redeployed');
-              console.log('2. The checkSerial function is not working');
-              console.log('3. There is a permissions issue');
-              console.log('4. The script URL might be incorrect');
-              
-              // Try to get iframe URL
-              try {
-                const iframeUrl = iframe.contentWindow.location.href;
-                console.log('Iframe URL:', iframeUrl);
-                
-                // Try to access iframe document to see if script ran
-                try {
-                  const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                  const bodyText = iframeDoc.body ? iframeDoc.body.textContent || iframeDoc.body.innerText : '';
-                  console.log('Iframe body text (first 500 chars):', bodyText.substring(0, 500));
-                  
-                  // Check if script tag exists
-                  const scripts = iframeDoc.getElementsByTagName('script');
-                  console.log('Number of script tags in iframe:', scripts.length);
-                } catch (docError) {
-                  console.log('Cannot access iframe document (CORS):', docError.message);
-                }
-              } catch (e) {
-                console.log('Cannot access iframe URL (CORS):', e.message);
-              }
-            }
-          }, 3000); // Increased to 3 seconds
-        };
-        
-        iframe.onerror = function() {
-          console.error('❌ Iframe failed to load');
-          showStatus('Failed to connect to verification server. Please check your internet connection and try again.', true);
-          verifyBtn.disabled = false;
-          verifyBtn.textContent = 'Verify Serial Number';
-        };
         
         // Submit form
         console.log('🚀 Submitting form now...');
