@@ -962,6 +962,11 @@
         detailsHTML += '</div>';
         
         detailsHTML += '<div class="success-detail-row">';
+        detailsHTML += '<span class="success-detail-label">Serial Number:</span>';
+        detailsHTML += '<span class="success-detail-value">' + (sessionStorage.getItem('verifiedSerial') || '') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="success-detail-row">';
         detailsHTML += '<span class="success-detail-label">Mobile Number:</span>';
         detailsHTML += '<span class="success-detail-value">' + (data.mobile || '') + '</span>';
         detailsHTML += '</div>';
@@ -975,6 +980,22 @@
         detailsHTML += '<span class="success-detail-label">Registration Fee:</span>';
         detailsHTML += '<span class="success-detail-value fee">₹' + (data.registrationFee || '0') + '</span>';
         detailsHTML += '</div>';
+        
+        // Payment information
+        const paymentAmount = sessionStorage.getItem('paymentAmount') || '';
+        const paymentToWhom = sessionStorage.getItem('paymentToWhom') || '';
+        if (paymentAmount) {
+          detailsHTML += '<div class="success-detail-row">';
+          detailsHTML += '<span class="success-detail-label">Amount Paid:</span>';
+          detailsHTML += '<span class="success-detail-value fee">₹' + paymentAmount + '</span>';
+          detailsHTML += '</div>';
+        }
+        if (paymentToWhom) {
+          detailsHTML += '<div class="success-detail-row">';
+          detailsHTML += '<span class="success-detail-label">Paid To:</span>';
+          detailsHTML += '<span class="success-detail-value">' + paymentToWhom + '</span>';
+          detailsHTML += '</div>';
+        }
         
         detailsHTML += '<div class="success-detail-row">';
         detailsHTML += '<span class="success-detail-label">Name on Jersey:</span>';
@@ -1005,6 +1026,12 @@
         
         detailsDiv.innerHTML = detailsHTML;
         console.log('Success details HTML set');
+        
+        // Add thanks message at the end
+        const thanksMessage = document.createElement('div');
+        thanksMessage.style.cssText = 'text-align: center; margin-top: 30px; padding: 20px; background: #065f46; color: #6ee7b7; border-radius: 8px; border: 1px solid #10b981;';
+        thanksMessage.innerHTML = '<h2 style="margin: 0 0 10px 0; color: #6ee7b7;">Thank you for registering!</h2><p style="margin: 0; font-size: 16px;">Thank you for participating in Surabhi Premier League - 2025</p>';
+        detailsDiv.appendChild(thanksMessage);
         
         // Scroll to top
         window.scrollTo(0, 0);
@@ -1065,18 +1092,35 @@
       yPos += 10;
       
       // Other details - ensure all fields are included
+      const paymentAmount = sessionStorage.getItem('paymentAmount') || '';
+      const paymentToWhom = sessionStorage.getItem('paymentToWhom') || '';
+      const serialNumber = sessionStorage.getItem('verifiedSerial') || '';
+      
       const details = [
         ['Name:', registrationData.name || ''],
         ['Father Name:', registrationData.fatherName || ''],
         ['Category:', registrationData.category || ''],
         ['Email:', registrationData.email || ''],
+        ['Serial Number:', serialNumber],
         ['Captaincy:', registrationData.captaincy || ''],
-        ['Registration Fee:', '₹' + (registrationData.registrationFee || '0')],
+        ['Registration Fee:', '₹' + (registrationData.registrationFee || '0')]
+      ];
+      
+      // Add payment information if available
+      if (paymentAmount) {
+        details.push(['Amount Paid:', '₹' + paymentAmount]);
+      }
+      if (paymentToWhom) {
+        details.push(['Paid To:', paymentToWhom]);
+      }
+      
+      // Continue with other details
+      details.push(
         ['Name on Jersey:', registrationData.jerseyName || ''],
         ['Jersey Number:', registrationData.jerseyNumber || ''],
         ['T-shirt Size:', registrationData.tshirtSize || ''],
         ['Trouser Size:', registrationData.trouserSize || '']
-      ];
+      );
       
       details.forEach(([label, value]) => {
         if (yPos > 270) {
@@ -1320,15 +1364,9 @@
       console.log('Review button type:', reviewBtn.type);
       console.log('Review button ID:', reviewBtn.id);
       
-      // Test: Add a simple alert to verify button works
-      reviewBtn.onclick = function() {
-        alert('Button clicked! This is a test.');
-      };
-      
       // Attach click handler to Review button directly (more reliable than form submit)
       reviewBtn.addEventListener('click', function(e) {
         console.log('=== REVIEW BUTTON CLICKED ===');
-        alert('Review button clicked! Processing...');
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
@@ -1403,8 +1441,9 @@
         // Calculate registration fee
         const registrationFee = captaincy === 'Yes' ? 2000 : 500;
         
-        // Get verified email from sessionStorage
+        // Get verified email and serial number from sessionStorage
         const verifiedEmail = sessionStorage.getItem('verifiedEmail') || '';
+        const verifiedSerial = sessionStorage.getItem('verifiedSerial') || '';
         
         // Get all form data (use form variable instead of this)
         const formData = new FormData(form);
@@ -1413,6 +1452,7 @@
           fatherName: fatherName,
           category: category,
           email: verifiedEmail,
+          serialNumber: verifiedSerial,
           mobile: mobile,
           captaincy: captaincy,
           registrationFee: registrationFee.toString(),
@@ -2067,6 +2107,7 @@
         fatherName: pendingFormData.fatherName || '',
         category: pendingFormData.category || '',
         email: pendingFormData.email || '',
+        serialNumber: pendingFormData.serialNumber || '',
         mobile: pendingFormData.mobile || '',
         captaincy: pendingFormData.captaincy || '',
         registrationFee: pendingFormData.registrationFee || '',

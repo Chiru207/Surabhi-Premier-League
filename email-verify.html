@@ -163,6 +163,10 @@
 <body>
   <div class="container">
     <h1>Email Verification</h1>
+    <div id="paymentConfirmation" style="display: none; background: #065f46; color: #6ee7b7; padding: 16px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #10b981; text-align: center;">
+      <strong>✓ Thank you for paying the registration fee!</strong><br>
+      <span id="paymentAmountText"></span>
+    </div>
     <p class="subtitle">Verify your email to proceed with registration</p>
     
     <form id="emailForm">
@@ -194,6 +198,36 @@
     
     let emailVerified = false;
     let verifiedEmail = '';
+    
+    // Show payment confirmation if available
+    window.addEventListener('DOMContentLoaded', function() {
+      const verifiedEmail = sessionStorage.getItem('verifiedEmail');
+      const paymentAmount = sessionStorage.getItem('paymentAmount');
+      
+      if (verifiedEmail && paymentAmount) {
+        const paymentDiv = document.getElementById('paymentConfirmation');
+        const amountText = document.getElementById('paymentAmountText');
+        const toWhom = sessionStorage.getItem('paymentToWhom') || '';
+        paymentDiv.style.display = 'block';
+        let paymentInfo = 'Amount Paid: ₹' + paymentAmount;
+        if (toWhom) {
+          paymentInfo += ' | Paid to: ' + toWhom;
+        }
+        amountText.textContent = paymentInfo;
+        
+        // Pre-fill email if available
+        const emailInput = document.getElementById('email');
+        if (emailInput) {
+          emailInput.value = verifiedEmail;
+        }
+      } else {
+        // If no serial verification, redirect to serial-verify page
+        if (!sessionStorage.getItem('verifiedSerial')) {
+          alert('Please verify your serial number first. Redirecting...');
+          window.location.href = 'serial-verify.html';
+        }
+      }
+    });
     
     // Send OTP button handler
     document.getElementById('sendOtpBtn').addEventListener('click', async function() {
