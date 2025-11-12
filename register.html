@@ -1309,12 +1309,22 @@
       }
       
       console.log('Attaching event listener to Review button...');
+      console.log('Review button element:', reviewBtn);
+      console.log('Review button type:', reviewBtn.type);
+      console.log('Review button ID:', reviewBtn.id);
+      
+      // Test: Add a simple alert to verify button works
+      reviewBtn.onclick = function() {
+        alert('Button clicked! This is a test.');
+      };
       
       // Attach click handler to Review button directly (more reliable than form submit)
       reviewBtn.addEventListener('click', function(e) {
         console.log('=== REVIEW BUTTON CLICKED ===');
+        alert('Review button clicked! Processing...');
         e.preventDefault();
         e.stopPropagation();
+        e.stopImmediatePropagation();
         
         // Validate all required fields first
         const name = document.getElementById('name').value.trim();
