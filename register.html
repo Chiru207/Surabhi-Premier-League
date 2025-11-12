@@ -1277,22 +1277,28 @@
     let pendingPhotoType = null;
     let pendingPhotoPreview = null;
     
-    // Check if email is verified (from email-verify.html)
-    const verifiedEmail = sessionStorage.getItem('verifiedEmail');
-    if (!verifiedEmail) {
-      alert('Please verify your email first. Redirecting to email verification page...');
-      window.location.href = 'email-verify.html';
-      return;
+    // Initialize registration page
+    function initRegistrationPage() {
+      // Check if email is verified (from email-verify.html)
+      const verifiedEmail = sessionStorage.getItem('verifiedEmail');
+      if (!verifiedEmail) {
+        alert('Please verify your email first. Redirecting to email verification page...');
+        window.location.href = 'email-verify.html';
+        return;
+      }
+      
+      console.log('Verified email from sessionStorage:', verifiedEmail);
+      
+      // Wait for DOM to be ready before attaching event listeners
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', attachFormListener);
+      } else {
+        attachFormListener();
+      }
     }
     
-    console.log('Verified email from sessionStorage:', verifiedEmail);
-    
-    // Wait for DOM to be ready before attaching event listeners
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', attachFormListener);
-    } else {
-      attachFormListener();
-    }
+    // Start initialization
+    initRegistrationPage();
     
     function attachFormListener() {
       const form = document.getElementById('registrationForm');
