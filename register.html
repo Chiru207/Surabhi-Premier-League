@@ -1524,12 +1524,29 @@
       overlay.classList.add('active');
       console.log('Overlay classes:', overlay.className);
       console.log('Overlay display style:', window.getComputedStyle(overlay).display);
+      
+      // Force show the overlay
+      overlay.style.display = 'flex';
+      overlay.style.zIndex = '10000';
+      
+      // Hide the form container
+      const formContainer = document.querySelector('.container');
+      if (formContainer) {
+        formContainer.style.display = 'none';
+      }
     }
     
     // Go Back button - restore form data
     document.getElementById('goBackBtn').addEventListener('click', function() {
       const overlay = document.getElementById('confirmationOverlay');
       overlay.classList.remove('active');
+      overlay.style.display = 'none';
+      
+      // Show the form container again
+      const formContainer = document.querySelector('.container');
+      if (formContainer) {
+        formContainer.style.display = 'block';
+      }
       
       // Restore form values
       if (pendingFormData) {
