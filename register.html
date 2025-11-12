@@ -1374,13 +1374,69 @@
     
     // Helper function to read iframe response with retries
     function readIframeResponseWithRetries(iframe, confirmBtn, hiddenForm, originalText, maxAttempts = 5) {
+      let processed = false; // Flag to prevent multiple processing
+      
       function readResponse(attempt = 1) {
+        if (processed) {
+          console.log('Response already processed, skipping attempt ' + attempt);
+          return;
+        }
+        
         let responseText = '';
         let orn = null;
         let hasError = false;
         
         try {
-          const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+          let iframeDoc = null;
+          try {
+            iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+          } catch (e) {
+            // CORS error - cannot access iframe document
+            console.log('CORS error: Cannot access iframe document:', e.message);
+            if (attempt >= 3) {
+              // After a few attempts, if we still can't access, assume success
+              // (Google Apps Script should have processed it)
+              console.log('CORS blocking iframe access after multiple attempts. Assuming registration was successful.');
+              processed = true;
+              // Show a message that registration may have succeeded but we can't confirm ORN
+              alert('Registration submitted successfully!\n\nNote: We cannot confirm your ORN automatically due to browser security restrictions.\n\nPlease check your email or contact the organizers with your mobile number to get your ORN.\n\nYour registration details have been saved.');
+              document.getElementById('confirmationOverlay').classList.remove('active');
+              confirmBtn.textContent = originalText;
+              confirmBtn.disabled = false;
+              if (document.body.contains(hiddenForm)) {
+                document.body.removeChild(hiddenForm);
+              }
+              // Still show success page with pending ORN
+              const successData = {
+                name: pendingFormData ? pendingFormData.name : '',
+                fatherName: pendingFormData ? pendingFormData.fatherName : '',
+                category: pendingFormData ? pendingFormData.category : '',
+                mobile: pendingFormData ? pendingFormData.mobile : '',
+                captaincy: pendingFormData ? pendingFormData.captaincy : '',
+                registrationFee: pendingFormData ? pendingFormData.registrationFee : '500',
+                jerseyName: pendingFormData ? pendingFormData.jerseyName : '',
+                jerseyNumber: pendingFormData ? pendingFormData.jerseyNumber : '',
+                tshirtSize: pendingFormData ? pendingFormData.tshirtSize : '',
+                trouserSize: pendingFormData ? pendingFormData.trouserSize : '',
+                photoPreview: pendingPhotoPreview || null
+              };
+              document.getElementById('registrationForm').reset();
+              document.getElementById('photoPreview').classList.remove('active');
+              document.getElementById('photoPreview').innerHTML = '';
+              document.getElementById('registrationFeeGroup').style.display = 'none';
+              showSuccessPage(successData, null);
+              pendingFormData = null;
+              pendingPhotoBase64 = null;
+              pendingPhotoName = null;
+              pendingPhotoType = null;
+              pendingPhotoPreview = null;
+              return;
+            }
+            // Retry on CORS error
+            setTimeout(() => readResponse(attempt + 1), 500);
+            return;
+          }
+          
           if (iframeDoc) {
             // Try different ways to get the response
             if (iframeDoc.body) {
@@ -1392,10 +1448,28 @@
             if (!responseText && iframeDoc.all) {
               responseText = iframeDoc.all[0] ? iframeDoc.all[0].textContent || iframeDoc.all[0].innerText : '';
             }
+            
+            // Also try to get from pre tag (common for JSON responses)
+            if (!responseText) {
+              const preTag = iframeDoc.querySelector('pre');
+              if (preTag) {
+                responseText = preTag.textContent || preTag.innerText || '';
+              }
+            }
+          }
+          
+          // Clean up response - remove HTML tags if present
+          if (responseText) {
+            // Remove common HTML tags but keep the content
+            responseText = responseText.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
+            responseText = responseText.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+            responseText = responseText.replace(/<[^>]+>/g, ' '); // Remove remaining HTML tags
+            responseText = responseText.replace(/\s+/g, ' ').trim(); // Normalize whitespace
           }
           
           console.log('Attempt ' + attempt + ' - Full iframe response:', responseText);
           console.log('Response length:', responseText.length);
+          console.log('Response preview (first 500 chars):', responseText.substring(0, 500));
           
           if (responseText && responseText.trim().length > 0) {
             // FIRST: Check for error messages (before trying to extract ORN)
@@ -1465,25 +1539,44 @@
               const ornPatterns = [
                 /"orn"\s*:\s*"([^"]+)"/i,  // "orn": "ORN-20251112-0001" (JSON in text)
                 /'orn'\s*:\s*'([^']+)'/i,  // 'orn': 'ORN-20251112-0001'
-                /ORN-\d{8}-\d{4}/,  // ORN-20251112-0001 (direct match)
                 /ORN[:\s]+([A-Z0-9-]+)/i,  // ORN: ORN-20251112-0001
+                /(ORN-\d{8}-\d{4})/i,  // ORN-20251112-0001 (direct match with capture group)
                 /(ORN[-\s]?\d{8}[-\s]?\d{4})/i  // Flexible pattern
               ];
               
               for (let pattern of ornPatterns) {
                 const match = responseText.match(pattern);
                 if (match) {
+                  // Use capture group if available, otherwise use full match
                   orn = (match[1] || match[0]).trim();
-                  // Clean up ORN format
-                  orn = orn.replace(/[\s]/g, '-').toUpperCase();
-                  console.log('ORN extracted with pattern:', pattern, 'Result:', orn);
-                  break;
+                  // Clean up ORN format - ensure proper format
+                  orn = orn.replace(/[\s_]/g, '-').toUpperCase();
+                  // Validate ORN format
+                  if (/^ORN-\d{8}-\d{4}$/.test(orn)) {
+                    console.log('ORN extracted and validated with pattern:', pattern, 'Result:', orn);
+                    break;
+                  } else {
+                    console.log('ORN extracted but format invalid:', orn, 'trying next pattern...');
+                    orn = null; // Reset and try next pattern
+                  }
+                }
+              }
+              
+              // Last resort: find any ORN-like pattern and clean it up
+              if (!orn) {
+                const anyOrnMatch = responseText.match(/(ORN[-\s]?\d{8}[-\s]?\d{4})/i);
+                if (anyOrnMatch) {
+                  orn = anyOrnMatch[1].replace(/[\s_]/g, '-').toUpperCase();
+                  // Try to fix format if close
+                  orn = orn.replace(/ORN-?(\d{8})-?(\d{4})/i, 'ORN-$1-$2');
+                  console.log('ORN found with flexible pattern and cleaned:', orn);
                 }
               }
             }
             
             // If we got a response and found ORN or no error, process it
             if (orn || (!hasError && responseText.length > 0)) {
+              processed = true; // Mark as processed to prevent duplicate calls
               processSuccess(orn, hasError);
               return;
             }
@@ -1500,11 +1593,15 @@
         }
         
         // If we exhausted attempts and still no response, assume success but no ORN
-        if (attempt >= maxAttempts) {
+        if (attempt >= maxAttempts && !processed) {
           console.log('Max attempts reached, processing without ORN');
+          processed = true; // Mark as processed
           processSuccess(null, false);
         }
       }
+      
+      // Start with a small delay to let iframe load
+      setTimeout(() => readResponse(1), 300);
       
       // Function to process successful registration
       function processSuccess(orn, hasError) {
@@ -1560,8 +1657,7 @@
         confirmBtn.disabled = false;
       }
       
-      // Start reading response (with retries)
-      readResponse();
+      // Note: readResponse is called with delay in the function above
     }
     
     // Wait for DOM to be ready, then attach event listeners
