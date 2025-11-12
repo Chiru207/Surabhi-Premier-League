@@ -313,7 +313,18 @@
         
         document.body.appendChild(form);
         
-        // Set up postMessage listener BEFORE submitting form
+        // Instead of form submission, let's try loading the iframe directly
+        // Build the URL first
+        const formUrl = new URL(form.action);
+        Array.from(form.elements).forEach(el => {
+          if (el.name && el.value) {
+            formUrl.searchParams.append(el.name, el.value);
+          }
+        });
+        const fullUrl = formUrl.toString();
+        console.log('🔗 Full URL to load in iframe:', fullUrl);
+        
+        // Set up postMessage listener BEFORE loading iframe
         let postMessageReceived = false;
         let messageHandler = null;
         
@@ -473,59 +484,50 @@
           }
         }, 5000); // Wait 5 seconds for postMessage
         
-        // Build the full URL to verify what we're submitting
-        const formUrl = new URL(form.action);
-        Array.from(form.elements).forEach(el => {
-          if (el.name && el.value) {
-            formUrl.searchParams.append(el.name, el.value);
-          }
-        });
-        console.log('🔗 Full form submission URL:', formUrl.toString());
-        console.log('💡 TIP: Copy this URL and open it in a new tab to test directly');
-        
-        // Submit form
-        console.log('🚀 Submitting form now...');
-        console.log('Form action URL:', form.action);
-        console.log('Form target:', form.target);
-        console.log('Form method:', form.method);
+        // Load the iframe directly instead of using form submission
+        console.log('🚀 Loading iframe directly with URL...');
         console.log('Iframe name:', iframe.name);
         console.log('Iframe id:', iframe.id);
-        
-        // Verify iframe is in DOM
         console.log('Iframe in DOM:', document.body.contains(iframe));
-        console.log('Iframe parent:', iframe.parentElement);
         
-        // Add a small delay to ensure iframe is ready
+        // Set iframe src directly - this is more reliable than form submission
         setTimeout(() => {
           try {
-            console.log('About to submit form...');
-            form.submit();
-            console.log('✅ Form submitted, iframe should load soon...');
-            console.log('Waiting for iframe onload event...');
+            console.log('Setting iframe src to:', fullUrl);
+            iframe.src = fullUrl;
+            console.log('✅ Iframe src set, waiting for load event...');
             
-            // Also check if iframe loads after a delay
-            setTimeout(() => {
-              if (!postMessageReceived) {
-                console.log('Checking iframe status after 2 seconds...');
-                console.log('Iframe src attribute:', iframe.getAttribute('src'));
-                console.log('Iframe name attribute:', iframe.getAttribute('name'));
-                console.log('Iframe in DOM:', document.body.contains(iframe));
-                
-                // Try to trigger a check
-                try {
-                  if (iframe.contentWindow) {
-                    console.log('Iframe contentWindow exists');
-                  } else {
-                    console.log('Iframe contentWindow does not exist yet');
+            // Also check if iframe loads after delays
+            const checkIntervals = [1000, 2000, 3000, 4000];
+            checkIntervals.forEach(delay => {
+              setTimeout(() => {
+                if (!postMessageReceived) {
+                  console.log(`Checking iframe status after ${delay}ms...`);
+                  console.log('Iframe src attribute:', iframe.getAttribute('src'));
+                  console.log('Iframe src property:', iframe.src);
+                  console.log('Iframe in DOM:', document.body.contains(iframe));
+                  
+                  try {
+                    if (iframe.contentWindow) {
+                      console.log('Iframe contentWindow exists');
+                      try {
+                        const iframeUrl = iframe.contentWindow.location.href;
+                        console.log('Iframe loaded URL:', iframeUrl);
+                      } catch (urlError) {
+                        console.log('Cannot read iframe URL (CORS):', urlError.message);
+                      }
+                    } else {
+                      console.log('Iframe contentWindow does not exist yet');
+                    }
+                  } catch (e) {
+                    console.log('Cannot access iframe contentWindow:', e.message);
                   }
-                } catch (e) {
-                  console.log('Cannot access iframe contentWindow:', e.message);
                 }
-              }
-            }, 2000);
-          } catch (submitError) {
-            console.error('❌ Error submitting form:', submitError);
-            showStatus('Error submitting form. Please try again.', true);
+              }, delay);
+            });
+          } catch (loadError) {
+            console.error('❌ Error loading iframe:', loadError);
+            showStatus('Error loading verification. Please try again.', true);
             verifyBtn.disabled = false;
             verifyBtn.textContent = 'Verify Serial Number';
           }
