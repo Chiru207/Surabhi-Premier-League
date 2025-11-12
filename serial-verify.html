@@ -232,23 +232,31 @@
         form.action = GOOGLE_SCRIPT_URL;
         form.target = 'hiddenFrame';
         
+        // Create form inputs with correct names
+        const actionInput = document.createElement('input');
+        actionInput.type = 'hidden';
+        actionInput.name = 'action';
+        actionInput.value = 'checkSerial';
+        form.appendChild(actionInput);
+        
         const serialInput = document.createElement('input');
         serialInput.type = 'hidden';
-        serialInput.name = 'action';
-        serialInput.value = 'checkSerial';
+        serialInput.name = 'serialNumber';
+        serialInput.value = serialNumber;
         form.appendChild(serialInput);
         
         const emailInput = document.createElement('input');
         emailInput.type = 'hidden';
-        emailInput.name = 'serialNumber';
-        emailInput.value = serialNumber;
+        emailInput.name = 'email';
+        emailInput.value = email;
         form.appendChild(emailInput);
         
-        const emailInput2 = document.createElement('input');
-        emailInput2.type = 'hidden';
-        emailInput2.name = 'email';
-        emailInput2.value = email;
-        form.appendChild(emailInput2);
+        // Log the form data being sent
+        console.log('Form data being sent:', {
+          action: 'checkSerial',
+          serialNumber: serialNumber,
+          email: email
+        });
         
         document.body.appendChild(form);
         
@@ -410,8 +418,15 @@
         
         // Submit form
         console.log('🚀 Submitting form now...');
-        form.submit();
-        console.log('✅ Form submitted, iframe should load soon...');
+        console.log('Form action URL:', form.action);
+        console.log('Form target:', form.target);
+        console.log('Form method:', form.method);
+        
+        // Add a small delay to ensure iframe is ready
+        setTimeout(() => {
+          form.submit();
+          console.log('✅ Form submitted, iframe should load soon...');
+        }, 100);
         
       } catch (error) {
         console.error('Error:', error);
