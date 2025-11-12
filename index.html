@@ -77,7 +77,7 @@
       border-radius: 16px;
       padding: clamp(10px, 2vw, 30px);
       margin: 0 auto;
-      max-width: 100%;
+      max-width: calc(100vw - 40px);
       width: 100%;
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
       box-sizing: border-box;
@@ -92,8 +92,8 @@
     .flyer-image {
       width: 100%;
       max-width: 100%;
-      max-height: 100%;
       height: auto;
+      max-height: 100%;
       border-radius: 12px;
       display: block;
       margin: 0 auto;
@@ -104,17 +104,17 @@
     
     .live-link, .register-link {
       display: inline-block;
-      padding: clamp(14px, 2.5vh, 18px) clamp(28px, 5vw, 36px);
+      padding: clamp(12px, 2vh, 16px) clamp(24px, 4vw, 32px);
       color: white;
       text-decoration: none;
       border-radius: 12px;
-      font-size: clamp(16px, 3.5vw, 20px);
+      font-size: clamp(14px, 3vw, 18px);
       font-weight: 600;
       transition: all 0.3s;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
       flex-shrink: 0;
       width: 100%;
-      max-width: 280px;
+      max-width: 250px;
       text-align: center;
       box-sizing: border-box;
     }
@@ -220,6 +220,7 @@
       .flyer-container {
         padding: 6px;
         max-height: calc(100vh - 150px); /* Even smaller header on very small screens */
+        max-width: calc(100vw - 10px);
       }
       
       .flyer-image {
@@ -248,7 +249,13 @@
       
       .buttons-section {
         flex: 0.3;
-        min-width: 250px;
+        min-width: 220px;
+      }
+      
+      .live-link, .register-link {
+        max-width: 220px;
+        font-size: clamp(14px, 2.5vw, 18px);
+        padding: clamp(12px, 1.8vh, 15px) clamp(20px, 3vw, 28px);
       }
     }
     

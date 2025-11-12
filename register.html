@@ -1303,129 +1303,132 @@
       
       // Form submission - show confirmation first
       form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      console.log('=== FORM SUBMIT TRIGGERED ===');
-      
-      // Validate all required fields first
-      const name = document.getElementById('name').value.trim();
-      const fatherName = document.getElementById('fatherName').value.trim();
-      const category = document.getElementById('category').value;
-      const mobile = document.getElementById('mobile').value.trim();
-      const captaincy = document.getElementById('captaincy').value;
-      const jerseyName = document.getElementById('jerseyName').value.trim();
-      const jerseyNumber = document.getElementById('jerseyNumber').value.trim();
-      const tshirtSize = document.getElementById('tshirtSize').value;
-      const trouserSize = document.getElementById('trouserSize').value;
-      
-      // Validate required fields
-      if (!name) {
-        alert('Please enter your name.');
-        return;
-      }
-      if (!fatherName) {
-        alert('Please enter father name.');
-        return;
-      }
-      if (!category) {
-        alert('Please select a category.');
-        return;
-      }
-      if (!mobile || mobile.length !== 10) {
-        alert('Please enter a valid 10-digit mobile number.');
-        return;
-      }
-      if (!captaincy) {
-        alert('Please select captaincy option.');
-        return;
-      }
-      if (!jerseyName) {
-        alert('Please enter jersey name.');
-        return;
-      }
-      if (!jerseyNumber) {
-        alert('Please enter jersey number.');
-        return;
-      }
-      if (!tshirtSize) {
-        alert('Please select T-shirt size.');
-        return;
-      }
-      if (!trouserSize) {
-        alert('Please select trouser size.');
-        return;
-      }
-      
-      console.log('All validations passed');
-      
-      // Validate photo size if provided
-      const photoInput = document.getElementById('photo');
-      const file = photoInput.files[0];
-      const maxSize = 10 * 1024 * 1024; // 10MB
-      
-      if (file && file.size > maxSize) {
-        alert('Photo size exceeds 10MB. Please choose a smaller file.');
-        return;
-      }
-      
-      // Calculate registration fee
-      const registrationFee = captaincy === 'Yes' ? 2000 : 500;
-      
-      // Get verified email from sessionStorage
-      const verifiedEmail = sessionStorage.getItem('verifiedEmail') || '';
-      
-      // Get all form data
-      const formData = new FormData(this);
-      pendingFormData = {
-        name: name,
-        fatherName: fatherName,
-        category: category,
-        email: verifiedEmail,
-        mobile: mobile,
-        captaincy: captaincy,
-        registrationFee: registrationFee.toString(),
-        jerseyName: jerseyName,
-        jerseyNumber: jerseyNumber,
-        tshirtSize: tshirtSize,
-        trouserSize: trouserSize
-      };
-      
-      // Also save to backup so it persists even if pendingFormData is cleared
-      backupFormData = { ...pendingFormData };
-      
-      console.log('Pending form data prepared:', pendingFormData);
-      console.log('Backup form data saved:', backupFormData);
-      
-      // Convert photo to base64 if exists
-      if (file) {
-        console.log('Photo file found, converting to base64...');
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          console.log('Photo converted to base64');
-          pendingPhotoBase64 = e.target.result.split(',')[1];
-          pendingPhotoName = file.name;
-          pendingPhotoType = file.type;
-          pendingPhotoPreview = e.target.result; // Full data URL for preview
-          
-          // Show confirmation
-          console.log('Calling showConfirmation with photo...');
-          showConfirmation(pendingFormData, registrationFee, pendingPhotoPreview);
-        };
-        reader.onerror = function(error) {
-          console.error('Error reading photo:', error);
-          alert('Error reading photo file. Please try again.');
-        };
-        reader.readAsDataURL(file);
-      } else {
-        console.log('No photo file, proceeding without photo...');
-        pendingPhotoBase64 = '';
-        pendingPhotoName = '';
-        pendingPhotoType = '';
-        pendingPhotoPreview = null;
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('=== FORM SUBMIT TRIGGERED ===');
         
-        // Show confirmation immediately (no photo to process)
-        console.log('Calling showConfirmation without photo...');
-        showConfirmation(pendingFormData, registrationFee, null);
-      }
+        // Validate all required fields first
+        const name = document.getElementById('name').value.trim();
+        const fatherName = document.getElementById('fatherName').value.trim();
+        const category = document.getElementById('category').value;
+        const mobile = document.getElementById('mobile').value.trim();
+        const captaincy = document.getElementById('captaincy').value;
+        const jerseyName = document.getElementById('jerseyName').value.trim();
+        const jerseyNumber = document.getElementById('jerseyNumber').value.trim();
+        const tshirtSize = document.getElementById('tshirtSize').value;
+        const trouserSize = document.getElementById('trouserSize').value;
+        
+        // Validate required fields
+        if (!name) {
+          alert('Please enter your name.');
+          return false;
+        }
+        if (!fatherName) {
+          alert('Please enter father name.');
+          return false;
+        }
+        if (!category) {
+          alert('Please select a category.');
+          return false;
+        }
+        if (!mobile || mobile.length !== 10) {
+          alert('Please enter a valid 10-digit mobile number.');
+          return false;
+        }
+        if (!captaincy) {
+          alert('Please select captaincy option.');
+          return false;
+        }
+        if (!jerseyName) {
+          alert('Please enter jersey name.');
+          return false;
+        }
+        if (!jerseyNumber) {
+          alert('Please enter jersey number.');
+          return false;
+        }
+        if (!tshirtSize) {
+          alert('Please select T-shirt size.');
+          return false;
+        }
+        if (!trouserSize) {
+          alert('Please select trouser size.');
+          return false;
+        }
+        
+        console.log('All validations passed');
+        
+        // Validate photo size if provided
+        const photoInput = document.getElementById('photo');
+        const file = photoInput.files[0];
+        const maxSize = 10 * 1024 * 1024; // 10MB
+        
+        if (file && file.size > maxSize) {
+          alert('Photo size exceeds 10MB. Please choose a smaller file.');
+          return false;
+        }
+        
+        // Calculate registration fee
+        const registrationFee = captaincy === 'Yes' ? 2000 : 500;
+        
+        // Get verified email from sessionStorage
+        const verifiedEmail = sessionStorage.getItem('verifiedEmail') || '';
+        
+        // Get all form data (use form variable instead of this)
+        const formData = new FormData(form);
+        pendingFormData = {
+          name: name,
+          fatherName: fatherName,
+          category: category,
+          email: verifiedEmail,
+          mobile: mobile,
+          captaincy: captaincy,
+          registrationFee: registrationFee.toString(),
+          jerseyName: jerseyName,
+          jerseyNumber: jerseyNumber,
+          tshirtSize: tshirtSize,
+          trouserSize: trouserSize
+        };
+        
+        // Also save to backup so it persists even if pendingFormData is cleared
+        backupFormData = { ...pendingFormData };
+        
+        console.log('Pending form data prepared:', pendingFormData);
+        console.log('Backup form data saved:', backupFormData);
+        
+        // Convert photo to base64 if exists
+        if (file) {
+          console.log('Photo file found, converting to base64...');
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            console.log('Photo converted to base64');
+            pendingPhotoBase64 = e.target.result.split(',')[1];
+            pendingPhotoName = file.name;
+            pendingPhotoType = file.type;
+            pendingPhotoPreview = e.target.result; // Full data URL for preview
+            
+            // Show confirmation
+            console.log('Calling showConfirmation with photo...');
+            showConfirmation(pendingFormData, registrationFee, pendingPhotoPreview);
+          };
+          reader.onerror = function(error) {
+            console.error('Error reading photo:', error);
+            alert('Error reading photo file. Please try again.');
+          };
+          reader.readAsDataURL(file);
+        } else {
+          console.log('No photo file, proceeding without photo...');
+          pendingPhotoBase64 = '';
+          pendingPhotoName = '';
+          pendingPhotoType = '';
+          pendingPhotoPreview = null;
+          
+          // Show confirmation immediately (no photo to process)
+          console.log('Calling showConfirmation without photo...');
+          showConfirmation(pendingFormData, registrationFee, null);
+        }
+        
+        return false; // Prevent form submission
       });
     }
     
@@ -1495,10 +1498,25 @@
       detailsHTML += '<span class="confirmation-value">' + (data.trouserSize || '') + '</span>';
       detailsHTML += '</div>';
       
-      detailsDiv.innerHTML = detailsHTML;
-      feeDiv.textContent = 'Registration Fee: ₹' + fee;
+      if (!detailsDiv) {
+        console.error('Confirmation details div not found!');
+        alert('Error: Could not display confirmation. Please try again.');
+        return;
+      }
       
+      if (!feeDiv) {
+        console.error('Confirmation fee div not found!');
+      }
+      
+      detailsDiv.innerHTML = detailsHTML;
+      if (feeDiv) {
+        feeDiv.textContent = 'Registration Fee: ₹' + fee;
+      }
+      
+      console.log('Adding active class to overlay...');
       overlay.classList.add('active');
+      console.log('Overlay classes:', overlay.className);
+      console.log('Overlay display style:', window.getComputedStyle(overlay).display);
     }
     
     // Go Back button - restore form data
