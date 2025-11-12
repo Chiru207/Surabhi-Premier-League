@@ -257,12 +257,16 @@
         // Set up postMessage listener BEFORE submitting form
         let postMessageReceived = false;
         const messageHandler = function(event) {
-          // Verify origin for security (optional but recommended)
-          // if (event.origin !== 'https://script.google.com') return;
+          // Filter out browser extension messages (they have different origins)
+          // Only process messages that look like our serial check response
+          if (!event.data || typeof event.data !== 'object') {
+            return; // Ignore non-object messages (likely from extensions)
+          }
           
-          if (event.data && event.data.type === 'serialCheck') {
+          // Check if this is our serial check message
+          if (event.data.type === 'serialCheck') {
             postMessageReceived = true;
-            console.log('Received postMessage:', event.data);
+            console.log('Received postMessage from Google Apps Script:', event.data);
             
             if (event.data.success) {
               // Store data in sessionStorage
@@ -270,6 +274,13 @@
               sessionStorage.setItem('verifiedEmail', email);
               sessionStorage.setItem('paymentAmount', event.data.amount || '');
               sessionStorage.setItem('paymentToWhom', event.data.toWhom || '');
+              
+              console.log('Stored in sessionStorage:', {
+                serial: serialNumber,
+                email: email,
+                amount: event.data.amount,
+                toWhom: event.data.toWhom
+              });
               
               // Clean up
               window.removeEventListener('message', messageHandler);
@@ -279,7 +290,9 @@
               // Redirect to email verification page
               window.location.href = 'email-verify.html';
             } else {
-              showStatus(event.data.error || 'Verification failed. Please try again.', true);
+              const errorMsg = event.data.error || 'Verification failed. Please try again.';
+              console.error('Verification failed:', errorMsg);
+              showStatus(errorMsg, true);
               verifyBtn.disabled = false;
               verifyBtn.textContent = 'Verify Serial Number';
               window.removeEventListener('message', messageHandler);
@@ -291,23 +304,28 @@
         
         // Add message listener
         window.addEventListener('message', messageHandler);
+        console.log('PostMessage listener added, waiting for response...');
         
         // Fallback timeout in case postMessage doesn't arrive
         setTimeout(function() {
           if (!postMessageReceived) {
-            console.log('PostMessage timeout - trying to read iframe response as fallback');
+            console.log('PostMessage timeout after 3 seconds - trying to read iframe response as fallback');
+            console.log('This might be a CORS issue. Checking iframe...');
+            
             try {
               const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
               const responseText = iframeDoc.body ? iframeDoc.body.textContent || iframeDoc.body.innerText : '';
               
               console.log('Fallback response from server:', responseText);
               
-              if (responseText.includes('success:') || responseText.includes('verified')) {
+              if (responseText && (responseText.includes('success:') || responseText.includes('verified'))) {
                 // Extract amount and to whom from response
                 const amountMatch = responseText.match(/amount[:\s]+₹?(\d+)/i);
                 const amount = amountMatch ? amountMatch[1] : '';
-                const toWhomMatch = responseText.match(/to whom[:\s]+([^,]+)/i);
+                const toWhomMatch = responseText.match(/to whom[:\s]+([^,\n]+)/i);
                 const toWhom = toWhomMatch ? toWhomMatch[1].trim() : '';
+                
+                console.log('Extracted from response - Amount:', amount, 'To Whom:', toWhom);
                 
                 // Store serial number, email, amount, and to whom in sessionStorage
                 sessionStorage.setItem('verifiedSerial', serialNumber);
@@ -322,39 +340,44 @@
                 
                 // Redirect to email verification page
                 window.location.href = 'email-verify.html';
-              } else if (responseText.includes('error:') || responseText.includes('not found') || responseText.includes('mismatch')) {
+                return;
+              } else if (responseText && (responseText.includes('error:') || responseText.includes('not found') || responseText.includes('mismatch'))) {
                 const errorMsg = responseText.includes('mismatch') 
                   ? 'Email address does not match the serial number. Please check and try again.'
-                  : 'Serial number not found or invalid. Please contact organizers.';
+                  : responseText.includes('not found')
+                  ? 'Serial number not found. Please check your serial number or contact organizers.'
+                  : 'Verification failed: ' + responseText;
+                console.error('Error from server:', errorMsg);
                 showStatus(errorMsg, true);
                 verifyBtn.disabled = false;
                 verifyBtn.textContent = 'Verify Serial Number';
                 window.removeEventListener('message', messageHandler);
                 if (document.body.contains(form)) document.body.removeChild(form);
                 if (document.body.contains(iframe)) document.body.removeChild(iframe);
+                return;
               } else {
-                // Still no response - show error
-                showStatus('Could not verify response. Please try again or contact organizers.', true);
-                verifyBtn.disabled = false;
-                verifyBtn.textContent = 'Verify Serial Number';
-                window.removeEventListener('message', messageHandler);
-                if (document.body.contains(form)) document.body.removeChild(form);
-                if (document.body.contains(iframe)) document.body.removeChild(iframe);
+                // No response text or empty response
+                console.log('No response text found in iframe');
               }
             } catch (error) {
-              // CORS error - this is expected, postMessage should have handled it
-              console.log('CORS error reading iframe (expected):', error);
-              if (!postMessageReceived) {
-                showStatus('Error verifying serial number. Please check your serial number and email, or contact organizers.', true);
-                verifyBtn.disabled = false;
-                verifyBtn.textContent = 'Verify Serial Number';
-                window.removeEventListener('message', messageHandler);
-                if (document.body.contains(form)) document.body.removeChild(form);
-                if (document.body.contains(iframe)) document.body.removeChild(iframe);
-              }
+              // CORS error - this is expected when trying to read cross-origin iframe
+              console.log('CORS error reading iframe (expected for cross-origin):', error.message);
             }
+            
+            // If we get here, postMessage didn't arrive and iframe reading failed
+            if (!postMessageReceived) {
+              console.error('Both postMessage and iframe reading failed. Serial:', serialNumber, 'Email:', email);
+              showStatus('Could not verify serial number. Please ensure:\n1. Serial number is correct\n2. Email matches the one used during payment\n3. Try refreshing the page and try again\n\nIf the problem persists, contact organizers.', true);
+              verifyBtn.disabled = false;
+              verifyBtn.textContent = 'Verify Serial Number';
+              window.removeEventListener('message', messageHandler);
+              if (document.body.contains(form)) document.body.removeChild(form);
+              if (document.body.contains(iframe)) document.body.removeChild(iframe);
+            }
+          } else {
+            console.log('PostMessage was received, no fallback needed');
           }
-        }, 3000); // Wait 3 seconds for postMessage
+        }, 5000); // Wait 5 seconds for postMessage (increased from 3)
         
         // Submit form
         form.submit();
