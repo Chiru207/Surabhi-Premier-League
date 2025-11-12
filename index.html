@@ -51,6 +51,7 @@
       min-width: 0;
       min-height: 0;
       max-height: 100%;
+      max-width: 100%;
       overflow: hidden;
     }
     
@@ -87,13 +88,14 @@
       overflow: hidden;
       max-height: calc(100vh - 200px); /* Account for header, buttons, and padding */
       min-height: 0;
+      position: relative;
     }
     
     .flyer-image {
-      width: 100%;
       max-width: 100%;
-      height: auto;
       max-height: 100%;
+      width: auto;
+      height: auto;
       border-radius: 12px;
       display: block;
       margin: 0 auto;
@@ -178,6 +180,7 @@
       .flyer-container {
         padding: clamp(8px, 1.5vw, 20px);
         max-height: calc(100vh - 180px); /* Smaller header on mobile */
+        max-width: calc(100vw - 20px);
       }
       
       .flyer-image {
