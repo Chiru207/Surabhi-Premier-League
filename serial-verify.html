@@ -225,21 +225,24 @@
         iframe.id = 'serialCheckIframe';
         
         // Set up iframe handlers BEFORE appending to DOM
-        iframe.onload = function() {
-          console.log('✅✅✅ IFRAME ONLOAD TRIGGERED!');
+        iframe.addEventListener('load', function() {
+          console.log('✅✅✅ IFRAME LOAD EVENT TRIGGERED!');
           console.log('Iframe src:', iframe.src);
           console.log('Iframe name:', iframe.name);
           console.log('Iframe id:', iframe.id);
+          console.log('Iframe contentWindow:', iframe.contentWindow);
           
           // Check iframe content after a short delay to allow script to execute
           setTimeout(function() {
-            console.log('=== Checking iframe after onload ===');
+            console.log('=== Checking iframe after load event ===');
             try {
               const iframeUrl = iframe.contentWindow.location.href;
               console.log('✅ Iframe URL:', iframeUrl);
               
               if (iframeUrl.includes('script.google.com')) {
                 console.log('✅ Iframe loaded from Google Apps Script');
+              } else {
+                console.log('⚠️ Iframe URL does not contain script.google.com');
               }
               
               try {
@@ -252,18 +255,26 @@
                   } else {
                     console.log('⚠️ Iframe body is empty!');
                   }
+                } else {
+                  console.log('⚠️ Iframe document or body not found');
                 }
               } catch (docError) {
                 console.log('Cannot access iframe document (CORS - expected):', docError.message);
+                console.log('But postMessage should still work from the iframe script');
               }
             } catch (e) {
               console.log('Cannot read iframe URL (CORS - expected):', e.message);
             }
           }, 1000);
-        };
+        }, { once: true });
         
-        iframe.onerror = function() {
-          console.error('❌ Iframe failed to load');
+        iframe.addEventListener('error', function() {
+          console.error('❌ Iframe error event triggered');
+        });
+        
+        // Also set onload property as backup
+        iframe.onload = function() {
+          console.log('✅✅✅ IFRAME ONLOAD PROPERTY TRIGGERED!');
         };
         
         document.body.appendChild(iframe);
@@ -462,16 +473,62 @@
           }
         }, 5000); // Wait 5 seconds for postMessage
         
+        // Build the full URL to verify what we're submitting
+        const formUrl = new URL(form.action);
+        Array.from(form.elements).forEach(el => {
+          if (el.name && el.value) {
+            formUrl.searchParams.append(el.name, el.value);
+          }
+        });
+        console.log('🔗 Full form submission URL:', formUrl.toString());
+        console.log('💡 TIP: Copy this URL and open it in a new tab to test directly');
+        
         // Submit form
         console.log('🚀 Submitting form now...');
         console.log('Form action URL:', form.action);
         console.log('Form target:', form.target);
         console.log('Form method:', form.method);
+        console.log('Iframe name:', iframe.name);
+        console.log('Iframe id:', iframe.id);
+        
+        // Verify iframe is in DOM
+        console.log('Iframe in DOM:', document.body.contains(iframe));
+        console.log('Iframe parent:', iframe.parentElement);
         
         // Add a small delay to ensure iframe is ready
         setTimeout(() => {
-          form.submit();
-          console.log('✅ Form submitted, iframe should load soon...');
+          try {
+            console.log('About to submit form...');
+            form.submit();
+            console.log('✅ Form submitted, iframe should load soon...');
+            console.log('Waiting for iframe onload event...');
+            
+            // Also check if iframe loads after a delay
+            setTimeout(() => {
+              if (!postMessageReceived) {
+                console.log('Checking iframe status after 2 seconds...');
+                console.log('Iframe src attribute:', iframe.getAttribute('src'));
+                console.log('Iframe name attribute:', iframe.getAttribute('name'));
+                console.log('Iframe in DOM:', document.body.contains(iframe));
+                
+                // Try to trigger a check
+                try {
+                  if (iframe.contentWindow) {
+                    console.log('Iframe contentWindow exists');
+                  } else {
+                    console.log('Iframe contentWindow does not exist yet');
+                  }
+                } catch (e) {
+                  console.log('Cannot access iframe contentWindow:', e.message);
+                }
+              }
+            }, 2000);
+          } catch (submitError) {
+            console.error('❌ Error submitting form:', submitError);
+            showStatus('Error submitting form. Please try again.', true);
+            verifyBtn.disabled = false;
+            verifyBtn.textContent = 'Verify Serial Number';
+          }
         }, 100);
         
       } catch (error) {
