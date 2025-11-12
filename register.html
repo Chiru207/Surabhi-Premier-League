@@ -772,42 +772,42 @@
       </div>
     </div>
     
-    <!-- Success Page (hidden initially) -->
-    <div id="successPage" class="success-page" style="display: none;">
-      <div class="success-container">
-        <div class="success-header">
-          <div class="success-icon">✓</div>
-          <h1>Registration Successful!</h1>
-          <p class="success-subtitle">Your registration has been submitted successfully</p>
-        </div>
-        
-        <div class="success-details" id="successDetails"></div>
-        
-        <div class="payment-instructions">
-          <h3>Payment Instructions</h3>
-          <p class="payment-note">
-            <strong>Please quote your ORN number when making the payment.</strong>
-          </p>
-          <div class="payment-contacts">
-            <p>Pay the registration fee to:</p>
-            <div class="contact-item">
-              <strong>Surya:</strong> <a href="tel:7036216447">7036216447</a>
-            </div>
-            <div class="contact-item">
-              <strong>Sai Subhakar:</strong> <a href="tel:8985182185">8985182185</a>
-            </div>
+    <a href="index.html" class="back-link">← Back to Home</a>
+  </div>
+  
+  <!-- Success Page (hidden initially, outside container) -->
+  <div id="successPage" class="success-page" style="display: none;">
+    <div class="success-container">
+      <div class="success-header">
+        <div class="success-icon">✓</div>
+        <h1>Registration Successful!</h1>
+        <p class="success-subtitle">Your registration has been submitted successfully</p>
+      </div>
+      
+      <div class="success-details" id="successDetails"></div>
+      
+      <div class="payment-instructions">
+        <h3>Payment Instructions</h3>
+        <p class="payment-note">
+          <strong>Please quote your ORN number when making the payment.</strong>
+        </p>
+        <div class="payment-contacts">
+          <p>Pay the registration fee to:</p>
+          <div class="contact-item">
+            <strong>Surya:</strong> <a href="tel:7036216447">7036216447</a>
+          </div>
+          <div class="contact-item">
+            <strong>Sai Subhakar:</strong> <a href="tel:8985182185">8985182185</a>
           </div>
         </div>
-        
-        <div class="success-actions">
-          <button id="downloadPdfBtn" class="download-btn">📥 Download Registration Details (PDF)</button>
-          <a href="register.html" class="new-registration-btn">Register Another Player</a>
-          <a href="index.html" class="home-btn">← Back to Home</a>
-        </div>
+      </div>
+      
+      <div class="success-actions">
+        <button id="downloadPdfBtn" class="download-btn">📥 Download Registration Details (PDF)</button>
+        <a href="register.html" class="new-registration-btn">Register Another Player</a>
+        <a href="index.html" class="home-btn">← Back to Home</a>
       </div>
     </div>
-    
-    <a href="index.html" class="back-link">← Back to Home</a>
   </div>
   
   <script>
@@ -820,86 +820,116 @@
     
     // Function to show success page with all details
     function showSuccessPage(data, orn) {
-      registrationData = { ...data, orn: orn };
-      
-      // Hide form container
-      document.querySelector('.container').style.display = 'none';
-      document.querySelector('.back-link').style.display = 'none';
-      
-      // Show success page
-      const successPage = document.getElementById('successPage');
-      successPage.style.display = 'block';
-      
-      // Build success details HTML
-      const detailsDiv = document.getElementById('successDetails');
-      let detailsHTML = '';
-      
-      detailsHTML += '<div class="success-detail-row">';
-      detailsHTML += '<span class="success-detail-label">Online Registration Number (ORN):</span>';
-      detailsHTML += '<span class="success-detail-value orn">' + (orn || 'Pending') + '</span>';
-      detailsHTML += '</div>';
-      
-      detailsHTML += '<div class="success-detail-row">';
-      detailsHTML += '<span class="success-detail-label">Name:</span>';
-      detailsHTML += '<span class="success-detail-value">' + (data.name || '') + '</span>';
-      detailsHTML += '</div>';
-      
-      detailsHTML += '<div class="success-detail-row">';
-      detailsHTML += '<span class="success-detail-label">Father Name:</span>';
-      detailsHTML += '<span class="success-detail-value">' + (data.fatherName || '') + '</span>';
-      detailsHTML += '</div>';
-      
-      detailsHTML += '<div class="success-detail-row">';
-      detailsHTML += '<span class="success-detail-label">Category:</span>';
-      detailsHTML += '<span class="success-detail-value">' + (data.category || '') + '</span>';
-      detailsHTML += '</div>';
-      
-      detailsHTML += '<div class="success-detail-row">';
-      detailsHTML += '<span class="success-detail-label">Mobile Number:</span>';
-      detailsHTML += '<span class="success-detail-value">' + (data.mobile || '') + '</span>';
-      detailsHTML += '</div>';
-      
-      detailsHTML += '<div class="success-detail-row">';
-      detailsHTML += '<span class="success-detail-label">Captaincy:</span>';
-      detailsHTML += '<span class="success-detail-value">' + (data.captaincy || '') + '</span>';
-      detailsHTML += '</div>';
-      
-      detailsHTML += '<div class="success-detail-row">';
-      detailsHTML += '<span class="success-detail-label">Registration Fee:</span>';
-      detailsHTML += '<span class="success-detail-value fee">₹' + (data.registrationFee || '0') + '</span>';
-      detailsHTML += '</div>';
-      
-      detailsHTML += '<div class="success-detail-row">';
-      detailsHTML += '<span class="success-detail-label">Name on Jersey:</span>';
-      detailsHTML += '<span class="success-detail-value">' + (data.jerseyName || '') + '</span>';
-      detailsHTML += '</div>';
-      
-      detailsHTML += '<div class="success-detail-row">';
-      detailsHTML += '<span class="success-detail-label">Jersey Number:</span>';
-      detailsHTML += '<span class="success-detail-value">' + (data.jerseyNumber || '') + '</span>';
-      detailsHTML += '</div>';
-      
-      detailsHTML += '<div class="success-detail-row">';
-      detailsHTML += '<span class="success-detail-label">T-shirt Size:</span>';
-      detailsHTML += '<span class="success-detail-value">' + (data.tshirtSize || '') + '</span>';
-      detailsHTML += '</div>';
-      
-      detailsHTML += '<div class="success-detail-row">';
-      detailsHTML += '<span class="success-detail-label">Trouser Size:</span>';
-      detailsHTML += '<span class="success-detail-value">' + (data.trouserSize || '') + '</span>';
-      detailsHTML += '</div>';
-      
-      if (data.photo && data.photoPreview) {
+      try {
+        console.log('showSuccessPage called with data:', data, 'orn:', orn);
+        
+        registrationData = { ...data, orn: orn };
+        
+        // Hide form container
+        const container = document.querySelector('.container');
+        const backLink = document.querySelector('.back-link');
+        
+        if (container) {
+          container.style.display = 'none';
+        }
+        if (backLink) {
+          backLink.style.display = 'none';
+        }
+        
+        // Show success page
+        const successPage = document.getElementById('successPage');
+        if (!successPage) {
+          console.error('Success page element not found!');
+          alert('Registration successful! ORN: ' + (orn || 'Pending') + '\n\nPlease note your ORN for payment.');
+          return;
+        }
+        
+        successPage.style.display = 'block';
+        console.log('Success page displayed');
+        
+        // Get details div
+        const detailsDiv = document.getElementById('successDetails');
+        if (!detailsDiv) {
+          console.error('Success details div not found!');
+          alert('Registration successful! ORN: ' + (orn || 'Pending') + '\n\nPlease note your ORN for payment.');
+          return;
+        }
+        
+        // Build success details HTML
+        let detailsHTML = '';
+        
         detailsHTML += '<div class="success-detail-row">';
-        detailsHTML += '<span class="success-detail-label">Photo:</span>';
-        detailsHTML += '<span class="success-detail-value"><img src="' + data.photoPreview + '" alt="Photo" style="max-width: 100px; max-height: 100px; border-radius: 8px;"></span>';
+        detailsHTML += '<span class="success-detail-label">Online Registration Number (ORN):</span>';
+        detailsHTML += '<span class="success-detail-value orn">' + (orn || 'Pending') + '</span>';
         detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="success-detail-row">';
+        detailsHTML += '<span class="success-detail-label">Name:</span>';
+        detailsHTML += '<span class="success-detail-value">' + (data.name || '') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="success-detail-row">';
+        detailsHTML += '<span class="success-detail-label">Father Name:</span>';
+        detailsHTML += '<span class="success-detail-value">' + (data.fatherName || '') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="success-detail-row">';
+        detailsHTML += '<span class="success-detail-label">Category:</span>';
+        detailsHTML += '<span class="success-detail-value">' + (data.category || '') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="success-detail-row">';
+        detailsHTML += '<span class="success-detail-label">Mobile Number:</span>';
+        detailsHTML += '<span class="success-detail-value">' + (data.mobile || '') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="success-detail-row">';
+        detailsHTML += '<span class="success-detail-label">Captaincy:</span>';
+        detailsHTML += '<span class="success-detail-value">' + (data.captaincy || '') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="success-detail-row">';
+        detailsHTML += '<span class="success-detail-label">Registration Fee:</span>';
+        detailsHTML += '<span class="success-detail-value fee">₹' + (data.registrationFee || '0') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="success-detail-row">';
+        detailsHTML += '<span class="success-detail-label">Name on Jersey:</span>';
+        detailsHTML += '<span class="success-detail-value">' + (data.jerseyName || '') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="success-detail-row">';
+        detailsHTML += '<span class="success-detail-label">Jersey Number:</span>';
+        detailsHTML += '<span class="success-detail-value">' + (data.jerseyNumber || '') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="success-detail-row">';
+        detailsHTML += '<span class="success-detail-label">T-shirt Size:</span>';
+        detailsHTML += '<span class="success-detail-value">' + (data.tshirtSize || '') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="success-detail-row">';
+        detailsHTML += '<span class="success-detail-label">Trouser Size:</span>';
+        detailsHTML += '<span class="success-detail-value">' + (data.trouserSize || '') + '</span>';
+        detailsHTML += '</div>';
+        
+        if (data.photo && data.photoPreview) {
+          detailsHTML += '<div class="success-detail-row">';
+          detailsHTML += '<span class="success-detail-label">Photo:</span>';
+          detailsHTML += '<span class="success-detail-value"><img src="' + data.photoPreview + '" alt="Photo" style="max-width: 100px; max-height: 100px; border-radius: 8px;"></span>';
+          detailsHTML += '</div>';
+        }
+        
+        detailsDiv.innerHTML = detailsHTML;
+        console.log('Success details HTML set');
+        
+        // Scroll to top
+        window.scrollTo(0, 0);
+        console.log('Success page displayed successfully');
+      } catch (error) {
+        console.error('Error in showSuccessPage:', error);
+        alert('Registration successful! ORN: ' + (orn || 'Pending') + '\n\nPlease note your ORN for payment.\n\nError displaying details: ' + error.message);
       }
-      
-      detailsDiv.innerHTML = detailsHTML;
-      
-      // Scroll to top
-      window.scrollTo(0, 0);
     }
     
     // Function to download PDF
