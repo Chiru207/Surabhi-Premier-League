@@ -688,6 +688,21 @@
       </div>
       
       <div class="form-group">
+        <label for="email">Email Address *</label>
+        <input type="email" id="email" name="email" required>
+        <small class="help-text">We'll send an OTP to verify your email</small>
+        <button type="button" id="sendOtpBtn" class="otp-btn" style="margin-top: 10px; padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 8px; cursor: pointer; width: 100%;">Send OTP</button>
+      </div>
+      
+      <div class="form-group" id="otpVerificationGroup" style="display: none;">
+        <label for="otp">Enter OTP *</label>
+        <input type="text" id="otp" name="otp" pattern="[0-9]{6}" title="Enter 6-digit OTP" maxlength="6" placeholder="Enter 6-digit OTP">
+        <small class="help-text">Check your email for the OTP</small>
+        <button type="button" id="verifyOtpBtn" class="otp-btn" style="margin-top: 10px; padding: 10px 20px; background: #10b981; color: white; border: none; border-radius: 8px; cursor: pointer; width: 100%;">Verify OTP</button>
+        <div id="otpStatus" style="margin-top: 10px; padding: 10px; border-radius: 8px; display: none;"></div>
+      </div>
+      
+      <div class="form-group">
         <label for="mobile">Mobile Number *</label>
         <input type="tel" id="mobile" name="mobile" pattern="[0-9]{10}" title="Enter exactly 10 digits" maxlength="10" required>
         <small class="help-text">Enter 10 digit mobile number</small>
@@ -941,9 +956,11 @@
         // Build success details HTML
         let detailsHTML = '';
         
+        // Store ORN in a data attribute for easy retrieval
+        const ornDisplay = orn || 'Pending';
         detailsHTML += '<div class="success-detail-row">';
         detailsHTML += '<span class="success-detail-label">Online Registration Number (ORN):</span>';
-        detailsHTML += '<span class="success-detail-value orn">' + (orn || 'Pending') + '</span>';
+        detailsHTML += '<span class="success-detail-value orn" data-orn="' + ornDisplay + '">' + ornDisplay + '</span>';
         detailsHTML += '</div>';
         
         detailsHTML += '<div class="success-detail-row">';
@@ -1025,20 +1042,40 @@
       console.log('Generating PDF with data:', registrationData);
       console.log('ORN in registrationData:', registrationData.orn);
       
-      // Try to get ORN from multiple sources
-      let ornValue = registrationData.orn;
+      // ALWAYS try to get ORN from the displayed success page first (most reliable)
+      let ornValue = null;
+      const ornElement = document.querySelector('.success-detail-value.orn');
+      if (ornElement) {
+        ornValue = ornElement.textContent.trim();
+        console.log('✅ Got ORN from success page element:', ornValue);
+        // Update registrationData with the found ORN
+        if (ornValue && ornValue !== 'Pending') {
+          registrationData.orn = ornValue;
+        }
+      }
       
-      // If ORN is still "Pending" or null, try to get it from the success page display
-      if (!ornValue || ornValue === 'Pending' || ornValue === 'null') {
-        const ornElement = document.querySelector('.success-detail-value.orn');
-        if (ornElement) {
-          ornValue = ornElement.textContent.trim();
-          console.log('Got ORN from success page element:', ornValue);
+      // If not found in element, try registrationData
+      if (!ornValue || ornValue === 'Pending' || ornValue === 'null' || ornValue === '') {
+        ornValue = registrationData.orn;
+        console.log('Trying ORN from registrationData:', ornValue);
+      }
+      
+      // If still not found, try to extract from any visible text
+      if (!ornValue || ornValue === 'Pending' || ornValue === 'null' || ornValue === '') {
+        const successPage = document.getElementById('successPage');
+        if (successPage) {
+          const pageText = successPage.textContent || successPage.innerText;
+          const ornMatch = pageText.match(/ORN[-\s]?(\d{8})[-\s]?(\d{4})/i);
+          if (ornMatch) {
+            ornValue = 'ORN-' + ornMatch[1] + '-' + ornMatch[2];
+            console.log('✅ Extracted ORN from page text:', ornValue);
+            registrationData.orn = ornValue;
+          }
         }
       }
       
       // Final fallback
-      if (!ornValue || ornValue === 'Pending' || ornValue === 'null') {
+      if (!ornValue || ornValue === 'Pending' || ornValue === 'null' || ornValue === '' || ornValue === null) {
         ornValue = 'Pending';
         console.warn('⚠️ ORN not found, using "Pending"');
       }
@@ -1253,10 +1290,117 @@
     let pendingPhotoType = null;
     let pendingPhotoPreview = null;
     
+    // Email OTP verification state
+    let emailVerified = false;
+    let otpSent = false;
+    
+    // Send OTP button handler
+    document.getElementById('sendOtpBtn').addEventListener('click', async function() {
+      const email = document.getElementById('email').value.trim();
+      if (!email) {
+        alert('Please enter your email address first.');
+        return;
+      }
+      
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        alert('Please enter a valid email address.');
+        return;
+      }
+      
+      const btn = this;
+      const originalText = btn.textContent;
+      btn.textContent = 'Sending OTP...';
+      btn.disabled = true;
+      
+      try {
+        const response = await fetch(GOOGLE_SCRIPT_URL + '?action=sendOtp&email=' + encodeURIComponent(email));
+        const result = await response.text();
+        
+        if (result.includes('success') || result.includes('OTP sent')) {
+          otpSent = true;
+          document.getElementById('otpVerificationGroup').style.display = 'block';
+          document.getElementById('otpStatus').style.display = 'block';
+          document.getElementById('otpStatus').style.background = '#10b981';
+          document.getElementById('otpStatus').style.color = 'white';
+          document.getElementById('otpStatus').textContent = '✓ OTP sent to your email! Please check your inbox.';
+          btn.textContent = 'Resend OTP';
+        } else {
+          alert('Error sending OTP: ' + result);
+        }
+      } catch (error) {
+        alert('Error sending OTP. Please try again.');
+        console.error('OTP send error:', error);
+      } finally {
+        btn.disabled = false;
+        if (!otpSent) {
+          btn.textContent = originalText;
+        }
+      }
+    });
+    
+    // Verify OTP button handler
+    document.getElementById('verifyOtpBtn').addEventListener('click', async function() {
+      const email = document.getElementById('email').value.trim();
+      const otp = document.getElementById('otp').value.trim();
+      
+      if (!email) {
+        alert('Please enter your email address first.');
+        return;
+      }
+      
+      if (!otp || otp.length !== 6) {
+        alert('Please enter a valid 6-digit OTP.');
+        return;
+      }
+      
+      const btn = this;
+      const originalText = btn.textContent;
+      btn.textContent = 'Verifying...';
+      btn.disabled = true;
+      
+      try {
+        const response = await fetch(GOOGLE_SCRIPT_URL + '?action=verifyOtp&email=' + encodeURIComponent(email) + '&otp=' + encodeURIComponent(otp));
+        const result = await response.text();
+        
+        if (result.includes('success') || result.includes('verified')) {
+          emailVerified = true;
+          document.getElementById('otpStatus').style.background = '#10b981';
+          document.getElementById('otpStatus').style.color = 'white';
+          document.getElementById('otpStatus').textContent = '✓ Email verified successfully! You can now proceed with registration.';
+          document.getElementById('otp').disabled = true;
+          document.getElementById('verifyOtpBtn').disabled = true;
+          document.getElementById('sendOtpBtn').disabled = true;
+          document.getElementById('email').disabled = true;
+        } else {
+          document.getElementById('otpStatus').style.background = '#ef4444';
+          document.getElementById('otpStatus').style.color = 'white';
+          document.getElementById('otpStatus').textContent = '✗ Invalid OTP. Please try again.';
+          document.getElementById('otpStatus').style.display = 'block';
+        }
+      } catch (error) {
+        alert('Error verifying OTP. Please try again.');
+        console.error('OTP verify error:', error);
+      } finally {
+        btn.disabled = false;
+        if (!emailVerified) {
+          btn.textContent = originalText;
+        }
+      }
+    });
+    
     // Form submission - show confirmation first
     document.getElementById('registrationForm').addEventListener('submit', function(e) {
       e.preventDefault();
       console.log('=== FORM SUBMIT TRIGGERED ===');
+      
+      // Check if email is verified
+      if (!emailVerified) {
+        alert('Please verify your email address first by entering the OTP sent to your email.');
+        document.getElementById('email').focus();
+        return;
+      }
       
       // Validate all required fields first
       const name = document.getElementById('name').value.trim();
@@ -1328,6 +1472,7 @@
         name: name,
         fatherName: fatherName,
         category: category,
+        email: email,
         mobile: mobile,
         captaincy: captaincy,
         registrationFee: registrationFee.toString(),
@@ -1972,6 +2117,7 @@
         name: pendingFormData.name || '',
         fatherName: pendingFormData.fatherName || '',
         category: pendingFormData.category || '',
+        email: pendingFormData.email || '',
         mobile: pendingFormData.mobile || '',
         captaincy: pendingFormData.captaincy || '',
         registrationFee: pendingFormData.registrationFee || '',
