@@ -217,17 +217,15 @@
       hideStatus();
       
       try {
-        const response = await fetch(GOOGLE_SCRIPT_URL + '?action=checkSerial&serialNumber=' + encodeURIComponent(serialNumber) + '&email=' + encodeURIComponent(email), {
-          method: 'GET',
-          mode: 'no-cors'
-        });
-        
         // Since we're using no-cors, we can't read the response directly
         // We'll use a hidden iframe to get the response
         const iframe = document.createElement('iframe');
         iframe.style.display = 'none';
         iframe.name = 'hiddenFrame';
+        iframe.id = 'serialCheckIframe';
         document.body.appendChild(iframe);
+        
+        console.log('Iframe created, waiting for it to load...');
         
         const form = document.createElement('form');
         form.method = 'GET';
@@ -256,7 +254,9 @@
         
         // Set up postMessage listener BEFORE submitting form
         let postMessageReceived = false;
-        const messageHandler = function(event) {
+        let messageHandler = null;
+        
+        messageHandler = function(event) {
           // Filter out browser extension messages (they have different origins)
           // Only process messages that look like our serial check response
           if (!event.data || typeof event.data !== 'object') {
@@ -264,9 +264,14 @@
           }
           
           // Check if this is our serial check message
-          if (event.data.type === 'serialCheck') {
+          if (event.data && event.data.type === 'serialCheck') {
             postMessageReceived = true;
-            console.log('Received postMessage from Google Apps Script:', event.data);
+            console.log('✅ Received postMessage from Google Apps Script:', event.data);
+            
+            // Remove listener immediately to prevent duplicate processing
+            if (messageHandler) {
+              window.removeEventListener('message', messageHandler);
+            }
             
             if (event.data.success) {
               // Store data in sessionStorage
@@ -275,7 +280,7 @@
               sessionStorage.setItem('paymentAmount', event.data.amount || '');
               sessionStorage.setItem('paymentToWhom', event.data.toWhom || '');
               
-              console.log('Stored in sessionStorage:', {
+              console.log('✅ Stored in sessionStorage:', {
                 serial: serialNumber,
                 email: email,
                 amount: event.data.amount,
@@ -283,19 +288,19 @@
               });
               
               // Clean up
-              window.removeEventListener('message', messageHandler);
               if (document.body.contains(form)) document.body.removeChild(form);
               if (document.body.contains(iframe)) document.body.removeChild(iframe);
               
               // Redirect to email verification page
-              window.location.href = 'email-verify.html';
+              setTimeout(() => {
+                window.location.href = 'email-verify.html';
+              }, 100);
             } else {
               const errorMsg = event.data.error || 'Verification failed. Please try again.';
-              console.error('Verification failed:', errorMsg);
+              console.error('❌ Verification failed:', errorMsg);
               showStatus(errorMsg, true);
               verifyBtn.disabled = false;
               verifyBtn.textContent = 'Verify Serial Number';
-              window.removeEventListener('message', messageHandler);
               if (document.body.contains(form)) document.body.removeChild(form);
               if (document.body.contains(iframe)) document.body.removeChild(iframe);
             }
@@ -304,12 +309,15 @@
         
         // Add message listener
         window.addEventListener('message', messageHandler);
-        console.log('PostMessage listener added, waiting for response...');
+        console.log('📡 PostMessage listener added, waiting for response...');
+        console.log('Submitting form to:', GOOGLE_SCRIPT_URL);
+        console.log('Serial Number:', serialNumber);
+        console.log('Email:', email);
         
         // Fallback timeout in case postMessage doesn't arrive
         setTimeout(function() {
           if (!postMessageReceived) {
-            console.log('PostMessage timeout after 3 seconds - trying to read iframe response as fallback');
+            console.log('⏰ PostMessage timeout after 5 seconds - trying to read iframe response as fallback');
             console.log('This might be a CORS issue. Checking iframe...');
             
             try {
@@ -377,10 +385,33 @@
           } else {
             console.log('PostMessage was received, no fallback needed');
           }
-        }, 5000); // Wait 5 seconds for postMessage (increased from 3)
+        }, 5000); // Wait 5 seconds for postMessage
+        
+        // Also add iframe onload handler as backup
+        iframe.onload = function() {
+          console.log('✅ Iframe loaded successfully');
+          // Give postMessage time to arrive (iframe loads before script executes)
+          setTimeout(function() {
+            if (!postMessageReceived) {
+              console.log('⚠️ Iframe loaded but postMessage not received yet. This might mean:');
+              console.log('1. Google Apps Script needs to be redeployed');
+              console.log('2. The checkSerial function is not working');
+              console.log('3. There is a permissions issue');
+            }
+          }, 2000);
+        };
+        
+        iframe.onerror = function() {
+          console.error('❌ Iframe failed to load');
+          showStatus('Failed to connect to verification server. Please check your internet connection and try again.', true);
+          verifyBtn.disabled = false;
+          verifyBtn.textContent = 'Verify Serial Number';
+        };
         
         // Submit form
+        console.log('🚀 Submitting form now...');
         form.submit();
+        console.log('✅ Form submitted, iframe should load soon...');
         
       } catch (error) {
         console.error('Error:', error);
