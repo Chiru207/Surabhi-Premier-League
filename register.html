@@ -663,7 +663,7 @@
     <h1>Register for Surabhi Premier League 2025</h1>
     <p class="subtitle">Fill in your details to register</p>
     
-    <form id="registrationForm" enctype="multipart/form-data">
+    <form id="registrationForm" enctype="multipart/form-data" novalidate>
       <div class="form-group">
         <label for="name">Name *</label>
         <input type="text" id="name" name="name" pattern="[A-Za-z\s]+" title="Only alphabets and spaces are allowed" required>
@@ -750,7 +750,7 @@
       
       <div class="form-group">
         <label for="photo">Upload Photo *</label>
-        <input type="file" id="photo" name="photo" accept="image/*,.jpg,.jpeg,.png,.gif,.webp" required>
+        <input type="file" id="photo" name="photo" accept="image/*,.jpg,.jpeg,.png,.gif,.webp">
         <small class="help-text">Supported formats: JPG, PNG, GIF, WebP. Maximum size: 10MB</small>
         <div id="photoPreview" class="photo-preview"></div>
       </div>
@@ -1303,9 +1303,10 @@
       
       // Form submission - show confirmation first
       form.addEventListener('submit', function(e) {
+        console.log('=== FORM SUBMIT TRIGGERED ===');
         e.preventDefault();
         e.stopPropagation();
-        console.log('=== FORM SUBMIT TRIGGERED ===');
+        e.stopImmediatePropagation();
         
         // Validate all required fields first
         const name = document.getElementById('name').value.trim();
@@ -1358,12 +1359,18 @@
         
         console.log('All validations passed');
         
-        // Validate photo size if provided
+        // Validate photo if provided
         const photoInput = document.getElementById('photo');
         const file = photoInput.files[0];
         const maxSize = 10 * 1024 * 1024; // 10MB
         
-        if (file && file.size > maxSize) {
+        // Check if photo is provided (it's marked as required in label)
+        if (!file) {
+          alert('Please upload a photo to continue.');
+          return false;
+        }
+        
+        if (file.size > maxSize) {
           alert('Photo size exceeds 10MB. Please choose a smaller file.');
           return false;
         }
