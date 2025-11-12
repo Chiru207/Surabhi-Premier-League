@@ -49,6 +49,9 @@
       align-items: center;
       justify-content: center;
       min-width: 0;
+      min-height: 0;
+      max-height: 100%;
+      overflow: hidden;
     }
     
     .buttons-section {
@@ -81,18 +84,22 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow: visible;
+      overflow: hidden;
+      max-height: calc(100vh - 200px); /* Account for header, buttons, and padding */
+      min-height: 0;
     }
     
     .flyer-image {
       width: 100%;
       max-width: 100%;
+      max-height: 100%;
       height: auto;
       border-radius: 12px;
       display: block;
       margin: 0 auto;
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
       object-fit: contain;
+      object-position: center;
     }
     
     .live-link, .register-link {
@@ -170,6 +177,7 @@
       
       .flyer-container {
         padding: clamp(8px, 1.5vw, 20px);
+        max-height: calc(100vh - 180px); /* Smaller header on mobile */
       }
       
       .flyer-image {
@@ -211,6 +219,7 @@
       
       .flyer-container {
         padding: 6px;
+        max-height: calc(100vh - 150px); /* Even smaller header on very small screens */
       }
       
       .flyer-image {

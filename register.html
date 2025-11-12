@@ -842,7 +842,6 @@
         if (event.data && event.data.type === 'registration-success' && !postMessageReceived) {
           postMessageReceived = true;
           console.log('✅ Received postMessage from Google Apps Script:', event.data);
-          const orn = event.data.orn || null;
           
           // Find the confirmation button to restore its state
           const confirmBtn = document.querySelector('#confirmationOverlay .confirm-btn');
@@ -1288,8 +1287,22 @@
     
     console.log('Verified email from sessionStorage:', verifiedEmail);
     
-    // Form submission - show confirmation first
-    document.getElementById('registrationForm').addEventListener('submit', function(e) {
+    // Wait for DOM to be ready before attaching event listeners
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', attachFormListener);
+    } else {
+      attachFormListener();
+    }
+    
+    function attachFormListener() {
+      const form = document.getElementById('registrationForm');
+      if (!form) {
+        console.error('Registration form not found!');
+        return;
+      }
+      
+      // Form submission - show confirmation first
+      form.addEventListener('submit', function(e) {
       e.preventDefault();
       console.log('=== FORM SUBMIT TRIGGERED ===');
       
@@ -1357,13 +1370,16 @@
       // Calculate registration fee
       const registrationFee = captaincy === 'Yes' ? 2000 : 500;
       
+      // Get verified email from sessionStorage
+      const verifiedEmail = sessionStorage.getItem('verifiedEmail') || '';
+      
       // Get all form data
       const formData = new FormData(this);
       pendingFormData = {
         name: name,
         fatherName: fatherName,
         category: category,
-        email: email,
+        email: verifiedEmail,
         mobile: mobile,
         captaincy: captaincy,
         registrationFee: registrationFee.toString(),
@@ -1410,7 +1426,8 @@
         console.log('Calling showConfirmation without photo...');
         showConfirmation(pendingFormData, registrationFee, null);
       }
-    });
+      });
+    }
     
     // Show confirmation overlay
     function showConfirmation(data, fee, photoPreview) {
