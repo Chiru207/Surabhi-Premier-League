@@ -821,6 +821,9 @@
     // Flag to track if we've received postMessage (to prevent duplicate processing)
     let postMessageReceived = false;
     
+    // Backup of form data that persists even after pendingFormData is cleared
+    let backupFormData = null;
+    
     // Listen for postMessage from iframe (Google Apps Script response)
     // This avoids CORS issues when reading iframe content
     window.addEventListener('message', function(event) {
@@ -843,17 +846,19 @@
           const confirmBtn = document.querySelector('#confirmationOverlay .confirm-btn');
           const originalText = confirmBtn ? confirmBtn.textContent : 'Confirm Registration';
           
+          // Use backupFormData if pendingFormData is null
+          const formDataToUse = pendingFormData || backupFormData || {};
           const successData = {
-            name: pendingFormData ? pendingFormData.name : '',
-            fatherName: pendingFormData ? pendingFormData.fatherName : '',
-            category: pendingFormData ? pendingFormData.category : '',
-            mobile: pendingFormData ? pendingFormData.mobile : '',
-            captaincy: pendingFormData ? pendingFormData.captaincy : '',
-            registrationFee: pendingFormData ? pendingFormData.registrationFee : '500',
-            jerseyName: pendingFormData ? pendingFormData.jerseyName : '',
-            jerseyNumber: pendingFormData ? pendingFormData.jerseyNumber : '',
-            tshirtSize: pendingFormData ? pendingFormData.tshirtSize : '',
-            trouserSize: pendingFormData ? pendingFormData.trouserSize : '',
+            name: formDataToUse.name || '',
+            fatherName: formDataToUse.fatherName || '',
+            category: formDataToUse.category || '',
+            mobile: formDataToUse.mobile || '',
+            captaincy: formDataToUse.captaincy || '',
+            registrationFee: formDataToUse.registrationFee || '500',
+            jerseyName: formDataToUse.jerseyName || '',
+            jerseyNumber: formDataToUse.jerseyNumber || '',
+            tshirtSize: formDataToUse.tshirtSize || '',
+            trouserSize: formDataToUse.trouserSize || '',
             photoPreview: pendingPhotoPreview || null
           };
           
@@ -1332,7 +1337,11 @@
         trouserSize: trouserSize
       };
       
+      // Also save to backup so it persists even if pendingFormData is cleared
+      backupFormData = { ...pendingFormData };
+      
       console.log('Pending form data prepared:', pendingFormData);
+      console.log('Backup form data saved:', backupFormData);
       
       // Convert photo to base64 if exists
       if (file) {
@@ -1507,12 +1516,68 @@
           
           let iframeDoc = null;
           let corsError = false;
+          // Try to get ORN from iframe URL first (sometimes it's in the URL)
+          try {
+            const iframeUrl = iframe.contentWindow.location.href;
+            if (iframeUrl && iframeUrl !== 'about:blank') {
+              console.log('Iframe URL:', iframeUrl);
+              // Try to extract ORN from URL
+              const urlOrnMatch = iframeUrl.match(/ORN[-\s]?(\d{8})[-\s]?(\d{4})/i);
+              if (urlOrnMatch) {
+                const urlOrn = 'ORN-' + urlOrnMatch[1] + '-' + urlOrnMatch[2];
+                console.log('🎯 Found ORN in iframe URL:', urlOrn);
+                if (!orn && !postMessageReceived) {
+                  orn = urlOrn;
+                }
+              }
+            }
+          } catch (urlError) {
+            // Can't access URL - that's okay, try document
+          }
+          
           try {
             iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
           } catch (e) {
             // CORS error - cannot access iframe document
             corsError = true;
             console.log('CORS error accessing iframe document (attempt ' + attempt + '):', e.message);
+            
+            // If we found ORN in URL, use it even with CORS error
+            if (orn && !postMessageReceived) {
+              console.log('✅ Using ORN from URL despite CORS error:', orn);
+              processed = true;
+              const formDataToUse = pendingFormData || backupFormData || {};
+              const successData = {
+                name: formDataToUse.name || '',
+                fatherName: formDataToUse.fatherName || '',
+                category: formDataToUse.category || '',
+                mobile: formDataToUse.mobile || '',
+                captaincy: formDataToUse.captaincy || '',
+                registrationFee: formDataToUse.registrationFee || '500',
+                jerseyName: formDataToUse.jerseyName || '',
+                jerseyNumber: formDataToUse.jerseyNumber || '',
+                tshirtSize: formDataToUse.tshirtSize || '',
+                trouserSize: formDataToUse.trouserSize || '',
+                photoPreview: pendingPhotoPreview || null
+              };
+              document.getElementById('confirmationOverlay').classList.remove('active');
+              confirmBtn.textContent = originalText;
+              confirmBtn.disabled = false;
+              if (document.body.contains(hiddenForm)) {
+                document.body.removeChild(hiddenForm);
+              }
+              document.getElementById('registrationForm').reset();
+              document.getElementById('photoPreview').classList.remove('active');
+              document.getElementById('photoPreview').innerHTML = '';
+              document.getElementById('registrationFeeGroup').style.display = 'none';
+              showSuccessPage(successData, orn);
+              pendingFormData = null;
+              pendingPhotoBase64 = null;
+              pendingPhotoName = null;
+              pendingPhotoType = null;
+              pendingPhotoPreview = null;
+              return;
+            }
             
             // Only show CORS message after many attempts AND if postMessage hasn't been received
             // Wait longer to give postMessage time to arrive
@@ -1544,20 +1609,22 @@
                 document.body.removeChild(hiddenForm);
               }
               
-              // Show success page with pending ORN and note
-              const successData = {
-                name: pendingFormData ? pendingFormData.name : '',
-                fatherName: pendingFormData ? pendingFormData.fatherName : '',
-                category: pendingFormData ? pendingFormData.category : '',
-                mobile: pendingFormData ? pendingFormData.mobile : '',
-                captaincy: pendingFormData ? pendingFormData.captaincy : '',
-                registrationFee: pendingFormData ? pendingFormData.registrationFee : '500',
-                jerseyName: pendingFormData ? pendingFormData.jerseyName : '',
-                jerseyNumber: pendingFormData ? pendingFormData.jerseyNumber : '',
-                tshirtSize: pendingFormData ? pendingFormData.tshirtSize : '',
-                trouserSize: pendingFormData ? pendingFormData.trouserSize : '',
-                photoPreview: pendingPhotoPreview || null
-              };
+          // Show success page with pending ORN and note
+          // Use backupFormData if pendingFormData is null
+          const formDataToUse = pendingFormData || backupFormData || {};
+          const successData = {
+            name: formDataToUse.name || '',
+            fatherName: formDataToUse.fatherName || '',
+            category: formDataToUse.category || '',
+            mobile: formDataToUse.mobile || '',
+            captaincy: formDataToUse.captaincy || '',
+            registrationFee: formDataToUse.registrationFee || '500',
+            jerseyName: formDataToUse.jerseyName || '',
+            jerseyNumber: formDataToUse.jerseyNumber || '',
+            tshirtSize: formDataToUse.tshirtSize || '',
+            trouserSize: formDataToUse.trouserSize || '',
+            photoPreview: pendingPhotoPreview || null
+          };
               document.getElementById('registrationForm').reset();
               document.getElementById('photoPreview').classList.remove('active');
               document.getElementById('photoPreview').innerHTML = '';
@@ -1822,17 +1889,19 @@
         console.log('Final ORN value:', orn);
         
         // Prepare data for success page - use actual form data
+        // Use backupFormData if pendingFormData is null
+        const formDataToUse = pendingFormData || backupFormData || {};
         const successData = {
-          name: pendingFormData ? pendingFormData.name : '',
-          fatherName: pendingFormData ? pendingFormData.fatherName : '',
-          category: pendingFormData ? pendingFormData.category : '',
-          mobile: pendingFormData ? pendingFormData.mobile : '',
-          captaincy: pendingFormData ? pendingFormData.captaincy : '',
-          registrationFee: pendingFormData ? pendingFormData.registrationFee : '500',
-          jerseyName: pendingFormData ? pendingFormData.jerseyName : '',
-          jerseyNumber: pendingFormData ? pendingFormData.jerseyNumber : '',
-          tshirtSize: pendingFormData ? pendingFormData.tshirtSize : '',
-          trouserSize: pendingFormData ? pendingFormData.trouserSize : '',
+          name: formDataToUse.name || '',
+          fatherName: formDataToUse.fatherName || '',
+          category: formDataToUse.category || '',
+          mobile: formDataToUse.mobile || '',
+          captaincy: formDataToUse.captaincy || '',
+          registrationFee: formDataToUse.registrationFee || '500',
+          jerseyName: formDataToUse.jerseyName || '',
+          jerseyNumber: formDataToUse.jerseyNumber || '',
+          tshirtSize: formDataToUse.tshirtSize || '',
+          trouserSize: formDataToUse.trouserSize || '',
           photoPreview: pendingPhotoPreview || null
         };
         
