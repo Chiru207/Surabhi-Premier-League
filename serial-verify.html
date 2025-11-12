@@ -322,6 +322,14 @@
         console.log('Serial Number:', serialNumber);
         console.log('Email:', email);
         
+        // Also log ALL postMessages received (for debugging)
+        const debugMessageHandler = function(event) {
+          console.log('🔍 DEBUG: Received postMessage from:', event.origin);
+          console.log('🔍 DEBUG: Message data:', event.data);
+          console.log('🔍 DEBUG: Message type:', typeof event.data);
+        };
+        window.addEventListener('message', debugMessageHandler);
+        
         // Fallback timeout in case postMessage doesn't arrive
         setTimeout(function() {
           if (!postMessageReceived) {
@@ -398,13 +406,25 @@
         // Also add iframe onload handler as backup
         iframe.onload = function() {
           console.log('✅ Iframe loaded successfully');
-          // Give postMessage time to arrive (iframe loads before script executes)
+          console.log('Iframe src:', iframe.src);
+          console.log('Iframe contentWindow:', iframe.contentWindow);
+          
+          // Try to check iframe content after a delay
           setTimeout(function() {
             if (!postMessageReceived) {
               console.log('⚠️ Iframe loaded but postMessage not received yet. This might mean:');
               console.log('1. Google Apps Script needs to be redeployed');
               console.log('2. The checkSerial function is not working');
               console.log('3. There is a permissions issue');
+              console.log('4. The script URL might be incorrect');
+              
+              // Try to get iframe URL
+              try {
+                const iframeUrl = iframe.contentWindow.location.href;
+                console.log('Iframe URL:', iframeUrl);
+              } catch (e) {
+                console.log('Cannot access iframe URL (CORS):', e.message);
+              }
             }
           }, 2000);
         };
