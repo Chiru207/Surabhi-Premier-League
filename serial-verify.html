@@ -265,20 +265,35 @@
         let messageHandler = null;
         
         messageHandler = function(event) {
+          // Log all messages for debugging
+          console.log('🔍 MessageHandler received:', {
+            origin: event.origin,
+            data: event.data,
+            dataType: typeof event.data,
+            hasType: event.data && event.data.type,
+            typeValue: event.data && event.data.type
+          });
+          
           // Filter out browser extension messages (they have different origins)
           // Only process messages that look like our serial check response
           if (!event.data || typeof event.data !== 'object') {
+            console.log('⏭️ Ignoring non-object message');
             return; // Ignore non-object messages (likely from extensions)
           }
           
           // Check if this is our serial check message
+          // Accept from any origin (since Google Apps Script might use different origins)
           if (event.data && event.data.type === 'serialCheck') {
             postMessageReceived = true;
-            console.log('✅ Received postMessage from Google Apps Script:', event.data);
+            console.log('✅✅✅ RECEIVED postMessage from Google Apps Script!', event.data);
+            console.log('Origin:', event.origin);
             
             // Remove listener immediately to prevent duplicate processing
             if (messageHandler) {
               window.removeEventListener('message', messageHandler);
+            }
+            if (debugMessageHandler) {
+              window.removeEventListener('message', debugMessageHandler);
             }
             
             if (event.data.success) {
@@ -312,6 +327,8 @@
               if (document.body.contains(form)) document.body.removeChild(form);
               if (document.body.contains(iframe)) document.body.removeChild(iframe);
             }
+          } else {
+            console.log('⏭️ Ignoring message - not a serialCheck type. Type:', event.data && event.data.type);
           }
         };
         
@@ -422,11 +439,24 @@
               try {
                 const iframeUrl = iframe.contentWindow.location.href;
                 console.log('Iframe URL:', iframeUrl);
+                
+                // Try to access iframe document to see if script ran
+                try {
+                  const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                  const bodyText = iframeDoc.body ? iframeDoc.body.textContent || iframeDoc.body.innerText : '';
+                  console.log('Iframe body text (first 500 chars):', bodyText.substring(0, 500));
+                  
+                  // Check if script tag exists
+                  const scripts = iframeDoc.getElementsByTagName('script');
+                  console.log('Number of script tags in iframe:', scripts.length);
+                } catch (docError) {
+                  console.log('Cannot access iframe document (CORS):', docError.message);
+                }
               } catch (e) {
                 console.log('Cannot access iframe URL (CORS):', e.message);
               }
             }
-          }, 2000);
+          }, 3000); // Increased to 3 seconds
         };
         
         iframe.onerror = function() {
