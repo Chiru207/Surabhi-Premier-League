@@ -1473,20 +1473,73 @@
         }
         
         // Check for error messages in response
+        let hasError = false;
         try {
           const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
           const responseText = iframeDoc.body ? iframeDoc.body.textContent || iframeDoc.body.innerText : '';
-          if (responseText && responseText.includes('Error:')) {
-            const errorMatch = responseText.match(/Error: ([^\n]+)/);
-            if (errorMatch) {
-              alert('Registration Error:\n\n' + errorMatch[1] + '\n\nPlease correct the issue and try again.');
+          console.log('Full response text:', responseText);
+          
+          if (responseText) {
+            // Check for error messages
+            if (responseText.includes('Error:') || responseText.toLowerCase().includes('error')) {
+              hasError = true;
+              let errorMessage = '';
+              
+              // Try to extract error message
+              const errorMatch = responseText.match(/Error: ([^\n|]+)/i);
+              if (errorMatch) {
+                errorMessage = errorMatch[1].trim();
+              } else if (responseText.includes('already registered')) {
+                errorMessage = 'This mobile number is already registered. Please use a different number or contact organizers.';
+              } else {
+                errorMessage = responseText.substring(0, 200); // First 200 chars
+              }
+              
+              console.log('Error detected:', errorMessage);
+              
+              // Show error alert
+              alert('Registration Error:\n\n' + errorMessage + '\n\nPlease correct the issue and try again.');
+              
+              // Close overlay and re-enable button
+              document.getElementById('confirmationOverlay').classList.remove('active');
               confirmBtn.textContent = originalText;
               confirmBtn.disabled = false;
-              return;
+              
+              // Remove form
+              if (document.body.contains(hiddenForm)) {
+                document.body.removeChild(hiddenForm);
+              }
+              
+              return; // Stop processing
+            }
+            
+            // Check if response is JSON success
+            try {
+              const response = JSON.parse(responseText);
+              if (response.success === false || response.error) {
+                hasError = true;
+                const errorMsg = response.error || response.message || 'Registration failed';
+                alert('Registration Error:\n\n' + errorMsg + '\n\nPlease correct the issue and try again.');
+                document.getElementById('confirmationOverlay').classList.remove('active');
+                confirmBtn.textContent = originalText;
+                confirmBtn.disabled = false;
+                if (document.body.contains(hiddenForm)) {
+                  document.body.removeChild(hiddenForm);
+                }
+                return;
+              }
+            } catch (e) {
+              // Not JSON, that's okay if it's not an error
             }
           }
         } catch (e) {
-          // Ignore CORS errors when checking for errors
+          console.log('Could not read iframe response for error check (CORS):', e);
+          // Continue - might be CORS issue but response could still be successful
+        }
+        
+        // If error was found, don't proceed
+        if (hasError) {
+          return;
         }
         
         // Prepare data for success page
@@ -1720,20 +1773,73 @@
             }
             
             // Check for error messages in response
+            let hasError = false;
             try {
               const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
               const responseText = iframeDoc.body ? iframeDoc.body.textContent || iframeDoc.body.innerText : '';
-              if (responseText && responseText.includes('Error:')) {
-                const errorMatch = responseText.match(/Error: ([^\n]+)/);
-                if (errorMatch) {
-                  alert('Registration Error:\n\n' + errorMatch[1] + '\n\nPlease correct the issue and try again.');
+              console.log('Full response text:', responseText);
+              
+              if (responseText) {
+                // Check for error messages
+                if (responseText.includes('Error:') || responseText.toLowerCase().includes('error')) {
+                  hasError = true;
+                  let errorMessage = '';
+                  
+                  // Try to extract error message
+                  const errorMatch = responseText.match(/Error: ([^\n|]+)/i);
+                  if (errorMatch) {
+                    errorMessage = errorMatch[1].trim();
+                  } else if (responseText.includes('already registered')) {
+                    errorMessage = 'This mobile number is already registered. Please use a different number or contact organizers.';
+                  } else {
+                    errorMessage = responseText.substring(0, 200); // First 200 chars
+                  }
+                  
+                  console.log('Error detected:', errorMessage);
+                  
+                  // Show error alert
+                  alert('Registration Error:\n\n' + errorMessage + '\n\nPlease correct the issue and try again.');
+                  
+                  // Close overlay and re-enable button
+                  document.getElementById('confirmationOverlay').classList.remove('active');
                   confirmBtn.textContent = originalText;
                   confirmBtn.disabled = false;
-                  return;
+                  
+                  // Remove form
+                  if (document.body.contains(hiddenForm)) {
+                    document.body.removeChild(hiddenForm);
+                  }
+                  
+                  return; // Stop processing
+                }
+                
+                // Check if response is JSON success
+                try {
+                  const response = JSON.parse(responseText);
+                  if (response.success === false || response.error) {
+                    hasError = true;
+                    const errorMsg = response.error || response.message || 'Registration failed';
+                    alert('Registration Error:\n\n' + errorMsg + '\n\nPlease correct the issue and try again.');
+                    document.getElementById('confirmationOverlay').classList.remove('active');
+                    confirmBtn.textContent = originalText;
+                    confirmBtn.disabled = false;
+                    if (document.body.contains(hiddenForm)) {
+                      document.body.removeChild(hiddenForm);
+                    }
+                    return;
+                  }
+                } catch (e) {
+                  // Not JSON, that's okay if it's not an error
                 }
               }
             } catch (e) {
-              // Ignore CORS errors when checking for errors
+              console.log('Could not read iframe response for error check (CORS):', e);
+              // Continue - might be CORS issue but response could still be successful
+            }
+            
+            // If error was found, don't proceed
+            if (hasError) {
+              return;
             }
             
             // Prepare data for success page
