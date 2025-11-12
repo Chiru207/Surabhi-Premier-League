@@ -254,13 +254,53 @@
         
         document.body.appendChild(form);
         
-        iframe.onload = function() {
-          setTimeout(function() {
+        // Set up postMessage listener BEFORE submitting form
+        let postMessageReceived = false;
+        const messageHandler = function(event) {
+          // Verify origin for security (optional but recommended)
+          // if (event.origin !== 'https://script.google.com') return;
+          
+          if (event.data && event.data.type === 'serialCheck') {
+            postMessageReceived = true;
+            console.log('Received postMessage:', event.data);
+            
+            if (event.data.success) {
+              // Store data in sessionStorage
+              sessionStorage.setItem('verifiedSerial', serialNumber);
+              sessionStorage.setItem('verifiedEmail', email);
+              sessionStorage.setItem('paymentAmount', event.data.amount || '');
+              sessionStorage.setItem('paymentToWhom', event.data.toWhom || '');
+              
+              // Clean up
+              window.removeEventListener('message', messageHandler);
+              if (document.body.contains(form)) document.body.removeChild(form);
+              if (document.body.contains(iframe)) document.body.removeChild(iframe);
+              
+              // Redirect to email verification page
+              window.location.href = 'email-verify.html';
+            } else {
+              showStatus(event.data.error || 'Verification failed. Please try again.', true);
+              verifyBtn.disabled = false;
+              verifyBtn.textContent = 'Verify Serial Number';
+              window.removeEventListener('message', messageHandler);
+              if (document.body.contains(form)) document.body.removeChild(form);
+              if (document.body.contains(iframe)) document.body.removeChild(iframe);
+            }
+          }
+        };
+        
+        // Add message listener
+        window.addEventListener('message', messageHandler);
+        
+        // Fallback timeout in case postMessage doesn't arrive
+        setTimeout(function() {
+          if (!postMessageReceived) {
+            console.log('PostMessage timeout - trying to read iframe response as fallback');
             try {
               const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
               const responseText = iframeDoc.body ? iframeDoc.body.textContent || iframeDoc.body.innerText : '';
               
-              console.log('Response from server:', responseText);
+              console.log('Fallback response from server:', responseText);
               
               if (responseText.includes('success:') || responseText.includes('verified')) {
                 // Extract amount and to whom from response
@@ -275,6 +315,11 @@
                 sessionStorage.setItem('paymentAmount', amount);
                 sessionStorage.setItem('paymentToWhom', toWhom);
                 
+                // Clean up
+                window.removeEventListener('message', messageHandler);
+                if (document.body.contains(form)) document.body.removeChild(form);
+                if (document.body.contains(iframe)) document.body.removeChild(iframe);
+                
                 // Redirect to email verification page
                 window.location.href = 'email-verify.html';
               } else if (responseText.includes('error:') || responseText.includes('not found') || responseText.includes('mismatch')) {
@@ -284,46 +329,34 @@
                 showStatus(errorMsg, true);
                 verifyBtn.disabled = false;
                 verifyBtn.textContent = 'Verify Serial Number';
+                window.removeEventListener('message', messageHandler);
+                if (document.body.contains(form)) document.body.removeChild(form);
+                if (document.body.contains(iframe)) document.body.removeChild(iframe);
               } else {
-                // Try alternative method - use postMessage
-                window.addEventListener('message', function(event) {
-                  if (event.data && event.data.type === 'serialCheck') {
-                    if (event.data.success) {
-                      sessionStorage.setItem('verifiedSerial', serialNumber);
-                      sessionStorage.setItem('verifiedEmail', email);
-                      sessionStorage.setItem('paymentAmount', event.data.amount || '');
-                      sessionStorage.setItem('paymentToWhom', event.data.toWhom || '');
-                      window.location.href = 'email-verify.html';
-                    } else {
-                      showStatus(event.data.error || 'Verification failed. Please try again.', true);
-                      verifyBtn.disabled = false;
-                      verifyBtn.textContent = 'Verify Serial Number';
-                    }
-                    window.removeEventListener('message', arguments.callee);
-                  }
-                });
-                
-                // Fallback: assume success after delay (not ideal but works)
-                setTimeout(function() {
-                  showStatus('Could not verify response. Please try again or contact organizers.', true);
-                  verifyBtn.disabled = false;
-                  verifyBtn.textContent = 'Verify Serial Number';
-                }, 3000);
+                // Still no response - show error
+                showStatus('Could not verify response. Please try again or contact organizers.', true);
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = 'Verify Serial Number';
+                window.removeEventListener('message', messageHandler);
+                if (document.body.contains(form)) document.body.removeChild(form);
+                if (document.body.contains(iframe)) document.body.removeChild(iframe);
               }
-              
-              document.body.removeChild(form);
-              document.body.removeChild(iframe);
             } catch (error) {
-              console.error('Error reading iframe response:', error);
-              showStatus('Error verifying serial number. Please try again.', true);
-              verifyBtn.disabled = false;
-              verifyBtn.textContent = 'Verify Serial Number';
-              if (document.body.contains(form)) document.body.removeChild(form);
-              if (document.body.contains(iframe)) document.body.removeChild(iframe);
+              // CORS error - this is expected, postMessage should have handled it
+              console.log('CORS error reading iframe (expected):', error);
+              if (!postMessageReceived) {
+                showStatus('Error verifying serial number. Please check your serial number and email, or contact organizers.', true);
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = 'Verify Serial Number';
+                window.removeEventListener('message', messageHandler);
+                if (document.body.contains(form)) document.body.removeChild(form);
+                if (document.body.contains(iframe)) document.body.removeChild(iframe);
+              }
             }
-          }, 1000);
-        };
+          }
+        }, 3000); // Wait 3 seconds for postMessage
         
+        // Submit form
         form.submit();
         
       } catch (error) {
