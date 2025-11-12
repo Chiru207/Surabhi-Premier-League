@@ -824,8 +824,16 @@
     // Listen for postMessage from iframe (Google Apps Script response)
     // This avoids CORS issues when reading iframe content
     window.addEventListener('message', function(event) {
+      // Log all messages for debugging
+      console.log('📨 Message received from origin:', event.origin, 'Data:', event.data);
+      
       // Verify message is from Google Apps Script (script.google.com)
-      if (event.origin.includes('script.google.com') || event.origin.includes('script.googleusercontent.com')) {
+      // Be more lenient with origin check
+      const isGoogleScript = event.origin.includes('script.google.com') || 
+                            event.origin.includes('script.googleusercontent.com') ||
+                            event.origin.includes('googleusercontent.com');
+      
+      if (isGoogleScript) {
         if (event.data && event.data.type === 'registration-success' && !postMessageReceived) {
           postMessageReceived = true;
           console.log('✅ Received postMessage from Google Apps Script:', event.data);
@@ -1440,6 +1448,12 @@
       let processed = false; // Flag to prevent multiple processing
       
       function readResponse(attempt = 1) {
+        // Check if postMessage already handled this
+        if (postMessageReceived) {
+          console.log('postMessage already received, skipping iframe reading attempt ' + attempt);
+          return;
+        }
+        
         if (processed) {
           console.log('Response already processed, skipping attempt ' + attempt);
           return;
@@ -1473,11 +1487,26 @@
             corsError = true;
             console.log('CORS error accessing iframe document (attempt ' + attempt + '):', e.message);
             
-            // Only show CORS message after many attempts AND if we're sure it's loaded
-            if (attempt >= maxAttempts) {
-              // After all attempts, if we still can't access, assume success
-              // (Google Apps Script should have processed it)
+            // Only show CORS message after many attempts AND if postMessage hasn't been received
+            // Wait longer to give postMessage time to arrive
+            if (attempt >= maxAttempts && !postMessageReceived) {
+              // Wait a bit more to see if postMessage arrives
+              if (attempt === maxAttempts) {
+                console.log('CORS blocking iframe access. Waiting 2 more seconds for postMessage...');
+                setTimeout(() => readResponse(attempt + 1), 2000);
+                return;
+              }
+              
+              // After extra wait, if we still can't access and no postMessage, assume success
               console.log('CORS blocking iframe access after all attempts. Registration likely successful but cannot read ORN.');
+              console.log('postMessage received:', postMessageReceived);
+              
+              // Double-check if postMessage was received while we were waiting
+              if (postMessageReceived) {
+                console.log('postMessage received during wait, aborting CORS handling');
+                return;
+              }
+              
               processed = true;
               
               // Don't show alert - just show success page with note
@@ -1508,11 +1537,12 @@
               document.getElementById('registrationFeeGroup').style.display = 'none';
               showSuccessPage(successData, null);
               
-              // Add a note to the success page about ORN
+              // Add a note to the success page about ORN (only if mobile number exists)
               setTimeout(() => {
                 const ornNote = document.createElement('div');
                 ornNote.style.cssText = 'background: #fef3c7; color: #92400e; padding: 15px; border-radius: 8px; margin-top: 20px; border: 1px solid #fbbf24;';
-                ornNote.innerHTML = '<strong>📱 Note:</strong> Your registration was submitted successfully! However, we could not automatically retrieve your ORN due to browser security restrictions. Please contact the organizers with your mobile number (<strong>' + (successData.mobile || '') + '</strong>) to get your ORN.';
+                const mobileDisplay = successData.mobile || 'your registered mobile number';
+                ornNote.innerHTML = '<strong>📱 Note:</strong> Your registration was submitted successfully! However, we could not automatically retrieve your ORN due to browser security restrictions. Please contact the organizers with your mobile number (<strong>' + mobileDisplay + '</strong>) to get your ORN.';
                 const successPage = document.getElementById('successPage');
                 if (successPage) {
                   const ornSection = successPage.querySelector('.detail-item:first-child');
@@ -1705,8 +1735,16 @@
         }
       }
       
-      // Start with a small delay to let iframe load
-      setTimeout(() => readResponse(1), 300);
+      // Start with a longer delay to give postMessage time to arrive first
+      // postMessage is faster and doesn't have CORS issues
+      setTimeout(() => {
+        // Check if postMessage already handled it
+        if (!postMessageReceived) {
+          readResponse(1);
+        } else {
+          console.log('postMessage already received, skipping iframe reading');
+        }
+      }, 1000); // Wait 1 second for postMessage
       
       // Function to process successful registration
       function processSuccess(orn, hasError) {
