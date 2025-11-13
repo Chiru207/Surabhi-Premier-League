@@ -224,61 +224,11 @@
         iframe.name = 'hiddenFrame';
         iframe.id = 'serialCheckIframe';
         
-        // Set up iframe handlers BEFORE appending to DOM
-        iframe.addEventListener('load', function() {
-          console.log('✅✅✅ IFRAME LOAD EVENT TRIGGERED!');
-          console.log('Iframe src:', iframe.src);
-          console.log('Iframe name:', iframe.name);
-          console.log('Iframe id:', iframe.id);
-          console.log('Iframe contentWindow:', iframe.contentWindow);
-          
-          // Check iframe content after a short delay to allow script to execute
-          setTimeout(function() {
-            console.log('=== Checking iframe after load event ===');
-            try {
-              const iframeUrl = iframe.contentWindow.location.href;
-              console.log('✅ Iframe URL:', iframeUrl);
-              
-              if (iframeUrl.includes('script.google.com')) {
-                console.log('✅ Iframe loaded from Google Apps Script');
-              } else {
-                console.log('⚠️ Iframe URL does not contain script.google.com');
-              }
-              
-              try {
-                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                if (iframeDoc && iframeDoc.body) {
-                  const bodyText = iframeDoc.body.textContent || iframeDoc.body.innerText || '';
-                  console.log('Iframe body text length:', bodyText.length);
-                  if (bodyText.length > 0) {
-                    console.log('Iframe body text:', bodyText.substring(0, 500));
-                  } else {
-                    console.log('⚠️ Iframe body is empty!');
-                  }
-                } else {
-                  console.log('⚠️ Iframe document or body not found');
-                }
-              } catch (docError) {
-                console.log('Cannot access iframe document (CORS - expected):', docError.message);
-                console.log('But postMessage should still work from the iframe script');
-              }
-            } catch (e) {
-              console.log('Cannot read iframe URL (CORS - expected):', e.message);
-            }
-          }, 1000);
-        }, { once: true });
-        
-        iframe.addEventListener('error', function() {
-          console.error('❌ Iframe error event triggered');
-        });
-        
-        // Also set onload property as backup
-        iframe.onload = function() {
-          console.log('✅✅✅ IFRAME ONLOAD PROPERTY TRIGGERED!');
-        };
-        
         document.body.appendChild(iframe);
-        console.log('Iframe created and appended to DOM, waiting for it to load...');
+        console.log('Iframe created and appended to DOM');
+        
+        // Set up iframe load handler - will be set after src is assigned
+        // This prevents the initial about:blank load from triggering our handler
         
         const form = document.createElement('form');
         form.method = 'GET';
@@ -488,37 +438,111 @@
         console.log('Iframe id:', iframe.id);
         console.log('Iframe in DOM:', document.body.contains(iframe));
         
-        // Set iframe src directly - this is more reliable than form submission
+        // Set up iframe load handler AFTER iframe is in DOM but BEFORE setting src
+        const iframeLoadHandler = function() {
+          console.log('✅✅✅ IFRAME LOAD EVENT TRIGGERED!');
+          console.log('Iframe src:', iframe.src);
+          console.log('Iframe name:', iframe.name);
+          console.log('Iframe id:', iframe.id);
+          
+          // Check iframe content after a short delay to allow script to execute
+          setTimeout(function() {
+            console.log('=== Checking iframe after load event ===');
+            try {
+              const iframeUrl = iframe.contentWindow.location.href;
+              console.log('✅ Iframe URL:', iframeUrl);
+              
+              if (iframeUrl.includes('script.google.com')) {
+                console.log('✅ Iframe loaded from Google Apps Script');
+              } else if (iframeUrl === 'about:blank') {
+                console.log('⚠️ Iframe is still at about:blank - load may have been blocked');
+                console.log('This could be due to X-Frame-Options header from Google Apps Script');
+              } else {
+                console.log('⚠️ Iframe URL does not contain script.google.com');
+              }
+              
+              try {
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                if (iframeDoc && iframeDoc.body) {
+                  const bodyText = iframeDoc.body.textContent || iframeDoc.body.innerText || '';
+                  console.log('Iframe body text length:', bodyText.length);
+                  if (bodyText.length > 0) {
+                    console.log('Iframe body text:', bodyText.substring(0, 500));
+                  } else {
+                    console.log('⚠️ Iframe body is empty!');
+                  }
+                } else {
+                  console.log('⚠️ Iframe document or body not found');
+                }
+              } catch (docError) {
+                console.log('Cannot access iframe document (CORS - expected):', docError.message);
+                console.log('But postMessage should still work from the iframe script');
+              }
+            } catch (e) {
+              console.log('Cannot read iframe URL (CORS - expected):', e.message);
+            }
+          }, 1000);
+        };
+        
+        iframe.addEventListener('load', iframeLoadHandler, { once: true });
+        iframe.addEventListener('error', function() {
+          console.error('❌ Iframe error event triggered');
+        });
+        
+        // Also set onload property as backup
+        iframe.onload = iframeLoadHandler;
+        
+        // Try loading iframe - if blocked, the postMessage might still work
+        // Google Apps Script may block iframe embedding, but the script might still execute
         setTimeout(() => {
           try {
             console.log('Setting iframe src to:', fullUrlString);
-            iframe.src = fullUrlString;
-            console.log('✅ Iframe src set, waiting for load event...');
+            console.log('💡 NOTE: Google Apps Script may block iframe embedding');
+            console.log('💡 But the script should still execute and send postMessage');
+            console.log('💡 If this fails, try opening the URL directly:', fullUrlString);
             
-            // Also check if iframe loads after delays
+            // Set iframe src
+            iframe.src = fullUrlString;
+            console.log('✅ Iframe src set');
+            
+            // Also try opening in a popup as a fallback/test
+            // This will help us verify if the script works when not in an iframe
+            console.log('💡 Opening URL in popup window for testing...');
+            const popup = window.open(fullUrlString, '_blank', 'width=400,height=300');
+            if (popup) {
+              console.log('✅ Popup opened - check its console to see if script runs');
+              // Close popup after 5 seconds
+              setTimeout(() => {
+                if (popup && !popup.closed) {
+                  popup.close();
+                  console.log('Popup closed');
+                }
+              }, 5000);
+            } else {
+              console.log('⚠️ Popup was blocked - this is normal if popup blocker is active');
+            }
+            
+            // Check iframe status periodically
             const checkIntervals = [1000, 2000, 3000, 4000];
             checkIntervals.forEach(delay => {
               setTimeout(() => {
                 if (!postMessageReceived) {
                   console.log(`Checking iframe status after ${delay}ms...`);
-                  console.log('Iframe src attribute:', iframe.getAttribute('src'));
-                  console.log('Iframe src property:', iframe.src);
-                  console.log('Iframe in DOM:', document.body.contains(iframe));
-                  
                   try {
                     if (iframe.contentWindow) {
-                      console.log('Iframe contentWindow exists');
                       try {
                         const iframeUrl = iframe.contentWindow.location.href;
                         console.log('Iframe loaded URL:', iframeUrl);
+                        if (iframeUrl === 'about:blank' && iframe.src.includes('script.google.com')) {
+                          console.log('⚠️ Iframe is blocked, but postMessage should still work');
+                          console.log('The Google Apps Script script should execute even if iframe is blocked');
+                        }
                       } catch (urlError) {
-                        console.log('Cannot read iframe URL (CORS):', urlError.message);
+                        console.log('Cannot read iframe URL (CORS - expected):', urlError.message);
                       }
-                    } else {
-                      console.log('Iframe contentWindow does not exist yet');
                     }
                   } catch (e) {
-                    console.log('Cannot access iframe contentWindow:', e.message);
+                    console.log('Cannot access iframe:', e.message);
                   }
                 }
               }, delay);
