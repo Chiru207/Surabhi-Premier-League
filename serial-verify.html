@@ -664,7 +664,7 @@
               } else {
                 console.log('✅ PostMessage was received, skipping JSON fallback');
               }
-            }, 3000); // Wait 3 seconds for iframe/postMessage
+            }, 2000); // Wait 2 seconds for iframe/postMessage (reduced for faster JSON fallback)
             
             // Store timeout reference so we can clear it if postMessage arrives
             window.jsonFallbackTimeout = jsonFallbackTimeout;
