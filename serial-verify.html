@@ -300,6 +300,13 @@
             console.log('✅✅✅ RECEIVED postMessage from Google Apps Script!', event.data);
             console.log('Origin:', event.origin);
             
+            // Clear JSON fallback timeout since postMessage worked
+            if (window.jsonFallbackTimeout) {
+              clearTimeout(window.jsonFallbackTimeout);
+              console.log('✅ Cleared JSON fallback timeout');
+              window.jsonFallbackTimeout = null;
+            }
+            
             // Remove listener immediately to prevent duplicate processing
             if (messageHandler) {
               window.removeEventListener('message', messageHandler);
@@ -509,39 +516,61 @@
             
             // Try JSON fetch with CORS proxy (allorigins.win is a free CORS proxy)
             // This is a fallback if iframe doesn't work
-            setTimeout(() => {
+            const jsonFallbackTimeout = setTimeout(() => {
+              console.log('⏰ JSON Fallback timeout triggered (3 seconds)');
+              console.log('postMessageReceived status:', postMessageReceived);
+              
               if (!postMessageReceived) {
-                console.log('💡 Iframe approach failed, trying JSON with CORS proxy...');
+                console.log('💡💡💡 IFRAME APPROACH FAILED - TRYING JSON WITH CORS PROXY...');
                 const corsProxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(jsonUrl);
+                console.log('CORS Proxy URL:', corsProxyUrl);
+                console.log('Original JSON URL:', jsonUrl);
                 
                 fetch(corsProxyUrl)
                   .then(response => {
+                    console.log('✅ Fetch response received, status:', response.status);
                     if (!response.ok) {
-                      throw new Error('Network response was not ok');
+                      throw new Error('Network response was not ok: ' + response.status);
                     }
-                    return response.json();
+                    return response.text(); // Get as text first to handle potential errors
                   })
-                  .then(data => {
-                    console.log('✅ JSON response received:', data);
-                    if (data.success) {
-                      // Store data in sessionStorage
-                      sessionStorage.setItem('verifiedSerial', data.serialNumber || serialNumber);
-                      sessionStorage.setItem('verifiedEmail', data.email || email);
-                      sessionStorage.setItem('paymentAmount', data.amount || '');
-                      sessionStorage.setItem('paymentToWhom', data.toWhom || '');
-                      
-                      console.log('✅ Stored in sessionStorage via JSON fallback');
-                      
-                      // Redirect to email verification page
-                      window.location.href = 'email-verify.html';
-                    } else {
-                      showStatus(data.error || 'Verification failed. Please try again.', true);
-                      verifyBtn.disabled = false;
-                      verifyBtn.textContent = 'Verify Serial Number';
+                  .then(text => {
+                    console.log('Raw JSON response text (first 500 chars):', text.substring(0, 500));
+                    try {
+                      const data = JSON.parse(text);
+                      console.log('✅✅✅ JSON response parsed successfully:', data);
+                      if (data.success) {
+                        // Store data in sessionStorage
+                        sessionStorage.setItem('verifiedSerial', data.serialNumber || serialNumber);
+                        sessionStorage.setItem('verifiedEmail', data.email || email);
+                        sessionStorage.setItem('paymentAmount', data.amount || '');
+                        sessionStorage.setItem('paymentToWhom', data.toWhom || '');
+                        
+                        console.log('✅✅✅ Stored in sessionStorage via JSON fallback');
+                        console.log('Redirecting to email-verify.html...');
+                        
+                        // Clean up
+                        window.removeEventListener('message', messageHandler);
+                        if (document.body.contains(form)) document.body.removeChild(form);
+                        if (document.body.contains(iframe)) document.body.removeChild(iframe);
+                        
+                        // Redirect to email verification page
+                        window.location.href = 'email-verify.html';
+                      } else {
+                        console.error('❌ Verification failed:', data.error);
+                        showStatus(data.error || 'Verification failed. Please try again.', true);
+                        verifyBtn.disabled = false;
+                        verifyBtn.textContent = 'Verify Serial Number';
+                      }
+                    } catch (parseError) {
+                      console.error('❌ Error parsing JSON:', parseError);
+                      console.error('Response text was:', text);
+                      throw new Error('Invalid JSON response: ' + parseError.message);
                     }
                   })
                   .catch(error => {
                     console.error('❌ JSON fetch error:', error);
+                    console.error('Error details:', error.message);
                     // If JSON also fails, show error
                     if (!postMessageReceived) {
                       showStatus('Could not verify serial number. Please ensure:\n1. Serial number is correct\n2. Email matches the one used during payment\n3. Try refreshing the page and try again\n\nIf the problem persists, contact organizers.', true);
@@ -549,8 +578,13 @@
                       verifyBtn.textContent = 'Verify Serial Number';
                     }
                   });
+              } else {
+                console.log('✅ PostMessage was received, skipping JSON fallback');
               }
             }, 3000); // Wait 3 seconds for iframe/postMessage
+            
+            // Store timeout reference so we can clear it if postMessage arrives
+            window.jsonFallbackTimeout = jsonFallbackTimeout;
             
             // Check iframe status periodically
             const checkIntervals = [1000, 2000, 3000, 4000, 5000];
