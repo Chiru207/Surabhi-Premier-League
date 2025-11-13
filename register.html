@@ -1125,13 +1125,32 @@
         yPos += 10;
       }
       
+      // Thank you message
       doc.setFontSize(12);
       doc.setFont(undefined, 'normal');
       doc.setTextColor(0, 0, 0);
-      const thankYouText = 'Thank you for registering. Give organizers mobile numbers 9395185132, 8074450066. Visit surabhipremierleague.info for more details.';
+      const thankYouText = 'Thank you for successfully registering for SPL-2025. All the best';
       const thankYouLines = doc.splitTextToSize(thankYouText, 170);
       doc.text(thankYouLines, 20, yPos);
-      yPos += Math.max(8, thankYouLines.length * 6);
+      yPos += Math.max(8, thankYouLines.length * 6) + 5;
+      
+      // Organizers contact info with hyperlink
+      doc.setFontSize(11);
+      doc.setTextColor(0, 0, 255); // Blue color for hyperlink
+      const organizersText = 'Organizers: 9395185132, 8074450066. https://surabhipremierleague.info/';
+      const organizersLines = doc.splitTextToSize(organizersText, 170);
+      doc.text(organizersLines, 20, yPos);
+      
+      // Add hyperlink to the URL (jsPDF supports this)
+      const urlText = 'https://surabhipremierleague.info/';
+      const urlStartIndex = organizersText.indexOf(urlText);
+      if (urlStartIndex >= 0) {
+        // Calculate position of URL in the text
+        const urlX = 20 + doc.getTextWidth(organizersText.substring(0, urlStartIndex));
+        const urlY = yPos;
+        doc.link(urlX, urlY - 5, doc.getTextWidth(urlText), 5, { url: urlText });
+      }
+      yPos += Math.max(8, organizersLines.length * 6);
       
       // Footer
       const pageCount = doc.internal.pages.length - 1;
@@ -1487,37 +1506,108 @@
       console.log('Pending form data prepared:', pendingFormData);
       console.log('Backup form data saved:', backupFormData);
       
-      // Convert photo to base64 if exists
-      if (file) {
-        console.log('Photo file found, converting to base64...');
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          console.log('Photo converted to base64');
-          pendingPhotoBase64 = e.target.result.split(',')[1];
-          pendingPhotoName = file.name;
-          pendingPhotoType = file.type;
-          pendingPhotoPreview = e.target.result; // Full data URL for preview
-          
-          // Show confirmation
-          console.log('Calling showConfirmation with photo...');
-          showConfirmation(pendingFormData, registrationFee, pendingPhotoPreview);
-        };
-        reader.onerror = function(error) {
-          console.error('Error reading photo:', error);
-          alert('Error reading photo file. Please try again.');
-        };
-        reader.readAsDataURL(file);
-      } else {
-        console.log('No photo file, proceeding without photo...');
-        pendingPhotoBase64 = '';
-        pendingPhotoName = '';
-        pendingPhotoType = '';
-        pendingPhotoPreview = null;
-        
-        // Show confirmation immediately (no photo to process)
-        console.log('Calling showConfirmation without photo...');
-        showConfirmation(pendingFormData, registrationFee, null);
+      // Check mobile number uniqueness before showing confirmation
+      console.log('Checking mobile number uniqueness...');
+      const checkMobileBtn = document.getElementById('reviewBtn');
+      if (checkMobileBtn) {
+        checkMobileBtn.disabled = true;
+        checkMobileBtn.textContent = 'Checking...';
       }
+      
+      // Call Google Apps Script to check mobile number
+      const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxY-Hoq9xCwO2i_rixEmDzThNVe8m4yDLWhAewhM9Vs8fq4TFYbNRAff87-0E9sR2NQ/exec';
+      fetch(GOOGLE_SCRIPT_URL + '?action=checkMobile&mobile=' + encodeURIComponent(mobile))
+        .then(response => response.text())
+        .then(result => {
+          console.log('Mobile check response:', result);
+          
+          // Re-enable button
+          if (checkMobileBtn) {
+            checkMobileBtn.disabled = false;
+            checkMobileBtn.textContent = 'Review Registration';
+          }
+          
+          // Check if mobile is already registered
+          if (result.includes('already registered') || result.includes('Duplicate') || result.toLowerCase().includes('error')) {
+            alert('This mobile number is already registered. Please use a different mobile number or contact the organizers.');
+            return false;
+          }
+          
+          // Mobile number is unique, proceed with photo processing and confirmation
+          // Convert photo to base64 if exists
+          if (file) {
+            console.log('Photo file found, converting to base64...');
+            const reader = new FileReader();
+            reader.onload = function(e) {
+              console.log('Photo converted to base64');
+              pendingPhotoBase64 = e.target.result.split(',')[1];
+              pendingPhotoName = file.name;
+              pendingPhotoType = file.type;
+              pendingPhotoPreview = e.target.result; // Full data URL for preview
+              
+              // Show confirmation
+              console.log('Calling showConfirmation with photo...');
+              showConfirmation(pendingFormData, registrationFee, pendingPhotoPreview);
+            };
+            reader.onerror = function(error) {
+              console.error('Error reading photo:', error);
+              alert('Error reading photo file. Please try again.');
+            };
+            reader.readAsDataURL(file);
+          } else {
+            console.log('No photo file, proceeding without photo...');
+            pendingPhotoBase64 = '';
+            pendingPhotoName = '';
+            pendingPhotoType = '';
+            pendingPhotoPreview = null;
+            
+            // Show confirmation immediately (no photo to process)
+            console.log('Calling showConfirmation without photo...');
+            showConfirmation(pendingFormData, registrationFee, null);
+          }
+        })
+        .catch(error => {
+          console.error('Error checking mobile number:', error);
+          // Re-enable button
+          if (checkMobileBtn) {
+            checkMobileBtn.disabled = false;
+            checkMobileBtn.textContent = 'Review Registration';
+          }
+          // Proceed anyway (server will check again on submission)
+          alert('Could not verify mobile number uniqueness. You can proceed, but the server will check again on submission.');
+          
+          // Convert photo to base64 if exists
+          if (file) {
+            console.log('Photo file found, converting to base64...');
+            const reader = new FileReader();
+            reader.onload = function(e) {
+              console.log('Photo converted to base64');
+              pendingPhotoBase64 = e.target.result.split(',')[1];
+              pendingPhotoName = file.name;
+              pendingPhotoType = file.type;
+              pendingPhotoPreview = e.target.result; // Full data URL for preview
+              
+              // Show confirmation
+              console.log('Calling showConfirmation with photo...');
+              showConfirmation(pendingFormData, registrationFee, pendingPhotoPreview);
+            };
+            reader.onerror = function(error) {
+              console.error('Error reading photo:', error);
+              alert('Error reading photo file. Please try again.');
+            };
+            reader.readAsDataURL(file);
+          } else {
+            console.log('No photo file, proceeding without photo...');
+            pendingPhotoBase64 = '';
+            pendingPhotoName = '';
+            pendingPhotoType = '';
+            pendingPhotoPreview = null;
+            
+            // Show confirmation immediately (no photo to process)
+            console.log('Calling showConfirmation without photo...');
+            showConfirmation(pendingFormData, registrationFee, null);
+          }
+        });
       
       return false;
     }
