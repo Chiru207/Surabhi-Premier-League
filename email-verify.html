@@ -338,12 +338,11 @@
       statusDiv.className = 'status-message status-' + type;
     }
     
-    // Check if email is already verified
+    // Check if email is already verified - auto redirect to registration
     const storedEmail = sessionStorage.getItem('verifiedEmail');
     if (storedEmail) {
-      document.getElementById('email').value = storedEmail;
-      document.getElementById('email').disabled = true;
-      showStatus('Email already verified. You can proceed to registration.', 'info');
+      // Auto redirect to registration if email is already verified
+      window.location.href = 'register.html';
     }
   </script>
 </body>
