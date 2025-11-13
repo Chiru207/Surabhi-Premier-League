@@ -216,6 +216,9 @@
       verifyBtn.textContent = 'Verifying...';
       hideStatus();
       
+      // Show a message that verification is in progress and may take up to a minute
+      showStatus('Verification in progress. Please wait... This may take up to a minute.', false);
+      
       try {
         // Since we're using no-cors, we can't read the response directly
         // We'll use a hidden iframe to get the response
@@ -468,11 +471,12 @@
             }
             
             // Final check - only show generic error for unexpected technical issues
+            // This timeout is now 60 seconds, so we've waited long enough
             if (!postMessageReceived) {
-              console.error('Both postMessage and iframe reading failed. Serial:', serialNumber, 'Email:', email);
-              // This is an unexpected technical issue (network, server error, etc.)
+              console.error('Verification timeout after 60 seconds. Serial:', serialNumber, 'Email:', email);
+              // This is an unexpected technical issue (network, server error, payment sheet missing, etc.)
               // Not a validation error - those should have been caught earlier
-              showStatus('Could not verify serial number due to a technical issue. Please try refreshing the page and try again. If the problem persists, contact organizers.', true);
+              showStatus('Could not verify serial number due to a technical issue. The verification process timed out after 1 minute. Please try refreshing the page and try again. If the problem persists, contact organizers.', true);
               verifyBtn.disabled = false;
               verifyBtn.textContent = 'Verify Serial Number';
               window.removeEventListener('message', messageHandler);
@@ -484,7 +488,7 @@
           } else {
             console.log('PostMessage was received, no fallback needed');
           }
-        }, 5000); // Wait 5 seconds for postMessage
+        }, 60000); // Wait 60 seconds (1 minute) for postMessage before showing fallback error
         
         // Load the iframe directly instead of using form submission
         console.log('🚀 Loading iframe directly with URL...');
@@ -898,7 +902,7 @@
               } else {
                 console.log('✅ PostMessage was received, skipping JSON fallback');
               }
-            }, 2000); // Wait 2 seconds for iframe/postMessage
+            }, 15000); // Wait 15 seconds for iframe/postMessage before retrying JSON
             
             // Store timeout reference so we can clear it if postMessage arrives
             window.jsonFallbackTimeout = jsonFallbackTimeout;
