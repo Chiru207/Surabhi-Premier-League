@@ -307,6 +307,13 @@
               window.jsonFallbackTimeout = null;
             }
             
+            // Clear the 5-second fallback timeout as well
+            if (window.fallbackTimeout) {
+              clearTimeout(window.fallbackTimeout);
+              console.log('✅ Cleared 5-second fallback timeout');
+              window.fallbackTimeout = null;
+            }
+            
             // Remove listener immediately to prevent duplicate processing
             if (messageHandler) {
               window.removeEventListener('message', messageHandler);
@@ -345,6 +352,9 @@
               verifyBtn.textContent = 'Verify Serial Number';
               if (document.body.contains(form)) document.body.removeChild(form);
               if (document.body.contains(iframe)) document.body.removeChild(iframe);
+              
+              // Mark that we've handled the error, so no fallback messages appear
+              return; // Exit early to prevent any further processing
             }
           } else {
             console.log('⏭️ Ignoring message - not a serialCheck type. Type:', event.data && event.data.type);
@@ -367,7 +377,7 @@
         window.addEventListener('message', debugMessageHandler);
         
         // Fallback timeout in case postMessage doesn't arrive
-        setTimeout(function() {
+        window.fallbackTimeout = setTimeout(function() {
           if (!postMessageReceived) {
             console.log('⏰ PostMessage timeout after 5 seconds - trying to read iframe response as fallback');
             console.log('This might be a CORS issue. Checking iframe...');
@@ -557,10 +567,24 @@
                         // Redirect to email verification page
                         window.location.href = 'email-verify.html';
                       } else {
+                        // Error received - mark as received to prevent other fallbacks
+                        postMessageReceived = true;
+                        
+                        // Clear the 5-second fallback timeout
+                        if (window.fallbackTimeout) {
+                          clearTimeout(window.fallbackTimeout);
+                          window.fallbackTimeout = null;
+                        }
+                        
                         console.error('❌ Verification failed:', data.error);
                         showStatus(data.error || 'Verification failed. Please try again.', true);
                         verifyBtn.disabled = false;
                         verifyBtn.textContent = 'Verify Serial Number';
+                        
+                        // Clean up
+                        window.removeEventListener('message', messageHandler);
+                        if (document.body.contains(form)) document.body.removeChild(form);
+                        if (document.body.contains(iframe)) document.body.removeChild(iframe);
                       }
                     } catch (parseError) {
                       console.error('❌ Error parsing JSON:', parseError);
