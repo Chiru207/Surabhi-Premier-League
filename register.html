@@ -696,19 +696,16 @@
         <small class="help-text">Enter 10 digit mobile number</small>
       </div>
       
-      <div class="form-group">
-        <label for="captaincy">Captaincy *</label>
-        <select id="captaincy" name="captaincy" required>
-          <option value="">Select</option>
-          <option value="Yes">Yes</option>
-          <option value="No">No</option>
-        </select>
+      <div class="form-group" id="captaincyInfoGroup">
+        <label>Captaincy Status</label>
+        <div class="fee-display" id="captaincyStatus">Determined by payment amount</div>
+        <small class="help-text">₹2000 = Captaincy (Yes), ₹500 = No Captaincy</small>
       </div>
       
-      <div class="form-group" id="registrationFeeGroup" style="display: none;">
+      <div class="form-group" id="registrationFeeGroup">
         <label>Registration Fee</label>
         <div class="fee-display" id="registrationFee">₹0</div>
-        <small class="help-text">Fee: ₹2000 for Captaincy, ₹500 otherwise</small>
+        <small class="help-text">Based on your payment amount</small>
       </div>
       
       <div class="form-group">
@@ -807,8 +804,6 @@
       
       <div class="success-actions">
         <button id="emailPdfBtn" class="download-btn">📧 Email Registration Details (PDF)</button>
-        <a href="register.html" class="new-registration-btn">Register Another Player</a>
-        <a href="index.html" class="home-btn">← Back to Home</a>
       </div>
     </div>
   </div>
@@ -850,13 +845,18 @@
           
           // Use backupFormData if pendingFormData is null
           const formDataToUse = pendingFormData || backupFormData || {};
+          // Determine captaincy from payment amount
+          const paymentAmount = sessionStorage.getItem('paymentAmount') || '';
+          const amount = parseInt(paymentAmount) || 0;
+          const captaincy = amount === 2000 ? 'Yes' : 'No';
+          
           const successData = {
             name: formDataToUse.name || '',
             fatherName: formDataToUse.fatherName || '',
             category: formDataToUse.category || '',
             mobile: formDataToUse.mobile || '',
-            captaincy: formDataToUse.captaincy || '',
-            registrationFee: formDataToUse.registrationFee || '500',
+            captaincy: captaincy,
+            registrationFee: amount.toString() || '0',
             jerseyName: formDataToUse.jerseyName || '',
             jerseyNumber: formDataToUse.jerseyNumber || '',
             tshirtSize: formDataToUse.tshirtSize || '',
@@ -1376,11 +1376,16 @@
         const fatherName = document.getElementById('fatherName').value.trim();
         const category = document.getElementById('category').value;
         const mobile = document.getElementById('mobile').value.trim();
-        const captaincy = document.getElementById('captaincy').value;
         const jerseyName = document.getElementById('jerseyName').value.trim();
         const jerseyNumber = document.getElementById('jerseyNumber').value.trim();
         const tshirtSize = document.getElementById('tshirtSize').value;
         const trouserSize = document.getElementById('trouserSize').value;
+        
+        // Get payment amount and determine captaincy
+        const paymentAmount = sessionStorage.getItem('paymentAmount') || '';
+        const amount = parseInt(paymentAmount) || 0;
+        const captaincy = amount === 2000 ? 'Yes' : 'No';
+        const calculatedRegistrationFee = amount || 0;
         
         // Validate required fields
         if (!name) {
@@ -1399,8 +1404,8 @@
           alert('Please enter a valid 10-digit mobile number.');
           return false;
         }
-        if (!captaincy) {
-          alert('Please select captaincy option.');
+        if (!paymentAmount || amount === 0) {
+          alert('Payment amount not found. Please verify your serial number and email first.');
           return false;
         }
         if (!jerseyName) {
@@ -1438,8 +1443,8 @@
           return false;
         }
         
-        // Calculate registration fee
-        const registrationFee = captaincy === 'Yes' ? 2000 : 500;
+        // Registration fee is already determined from payment amount
+        const registrationFee = calculatedRegistrationFee;
         
         // Get verified email and serial number from sessionStorage
         const verifiedEmail = sessionStorage.getItem('verifiedEmail') || '';
@@ -1682,16 +1687,13 @@
           document.getElementById('fatherName').value = pendingFormData.fatherName || '';
           document.getElementById('category').value = pendingFormData.category || '';
           document.getElementById('mobile').value = pendingFormData.mobile || '';
-          document.getElementById('captaincy').value = pendingFormData.captaincy || '';
           document.getElementById('jerseyName').value = pendingFormData.jerseyName || '';
           document.getElementById('jerseyNumber').value = pendingFormData.jerseyNumber || '';
           document.getElementById('tshirtSize').value = pendingFormData.tshirtSize || '';
           document.getElementById('trouserSize').value = pendingFormData.trouserSize || '';
           
-          // Trigger captaincy change to show fee
-          if (pendingFormData.captaincy) {
-            document.getElementById('captaincy').dispatchEvent(new Event('change'));
-          }
+          // Update captaincy and fee based on payment amount
+          updateCaptaincyAndFee();
           
           // Restore photo preview if exists
           if (pendingPhotoPreview) {
@@ -1843,13 +1845,18 @@
           // Show success page with pending ORN and note
           // Use backupFormData if pendingFormData is null
           const formDataToUse = pendingFormData || backupFormData || {};
+          // Determine captaincy from payment amount
+          const paymentAmount = sessionStorage.getItem('paymentAmount') || '';
+          const amount = parseInt(paymentAmount) || 0;
+          const captaincy = amount === 2000 ? 'Yes' : 'No';
+          
           const successData = {
             name: formDataToUse.name || '',
             fatherName: formDataToUse.fatherName || '',
             category: formDataToUse.category || '',
             mobile: formDataToUse.mobile || '',
-            captaincy: formDataToUse.captaincy || '',
-            registrationFee: formDataToUse.registrationFee || '500',
+            captaincy: captaincy,
+            registrationFee: amount.toString() || '0',
             jerseyName: formDataToUse.jerseyName || '',
             jerseyNumber: formDataToUse.jerseyNumber || '',
             tshirtSize: formDataToUse.tshirtSize || '',
