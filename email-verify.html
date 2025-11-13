@@ -306,6 +306,8 @@
           
           // Store verified email in sessionStorage
           sessionStorage.setItem('verifiedEmail', email);
+          // Mark that OTP verification is complete (not just serial verification)
+          sessionStorage.setItem('emailOtpVerified', 'true');
           
           // Redirect to registration page after 1 second
           setTimeout(() => {
@@ -338,11 +340,18 @@
       statusDiv.className = 'status-message status-' + type;
     }
     
-    // Check if email is already verified - auto redirect to registration
-    const storedEmail = sessionStorage.getItem('verifiedEmail');
-    if (storedEmail) {
-      // Auto redirect to registration if email is already verified
+    // Check if email OTP is already verified (not just serial verification)
+    // Only redirect if OTP was verified, not just if email exists from serial verification
+    const emailOtpVerified = sessionStorage.getItem('emailOtpVerified');
+    if (emailOtpVerified === 'true') {
+      // Auto redirect to registration if email OTP is already verified
       window.location.href = 'register.html';
+    }
+    
+    // If no serial verification, redirect back
+    if (!sessionStorage.getItem('verifiedSerial')) {
+      alert('Please verify your serial number first. Redirecting...');
+      window.location.href = 'serial-verify.html';
     }
   </script>
 </body>
