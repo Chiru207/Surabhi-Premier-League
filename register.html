@@ -786,21 +786,6 @@
       
       <div class="success-details" id="successDetails"></div>
       
-      <div class="payment-instructions">
-        <h3>Payment Instructions</h3>
-        <p class="payment-note">
-          <strong>Please quote your mobile number when making the payment.</strong>
-        </p>
-        <div class="payment-contacts">
-          <p>Pay the registration fee to:</p>
-          <div class="contact-item">
-            <strong>Surya:</strong> <a href="tel:7036216447">7036216447</a>
-          </div>
-          <div class="contact-item">
-            <strong>Sai Subhakar:</strong> <a href="tel:8985182185">8985182185</a>
-          </div>
-        </div>
-      </div>
       
       <div class="success-actions">
         <button id="emailPdfBtn" class="download-btn">📧 Email Registration Details (PDF)</button>
@@ -976,20 +961,15 @@
         detailsHTML += '<span class="success-detail-value">' + (data.captaincy || '') + '</span>';
         detailsHTML += '</div>';
         
-        detailsHTML += '<div class="success-detail-row">';
-        detailsHTML += '<span class="success-detail-label">Registration Fee:</span>';
-        detailsHTML += '<span class="success-detail-value fee">₹' + (data.registrationFee || '0') + '</span>';
-        detailsHTML += '</div>';
-        
-        // Payment information
+        // Combine Registration Fee and Amount Paid into Registration Fee Paid
         const paymentAmount = sessionStorage.getItem('paymentAmount') || '';
         const paymentToWhom = sessionStorage.getItem('paymentToWhom') || '';
-        if (paymentAmount) {
-          detailsHTML += '<div class="success-detail-row">';
-          detailsHTML += '<span class="success-detail-label">Amount Paid:</span>';
-          detailsHTML += '<span class="success-detail-value fee">₹' + paymentAmount + '</span>';
-          detailsHTML += '</div>';
-        }
+        const registrationFeePaid = paymentAmount || data.registrationFee || '0';
+        
+        detailsHTML += '<div class="success-detail-row">';
+        detailsHTML += '<span class="success-detail-label">Registration Fee Paid:</span>';
+        detailsHTML += '<span class="success-detail-value fee">Rs. ' + registrationFeePaid + '</span>';
+        detailsHTML += '</div>';
         if (paymentToWhom) {
           detailsHTML += '<div class="success-detail-row">';
           detailsHTML += '<span class="success-detail-label">Paid To:</span>';
@@ -1077,11 +1057,11 @@
       doc.setFontSize(12);
       doc.setTextColor(0, 0, 0);
       
-      // Mobile Number (highlighted as identifier)
+      // Mobile Number (no payment quote text)
       doc.setFontSize(14);
       doc.setTextColor(0, 100, 200);
       doc.setFont(undefined, 'bold');
-      doc.text('Mobile Number (Quote this for payment):', 20, yPos);
+      doc.text('Mobile Number:', 20, yPos);
       doc.text(registrationData.mobile || '', 120, yPos);
       yPos += 10;
       
@@ -1096,6 +1076,9 @@
       const paymentToWhom = sessionStorage.getItem('paymentToWhom') || '';
       const serialNumber = sessionStorage.getItem('verifiedSerial') || '';
       
+      // Combine Registration Fee and Amount Paid into Registration Fee Paid
+      const registrationFeePaid = paymentAmount || registrationData.registrationFee || '0';
+      
       const details = [
         ['Name:', registrationData.name || ''],
         ['Father Name:', registrationData.fatherName || ''],
@@ -1103,13 +1086,10 @@
         ['Email:', registrationData.email || ''],
         ['Serial Number:', serialNumber],
         ['Captaincy:', registrationData.captaincy || ''],
-        ['Registration Fee:', '₹' + (registrationData.registrationFee || '0')]
+        ['Registration Fee Paid:', 'Rs. ' + registrationFeePaid]
       ];
       
-      // Add payment information if available
-      if (paymentAmount) {
-        details.push(['Amount Paid:', '₹' + paymentAmount]);
-      }
+      // Add payment to whom if available
       if (paymentToWhom) {
         details.push(['Paid To:', paymentToWhom]);
       }
@@ -1137,7 +1117,7 @@
         yPos += Math.max(8, lines.length * 6);
       });
       
-      // Payment instructions
+      // Thank you message and contact information
       if (yPos > 250) {
         doc.addPage();
         yPos = 20;
@@ -1145,28 +1125,13 @@
         yPos += 10;
       }
       
-      doc.setFontSize(14);
-      doc.setFont(undefined, 'bold');
-      doc.setTextColor(200, 150, 0);
-      doc.text('Payment Instructions', 20, yPos);
-      yPos += 10;
-      
-      doc.setFontSize(11);
-      doc.setTextColor(0, 0, 0);
-      doc.setFont(undefined, 'bold');
-      const paymentNote = 'Please quote your mobile number (' + (registrationData.mobile || '') + ') when making the payment.';
-      const paymentLines = doc.splitTextToSize(paymentNote, 170);
-      doc.text(paymentLines, 20, yPos);
-      yPos += Math.max(8, paymentLines.length * 6);
-      
+      doc.setFontSize(12);
       doc.setFont(undefined, 'normal');
-      doc.text('Pay the registration fee to:', 20, yPos);
-      yPos += 8;
-      
-      doc.setFont(undefined, 'bold');
-      doc.text('Surya: 7036216447', 20, yPos);
-      yPos += 8;
-      doc.text('Sai Subhakar: 8985182185', 20, yPos);
+      doc.setTextColor(0, 0, 0);
+      const thankYouText = 'Thank you for registering. Give organizers mobile numbers 9395185132, 8074450066. Visit surabhipremierleague.info for more details.';
+      const thankYouLines = doc.splitTextToSize(thankYouText, 170);
+      doc.text(thankYouLines, 20, yPos);
+      yPos += Math.max(8, thankYouLines.length * 6);
       
       // Footer
       const pageCount = doc.internal.pages.length - 1;
@@ -1645,8 +1610,11 @@
         console.log('Details div innerHTML length:', detailsDiv.innerHTML.length);
         
         if (feeDiv) {
-          feeDiv.textContent = 'Registration Fee: ₹' + fee;
-          console.log('Fee set:', fee);
+          // Combine Registration Fee and Amount Paid
+          const paymentAmount = sessionStorage.getItem('paymentAmount') || '';
+          const registrationFeePaid = paymentAmount || fee.toString();
+          feeDiv.textContent = 'Registration Fee Paid: Rs. ' + registrationFeePaid;
+          console.log('Fee set:', registrationFeePaid);
         }
         
         // Ensure confirmation box is visible
