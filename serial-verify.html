@@ -492,63 +492,97 @@
         // Also set onload property as backup
         iframe.onload = iframeLoadHandler;
         
-        // Try loading iframe - if blocked, the postMessage might still work
-        // Google Apps Script may block iframe embedding, but the script might still execute
+        // Try iframe first, then fallback to JSON with CORS proxy if needed
+        console.log('🚀 Attempting to load Google Apps Script...');
+        console.log('URL:', fullUrlString);
+        
+        // Try iframe approach first
         setTimeout(() => {
           try {
             console.log('Setting iframe src to:', fullUrlString);
-            console.log('💡 NOTE: Google Apps Script may block iframe embedding');
-            console.log('💡 But the script should still execute and send postMessage');
-            console.log('💡 If this fails, try opening the URL directly:', fullUrlString);
-            
-            // Set iframe src
             iframe.src = fullUrlString;
             console.log('✅ Iframe src set');
             
-            // Also try opening in a popup as a fallback/test
-            // This will help us verify if the script works when not in an iframe
-            console.log('💡 Opening URL in popup window for testing...');
-            const popup = window.open(fullUrlString, '_blank', 'width=400,height=300');
-            if (popup) {
-              console.log('✅ Popup opened - check its console to see if script runs');
-              // Close popup after 5 seconds
-              setTimeout(() => {
-                if (popup && !popup.closed) {
-                  popup.close();
-                  console.log('Popup closed');
-                }
-              }, 5000);
-            } else {
-              console.log('⚠️ Popup was blocked - this is normal if popup blocker is active');
-            }
+            // Also try JSON format with CORS proxy as fallback
+            const jsonUrl = fullUrlString + '&format=json';
+            console.log('💡 JSON URL (for fallback):', jsonUrl);
+            
+            // Try JSON fetch with CORS proxy (allorigins.win is a free CORS proxy)
+            // This is a fallback if iframe doesn't work
+            setTimeout(() => {
+              if (!postMessageReceived) {
+                console.log('💡 Iframe approach failed, trying JSON with CORS proxy...');
+                const corsProxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(jsonUrl);
+                
+                fetch(corsProxyUrl)
+                  .then(response => {
+                    if (!response.ok) {
+                      throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                  })
+                  .then(data => {
+                    console.log('✅ JSON response received:', data);
+                    if (data.success) {
+                      // Store data in sessionStorage
+                      sessionStorage.setItem('verifiedSerial', data.serialNumber || serialNumber);
+                      sessionStorage.setItem('verifiedEmail', data.email || email);
+                      sessionStorage.setItem('paymentAmount', data.amount || '');
+                      sessionStorage.setItem('paymentToWhom', data.toWhom || '');
+                      
+                      console.log('✅ Stored in sessionStorage via JSON fallback');
+                      
+                      // Redirect to email verification page
+                      window.location.href = 'email-verify.html';
+                    } else {
+                      showStatus(data.error || 'Verification failed. Please try again.', true);
+                      verifyBtn.disabled = false;
+                      verifyBtn.textContent = 'Verify Serial Number';
+                    }
+                  })
+                  .catch(error => {
+                    console.error('❌ JSON fetch error:', error);
+                    // If JSON also fails, show error
+                    if (!postMessageReceived) {
+                      showStatus('Could not verify serial number. Please ensure:\n1. Serial number is correct\n2. Email matches the one used during payment\n3. Try refreshing the page and try again\n\nIf the problem persists, contact organizers.', true);
+                      verifyBtn.disabled = false;
+                      verifyBtn.textContent = 'Verify Serial Number';
+                    }
+                  });
+              }
+            }, 3000); // Wait 3 seconds for iframe/postMessage
             
             // Check iframe status periodically
-            const checkIntervals = [1000, 2000, 3000, 4000];
+            const checkIntervals = [1000, 2000, 3000, 4000, 5000];
             checkIntervals.forEach(delay => {
               setTimeout(() => {
                 if (!postMessageReceived) {
-                  console.log(`Checking iframe status after ${delay}ms...`);
+                  console.log(`Checking status after ${delay}ms...`);
                   try {
                     if (iframe.contentWindow) {
                       try {
                         const iframeUrl = iframe.contentWindow.location.href;
                         console.log('Iframe loaded URL:', iframeUrl);
                         if (iframeUrl === 'about:blank' && iframe.src.includes('script.google.com')) {
-                          console.log('⚠️ Iframe is blocked, but postMessage should still work');
-                          console.log('The Google Apps Script script should execute even if iframe is blocked');
+                          if (delay >= 5000) {
+                            console.log('⚠️⚠️⚠️ IFRAME IS BLOCKED BY GOOGLE APPS SCRIPT');
+                            console.log('💡 Will try JSON fallback with CORS proxy...');
+                          }
                         }
                       } catch (urlError) {
-                        console.log('Cannot read iframe URL (CORS - expected):', urlError.message);
+                        console.log('Cannot read iframe URL (CORS):', urlError.message);
                       }
                     }
                   } catch (e) {
                     console.log('Cannot access iframe:', e.message);
                   }
+                } else {
+                  console.log('✅ PostMessage was received!');
                 }
               }, delay);
             });
           } catch (loadError) {
-            console.error('❌ Error loading iframe:', loadError);
+            console.error('❌ Error:', loadError);
             showStatus('Error loading verification. Please try again.', true);
             verifyBtn.disabled = false;
             verifyBtn.textContent = 'Verify Serial Number';
