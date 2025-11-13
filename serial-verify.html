@@ -581,8 +581,14 @@
                     }
                     
                     console.log('✅ Fetch response received, status:', response.status);
+                    console.log('Response headers:', response.headers);
+                    
                     if (!response.ok) {
-                      throw new Error('Network response was not ok: ' + response.status);
+                      // Try to get error message from response
+                      return response.text().then(text => {
+                        console.error('Response not OK, text:', text.substring(0, 500));
+                        throw new Error('Network response was not ok: ' + response.status + '. Response: ' + text.substring(0, 200));
+                      });
                     }
                     return response.text(); // Get as text first to handle potential errors
                   })
@@ -593,7 +599,20 @@
                       return;
                     }
                     
-                    console.log('Raw JSON response text (first 500 chars):', text.substring(0, 500));
+                    console.log('Raw JSON response text (first 1000 chars):', text.substring(0, 1000));
+                    console.log('Response text length:', text.length);
+                    
+                    // Check if response looks like HTML (error page)
+                    if (text.trim().startsWith('<!DOCTYPE') || text.trim().startsWith('<html')) {
+                      console.error('❌ Received HTML instead of JSON. Response might be an error page.');
+                      // Try to extract error message from HTML
+                      const errorMatch = text.match(/error:\s*([^\n<]+)/i) || text.match(/<pre[^>]*>([^<]+)<\/pre>/i);
+                      if (errorMatch) {
+                        throw new Error(errorMatch[1].trim());
+                      }
+                      throw new Error('Received HTML response instead of JSON. The server may be returning an error page.');
+                    }
+                    
                     try {
                       const data = JSON.parse(text);
                       console.log('✅✅✅ JSON response parsed successfully:', data);
@@ -605,6 +624,16 @@
                       }
                       
                       if (data.success) {
+                        // Mark as received to prevent other fallbacks
+                        postMessageReceived = true;
+                        
+                        // Clear the 5-second fallback timeout
+                        if (window.fallbackTimeout) {
+                          clearTimeout(window.fallbackTimeout);
+                          window.fallbackTimeout = null;
+                          console.log('✅ Cleared 5-second fallback timeout (JSON success case)');
+                        }
+                        
                         // Store data in sessionStorage
                         sessionStorage.setItem('verifiedSerial', data.serialNumber || serialNumber);
                         sessionStorage.setItem('verifiedEmail', data.email || email);
@@ -632,8 +661,9 @@
                           console.log('✅ Cleared 5-second fallback timeout (JSON error case)');
                         }
                         
-                        console.error('❌ Verification failed:', data.error);
-                        showStatus(data.error || 'Verification failed. Please try again.', true);
+                        const errorMsg = data.error || 'Verification failed. Please try again.';
+                        console.error('❌ Verification failed via JSON:', errorMsg);
+                        showStatus(errorMsg, true);
                         verifyBtn.disabled = false;
                         verifyBtn.textContent = 'Verify Serial Number';
                         
@@ -644,8 +674,14 @@
                       }
                     } catch (parseError) {
                       console.error('❌ Error parsing JSON:', parseError);
-                      console.error('Response text was:', text);
-                      throw new Error('Invalid JSON response: ' + parseError.message);
+                      console.error('Response text was:', text.substring(0, 500));
+                      console.error('Parse error details:', parseError.message);
+                      // Try to extract error from text if it's not valid JSON
+                      const errorMatch = text.match(/error[:\s]+([^\n<]+)/i);
+                      if (errorMatch) {
+                        throw new Error(errorMatch[1].trim());
+                      }
+                      throw new Error('Invalid JSON response: ' + parseError.message + '. Response: ' + text.substring(0, 200));
                     }
                   })
                   .catch(error => {
@@ -653,8 +689,24 @@
                     if (!postMessageReceived) {
                       console.error('❌ JSON fetch error:', error);
                       console.error('Error details:', error.message);
-                      // Only show generic error if we haven't received a specific error via postMessage
-                      showStatus('Could not verify serial number. Please ensure:\n1. Serial number is correct\n2. Email matches the one used during payment\n3. Try refreshing the page and try again\n\nIf the problem persists, contact organizers.', true);
+                      console.error('Error stack:', error.stack);
+                      
+                      // Extract specific error message if available
+                      let errorMsg = error.message || 'Could not verify serial number';
+                      
+                      // If error contains specific messages, use them
+                      if (errorMsg.includes('Serial number not found') || errorMsg.includes('not found')) {
+                        errorMsg = 'Serial number not found. Please check your serial number or contact organizers.';
+                      } else if (errorMsg.includes('Email') && (errorMsg.includes('match') || errorMsg.includes('mismatch'))) {
+                        errorMsg = 'Email address does not match the serial number. Please check your email address or contact organizers.';
+                      } else if (errorMsg.includes('already registered')) {
+                        errorMsg = errorMsg;
+                      } else {
+                        // Generic error only if we can't determine specific error
+                        errorMsg = 'Could not verify serial number. Please ensure:\n1. Serial number is correct\n2. Email matches the one used during payment\n3. Try refreshing the page and try again\n\nIf the problem persists, contact organizers.';
+                      }
+                      
+                      showStatus(errorMsg, true);
                       verifyBtn.disabled = false;
                       verifyBtn.textContent = 'Verify Serial Number';
                     } else {
@@ -664,7 +716,7 @@
               } else {
                 console.log('✅ PostMessage was received, skipping JSON fallback');
               }
-            }, 2000); // Wait 2 seconds for iframe/postMessage (reduced for faster JSON fallback)
+            }, 1500); // Wait 1.5 seconds for iframe/postMessage (reduced for faster JSON fallback)
             
             // Store timeout reference so we can clear it if postMessage arrives
             window.jsonFallbackTimeout = jsonFallbackTimeout;
