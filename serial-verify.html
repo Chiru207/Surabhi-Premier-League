@@ -345,15 +345,33 @@
                 window.location.href = 'email-verify.html';
               }, 100);
             } else {
+              // Error received - handle it and prevent all fallbacks
               const errorMsg = event.data.error || 'Verification failed. Please try again.';
               console.error('❌ Verification failed:', errorMsg);
+              
+              // Clear ALL timeouts to prevent fallback messages
+              if (window.jsonFallbackTimeout) {
+                clearTimeout(window.jsonFallbackTimeout);
+                window.jsonFallbackTimeout = null;
+                console.log('✅ Cleared JSON fallback timeout (error case)');
+              }
+              if (window.fallbackTimeout) {
+                clearTimeout(window.fallbackTimeout);
+                window.fallbackTimeout = null;
+                console.log('✅ Cleared 5-second fallback timeout (error case)');
+              }
+              
+              // Show error message
               showStatus(errorMsg, true);
               verifyBtn.disabled = false;
               verifyBtn.textContent = 'Verify Serial Number';
+              
+              // Clean up
               if (document.body.contains(form)) document.body.removeChild(form);
               if (document.body.contains(iframe)) document.body.removeChild(iframe);
               
               // Mark that we've handled the error, so no fallback messages appear
+              // postMessageReceived is already true, so fallbacks won't fire
               return; // Exit early to prevent any further processing
             }
           } else {
@@ -378,6 +396,7 @@
         
         // Fallback timeout in case postMessage doesn't arrive
         window.fallbackTimeout = setTimeout(function() {
+          // Double-check postMessageReceived status before showing fallback
           if (!postMessageReceived) {
             console.log('⏰ PostMessage timeout after 5 seconds - trying to read iframe response as fallback');
             console.log('This might be a CORS issue. Checking iframe...');
@@ -387,6 +406,12 @@
               const responseText = iframeDoc.body ? iframeDoc.body.textContent || iframeDoc.body.innerText : '';
               
               console.log('Fallback response from server:', responseText);
+              
+              // Check again if postMessage was received while we were reading iframe
+              if (postMessageReceived) {
+                console.log('PostMessage received while reading iframe - aborting fallback');
+                return;
+              }
               
               if (responseText && (responseText.includes('success:') || responseText.includes('verified'))) {
                 // Extract amount and to whom from response
@@ -411,8 +436,16 @@
                 // Redirect to email verification page
                 window.location.href = 'email-verify.html';
                 return;
-              } else if (responseText && (responseText.includes('error:') || responseText.includes('not found') || responseText.includes('mismatch'))) {
-                const errorMsg = responseText.includes('mismatch') 
+              } else if (responseText && (responseText.includes('error:') || responseText.includes('not found') || responseText.includes('mismatch') || responseText.includes('already registered'))) {
+                // Check again if postMessage was received
+                if (postMessageReceived) {
+                  console.log('PostMessage received while processing iframe error - aborting fallback');
+                  return;
+                }
+                
+                const errorMsg = responseText.includes('already registered')
+                  ? responseText.match(/error:\s*([^\n]+)/i) ? responseText.match(/error:\s*([^\n]+)/i)[1] : 'This serial number or email is already registered.'
+                  : responseText.includes('mismatch') 
                   ? 'Email address does not match the serial number. Please check and try again.'
                   : responseText.includes('not found')
                   ? 'Serial number not found. Please check your serial number or contact organizers.'
@@ -434,7 +467,7 @@
               console.log('CORS error reading iframe (expected for cross-origin):', error.message);
             }
             
-            // If we get here, postMessage didn't arrive and iframe reading failed
+            // Final check before showing generic error
             if (!postMessageReceived) {
               console.error('Both postMessage and iframe reading failed. Serial:', serialNumber, 'Email:', email);
               showStatus('Could not verify serial number. Please ensure:\n1. Serial number is correct\n2. Email matches the one used during payment\n3. Try refreshing the page and try again\n\nIf the problem persists, contact organizers.', true);
@@ -443,6 +476,8 @@
               window.removeEventListener('message', messageHandler);
               if (document.body.contains(form)) document.body.removeChild(form);
               if (document.body.contains(iframe)) document.body.removeChild(iframe);
+            } else {
+              console.log('PostMessage was received during fallback processing - not showing generic error');
             }
           } else {
             console.log('PostMessage was received, no fallback needed');
@@ -530,6 +565,7 @@
               console.log('⏰ JSON Fallback timeout triggered (3 seconds)');
               console.log('postMessageReceived status:', postMessageReceived);
               
+              // Double-check before proceeding
               if (!postMessageReceived) {
                 console.log('💡💡💡 IFRAME APPROACH FAILED - TRYING JSON WITH CORS PROXY...');
                 const corsProxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(jsonUrl);
@@ -538,6 +574,12 @@
                 
                 fetch(corsProxyUrl)
                   .then(response => {
+                    // Check again before processing
+                    if (postMessageReceived) {
+                      console.log('PostMessage received during fetch - aborting JSON fallback');
+                      return Promise.reject(new Error('PostMessage received, aborting'));
+                    }
+                    
                     console.log('✅ Fetch response received, status:', response.status);
                     if (!response.ok) {
                       throw new Error('Network response was not ok: ' + response.status);
@@ -545,10 +587,23 @@
                     return response.text(); // Get as text first to handle potential errors
                   })
                   .then(text => {
+                    // Check again before parsing
+                    if (postMessageReceived) {
+                      console.log('PostMessage received while parsing JSON - aborting');
+                      return;
+                    }
+                    
                     console.log('Raw JSON response text (first 500 chars):', text.substring(0, 500));
                     try {
                       const data = JSON.parse(text);
                       console.log('✅✅✅ JSON response parsed successfully:', data);
+                      
+                      // Final check before processing
+                      if (postMessageReceived) {
+                        console.log('PostMessage received after parsing JSON - aborting');
+                        return;
+                      }
+                      
                       if (data.success) {
                         // Store data in sessionStorage
                         sessionStorage.setItem('verifiedSerial', data.serialNumber || serialNumber);
@@ -574,6 +629,7 @@
                         if (window.fallbackTimeout) {
                           clearTimeout(window.fallbackTimeout);
                           window.fallbackTimeout = null;
+                          console.log('✅ Cleared 5-second fallback timeout (JSON error case)');
                         }
                         
                         console.error('❌ Verification failed:', data.error);
@@ -593,13 +649,16 @@
                     }
                   })
                   .catch(error => {
-                    console.error('❌ JSON fetch error:', error);
-                    console.error('Error details:', error.message);
-                    // If JSON also fails, show error
+                    // Only show error if postMessage wasn't received
                     if (!postMessageReceived) {
+                      console.error('❌ JSON fetch error:', error);
+                      console.error('Error details:', error.message);
+                      // Only show generic error if we haven't received a specific error via postMessage
                       showStatus('Could not verify serial number. Please ensure:\n1. Serial number is correct\n2. Email matches the one used during payment\n3. Try refreshing the page and try again\n\nIf the problem persists, contact organizers.', true);
                       verifyBtn.disabled = false;
                       verifyBtn.textContent = 'Verify Serial Number';
+                    } else {
+                      console.log('PostMessage was received, not showing JSON fallback error');
                     }
                   });
               } else {
