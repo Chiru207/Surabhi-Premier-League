@@ -1,0 +1,432 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"/>
+  <title>Get Serial Number - Payment Entry</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Logo in top-right corner */
+    .page-logo {
+      position: fixed;
+      top: clamp(10px, 2vh, 20px);
+      right: clamp(10px, 2vw, 20px);
+      width: clamp(60px, 8vw, 120px);
+      height: auto;
+      z-index: 1000;
+      opacity: 0.9;
+      transition: opacity 0.3s;
+    }
+    
+    .page-logo:hover {
+      opacity: 1;
+    }
+    
+    @media (max-width: 768px) {
+      .page-logo {
+        width: clamp(50px, 10vw, 80px);
+        top: clamp(8px, 1.5vh, 15px);
+        right: clamp(8px, 2vw, 15px);
+      }
+    }
+    
+    body {
+      background: #0f172a;
+      color: #e2e8f0;
+      font-family: system-ui, Arial, Helvetica, sans-serif;
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .container {
+      max-width: 600px;
+      width: 100%;
+      background: #111827;
+      border: 2px solid #334155;
+      border-radius: 16px;
+      padding: clamp(20px, 4vw, 40px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+    
+    h1 {
+      font-size: clamp(24px, 5vw, 36px);
+      margin-bottom: 10px;
+      color: #60a5fa;
+      font-weight: 700;
+      text-align: center;
+    }
+    
+    .subtitle {
+      text-align: center;
+      color: #94a3b8;
+      margin-bottom: 30px;
+      font-size: clamp(14px, 2.5vw, 16px);
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #e2e8f0;
+      font-weight: 500;
+      font-size: clamp(14px, 2.5vw, 16px);
+    }
+    
+    input, select {
+      width: 100%;
+      padding: 12px 16px;
+      background: #1e293b;
+      border: 2px solid #334155;
+      border-radius: 8px;
+      color: #e2e8f0;
+      font-size: 16px;
+      box-sizing: border-box;
+      transition: border-color 0.3s;
+    }
+    
+    input:focus, select:focus {
+      outline: none;
+      border-color: #60a5fa;
+    }
+    
+    .otp-btn {
+      width: 100%;
+      padding: 14px;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-bottom: 15px;
+    }
+    
+    .otp-btn:hover:not(:disabled) {
+      background: #2563eb;
+      transform: translateY(-2px);
+    }
+    
+    .otp-btn:disabled {
+      background: #475569;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+    
+    .verify-btn {
+      background: #10b981;
+      margin-top: 10px;
+    }
+    
+    .verify-btn:hover:not(:disabled) {
+      background: #059669;
+    }
+    
+    .status-message {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-top: 15px;
+      display: none;
+      font-size: 14px;
+    }
+    
+    .status-message.success {
+      background: #065f46;
+      color: #6ee7b7;
+      border: 1px solid #10b981;
+      display: block;
+    }
+    
+    .status-message.error {
+      background: #7f1d1d;
+      color: #fca5a5;
+      border: 1px solid #ef4444;
+      display: block;
+    }
+    
+    .help-text {
+      display: block;
+      margin-top: 5px;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+    
+    .success-page {
+      text-align: center;
+      padding: 30px;
+    }
+    
+    .success-icon {
+      font-size: 64px;
+      color: #10b981;
+      margin-bottom: 20px;
+    }
+    
+    .serial-number {
+      font-size: 48px;
+      font-weight: 700;
+      color: #60a5fa;
+      margin: 20px 0;
+      padding: 20px;
+      background: #1e293b;
+      border-radius: 12px;
+      border: 2px solid #334155;
+    }
+    
+    .back-link {
+      margin-top: 30px;
+      text-align: center;
+    }
+    
+    .back-link a {
+      color: #60a5fa;
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.3s;
+    }
+    
+    .back-link a:hover {
+      color: #93c5fd;
+      text-decoration: underline;
+    }
+    
+    #otpGroup {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Logo in top-right corner -->
+  <img src="./Surabhi%20yuvasena%20logo.png" alt="Surabhi Yuvasena Logo" class="page-logo">
+  <div class="container">
+    <h1>Payment Entry</h1>
+    <p class="subtitle">Enter payment details to get serial number</p>
+    
+    <form id="paymentForm">
+      <div class="form-group">
+        <label for="playerEmail">Player Email Address *</label>
+        <input type="email" id="playerEmail" name="playerEmail" required autocomplete="email">
+        <small class="help-text">Email address of the player who made the payment</small>
+      </div>
+      
+      <div class="form-group">
+        <label for="amount">Amount Paid *</label>
+        <select id="amount" name="amount" required>
+          <option value="">Select Amount</option>
+          <option value="500">₹500 (No Captaincy)</option>
+          <option value="2000">₹2000 (With Captaincy)</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="paidTo">Paid To *</label>
+        <select id="paidTo" name="paidTo" required>
+          <option value="">Select Person</option>
+          <option value="Subhakar">Subhakar</option>
+          <option value="Surya">Surya</option>
+        </select>
+        <small class="help-text">OTP will be sent to the selected person's email for verification</small>
+      </div>
+      
+      <button type="button" id="sendOtpBtn" class="otp-btn">Send OTP for Verification</button>
+      
+      <div id="otpGroup" class="form-group">
+        <label for="otp">Enter OTP *</label>
+        <input type="text" id="otp" name="otp" pattern="[0-9]{6}" title="Enter 6-digit OTP" maxlength="6" placeholder="Enter 6-digit OTP" autocomplete="off">
+        <small class="help-text">Check the organizer's email for the OTP (valid for 10 minutes)</small>
+        <button type="button" id="verifyOtpBtn" class="otp-btn verify-btn">Verify OTP & Submit Payment</button>
+      </div>
+      
+      <div id="statusMessage" class="status-message"></div>
+    </form>
+    
+    <!-- Success Page (hidden initially) -->
+    <div id="successPage" class="success-page" style="display: none;">
+      <div class="success-icon">✓</div>
+      <h2 style="color: #10b981; margin-bottom: 20px;">Payment Entry Successful!</h2>
+      <p style="color: #94a3b8; margin-bottom: 10px;">Serial Number Assigned:</p>
+      <div class="serial-number" id="serialNumberDisplay"></div>
+      <p style="color: #94a3b8; margin-top: 20px;">Payment details have been recorded successfully.</p>
+      <div class="back-link">
+        <a href="get_serial.html">← Enter Another Payment</a>
+      </div>
+    </div>
+    
+    <div class="back-link" id="backLink">
+      <a href="index.html">← Back to Home</a>
+    </div>
+  </div>
+  
+  <script>
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxY-Hoq9xCwO2i_rixEmDzThNVe8m4yDLWhAewhM9Vs8fq4TFYbNRAff87-0E9sR2NQ/exec';
+    
+    let otpSent = false;
+    let organizerEmail = '';
+    
+    function showStatus(message, type) {
+      const statusDiv = document.getElementById('statusMessage');
+      statusDiv.textContent = message;
+      statusDiv.className = 'status-message ' + type;
+      statusDiv.style.display = 'block';
+    }
+    
+    function hideStatus() {
+      const statusDiv = document.getElementById('statusMessage');
+      statusDiv.style.display = 'none';
+      statusDiv.className = 'status-message';
+    }
+    
+    // Send OTP button handler
+    document.getElementById('sendOtpBtn').addEventListener('click', async function() {
+      const playerEmail = document.getElementById('playerEmail').value.trim();
+      const amount = document.getElementById('amount').value;
+      const paidTo = document.getElementById('paidTo').value;
+      
+      if (!playerEmail || !amount || !paidTo) {
+        showStatus('Please fill in all fields before sending OTP.', 'error');
+        return;
+      }
+      
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(playerEmail)) {
+        showStatus('Please enter a valid email address.', 'error');
+        return;
+      }
+      
+      // Determine organizer email based on "Paid To" selection
+      if (paidTo === 'Subhakar') {
+        organizerEmail = 'saisubhakarv@gmail.com';
+      } else if (paidTo === 'Surya') {
+        organizerEmail = 'suryakumarofficial24@gmail.com';
+      } else {
+        showStatus('Please select a valid person.', 'error');
+        return;
+      }
+      
+      const btn = this;
+      const originalText = btn.textContent;
+      btn.textContent = 'Sending OTP...';
+      btn.disabled = true;
+      hideStatus();
+      
+      try {
+        const response = await fetch(GOOGLE_SCRIPT_URL + '?action=sendOtpToOrganizer&email=' + encodeURIComponent(organizerEmail) + '&paidTo=' + encodeURIComponent(paidTo));
+        const result = await response.text();
+        
+        if (result.includes('success') || result.includes('OTP sent')) {
+          showStatus('✓ OTP sent to ' + paidTo + '\'s email (' + organizerEmail + ')! Please check the inbox.', 'success');
+          document.getElementById('otpGroup').style.display = 'block';
+          document.getElementById('otp').focus();
+          btn.textContent = 'Resend OTP';
+          otpSent = true;
+        } else {
+          showStatus('Error sending OTP: ' + result, 'error');
+        }
+      } catch (error) {
+        showStatus('Error sending OTP. Please try again.', 'error');
+        console.error('OTP send error:', error);
+      } finally {
+        btn.disabled = false;
+      }
+    });
+    
+    // Verify OTP and submit payment
+    document.getElementById('verifyOtpBtn').addEventListener('click', async function() {
+      if (!otpSent) {
+        showStatus('Please send OTP first.', 'error');
+        return;
+      }
+      
+      const playerEmail = document.getElementById('playerEmail').value.trim();
+      const amount = document.getElementById('amount').value;
+      const paidTo = document.getElementById('paidTo').value;
+      const otp = document.getElementById('otp').value.trim();
+      
+      if (!playerEmail || !amount || !paidTo || !otp) {
+        showStatus('Please fill in all fields including OTP.', 'error');
+        return;
+      }
+      
+      if (otp.length !== 6 || !/^\d{6}$/.test(otp)) {
+        showStatus('Please enter a valid 6-digit OTP.', 'error');
+        return;
+      }
+      
+      const btn = this;
+      const originalText = btn.textContent;
+      btn.textContent = 'Verifying & Submitting...';
+      btn.disabled = true;
+      hideStatus();
+      
+      try {
+        // First verify OTP
+        const verifyResponse = await fetch(GOOGLE_SCRIPT_URL + '?action=verifyOtpForOrganizer&email=' + encodeURIComponent(organizerEmail) + '&otp=' + encodeURIComponent(otp));
+        const verifyResult = await verifyResponse.text();
+        
+        if (!verifyResult.includes('success') && !verifyResult.includes('verified')) {
+          showStatus('Invalid OTP. Please check and try again.', 'error');
+          btn.disabled = false;
+          btn.textContent = originalText;
+          return;
+        }
+        
+        // OTP verified, now submit payment
+        const submitResponse = await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: new URLSearchParams({
+            action: 'addPaymentEntry',
+            email: playerEmail,
+            amount: amount,
+            paidTo: paidTo
+          })
+        });
+        
+        const submitResult = await submitResponse.text();
+        
+        if (submitResult.includes('success') || submitResult.includes('Serial')) {
+          // Extract serial number from response
+          const serialMatch = submitResult.match(/Serial[:\s]+(\d+)/i) || submitResult.match(/(\d+)/);
+          const serialNumber = serialMatch ? serialMatch[1] : 'N/A';
+          
+          // Hide form and show success page
+          document.getElementById('paymentForm').style.display = 'none';
+          document.getElementById('backLink').style.display = 'none';
+          document.getElementById('successPage').style.display = 'block';
+          document.getElementById('serialNumberDisplay').textContent = serialNumber;
+          
+          // Reset form for next entry
+          setTimeout(() => {
+            document.getElementById('paymentForm').reset();
+            document.getElementById('otpGroup').style.display = 'none';
+            otpSent = false;
+            organizerEmail = '';
+          }, 100);
+        } else {
+          showStatus('Error submitting payment: ' + submitResult, 'error');
+          btn.disabled = false;
+          btn.textContent = originalText;
+        }
+      } catch (error) {
+        showStatus('Error submitting payment. Please try again.', 'error');
+        console.error('Payment submit error:', error);
+        btn.disabled = false;
+        btn.textContent = originalText;
+      }
+    });
+  </script>
+</body>
+</html>
+
