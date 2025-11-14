@@ -220,98 +220,137 @@
     try {
       const ctx = getAudioContext();
       
-      if (type === 'bid') {
-        // Short beep for bid
-        const oscillator = ctx.createOscillator();
-        const gainNode = ctx.createGain();
-        oscillator.connect(gainNode);
-        gainNode.connect(ctx.destination);
-        oscillator.frequency.value = 800;
-        oscillator.type = 'sine';
-        gainNode.gain.setValueAtTime(0.3, ctx.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
-        oscillator.start(ctx.currentTime);
-        oscillator.stop(ctx.currentTime + 0.1);
-      } else if (type === 'sold') {
-        // Clapping-like sound
-        playClappingSound(ctx);
-      } else if (type === 'timerWarning') {
-        // Warning beep
-        const oscillator = ctx.createOscillator();
-        const gainNode = ctx.createGain();
-        oscillator.connect(gainNode);
-        gainNode.connect(ctx.destination);
-        oscillator.frequency.value = 600;
-        oscillator.type = 'sine';
-        gainNode.gain.setValueAtTime(0.4, ctx.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
-        oscillator.start(ctx.currentTime);
-        oscillator.stop(ctx.currentTime + 0.2);
-      } else if (type === 'adminAction') {
-        // Admin action sound
-        const oscillator = ctx.createOscillator();
-        const gainNode = ctx.createGain();
-        oscillator.connect(gainNode);
-        gainNode.connect(ctx.destination);
-        oscillator.frequency.value = 400;
-        oscillator.type = 'triangle';
-        gainNode.gain.setValueAtTime(0.3, ctx.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-        oscillator.start(ctx.currentTime);
-        oscillator.stop(ctx.currentTime + 0.3);
+      let frequency = 440;
+      let duration = 0.1;
+      let volume = 0.3;
+      
+      switch(type) {
+        case 'bid':
+          // Short beep for bid
+          frequency = 600;
+          duration = 0.15;
+          volume = 0.2;
+          break;
+        case 'basePrice':
+          // Medium beep for base price claim
+          frequency = 500;
+          duration = 0.2;
+          volume = 0.25;
+          break;
+        case 'drop':
+          // Lower tone for drop
+          frequency = 300;
+          duration = 0.2;
+          volume = 0.2;
+          break;
+        case 'sold':
+          // Clapping-like sound (multiple tones)
+          playClappingSound(ctx);
+          return;
+        case 'newPlayer':
+          // Upward tone for new player
+          frequency = 400;
+          duration = 0.3;
+          volume = 0.3;
+          break;
+        case 'adminAction':
+          // Notification sound
+          frequency = 350;
+          duration = 0.25;
+          volume = 0.25;
+          break;
+        case 'timerWarning':
+          // Warning beep
+          frequency = 800;
+          duration = 0.1;
+          volume = 0.3;
+          break;
       }
+      
+      const oscillator = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(ctx.destination);
+      
+      oscillator.frequency.value = frequency;
+      oscillator.type = 'sine';
+      
+      gainNode.gain.setValueAtTime(volume, ctx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+      
+      oscillator.start(ctx.currentTime);
+      oscillator.stop(ctx.currentTime + duration);
     } catch (e) {
       console.log('Sound playback not available:', e);
     }
   }
   
+  // Clapping-like sound (multiple quick tones in a chord pattern)
   function playClappingSound(audioContext) {
-    const chord1 = [523, 659, 784];
-    const chord2 = [523, 659, 784, 1047];
+    // Play a celebratory chord sequence (C major chord)
+    const chord1 = [523, 659, 784]; // C, E, G
+    const chord2 = [523, 659, 784, 1047]; // C, E, G, C (octave)
     
+    // First chord
     chord1.forEach((freq, index) => {
       setTimeout(() => {
         const oscillator = audioContext.createOscillator();
         const gainNode = audioContext.createGain();
+        
         oscillator.connect(gainNode);
         gainNode.connect(audioContext.destination);
+        
         oscillator.frequency.value = freq;
         oscillator.type = 'sine';
+        
         gainNode.gain.setValueAtTime(0.25, audioContext.currentTime);
         gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+        
         oscillator.start(audioContext.currentTime);
         oscillator.stop(audioContext.currentTime + 0.2);
-      }, index * 50);
+      }, index * 30);
     });
     
+    // Second chord (slightly delayed for clapping effect)
     setTimeout(() => {
       chord2.forEach((freq, index) => {
         setTimeout(() => {
           const oscillator = audioContext.createOscillator();
           const gainNode = audioContext.createGain();
+          
           oscillator.connect(gainNode);
           gainNode.connect(audioContext.destination);
+          
           oscillator.frequency.value = freq;
           oscillator.type = 'sine';
-          gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-          gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+          
+          gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+          
           oscillator.start(audioContext.currentTime);
-          oscillator.stop(audioContext.currentTime + 0.3);
-        }, index * 50);
+          oscillator.stop(audioContext.currentTime + 0.15);
+        }, index * 25);
       });
-    }, 200);
+    }, 150);
   }
   
-  // Text-to-speech function
+  // Text-to-speech announcement
   function speak(text, priority = 'normal') {
-    if (!('speechSynthesis' in window)) return;
-    
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = priority === 'high' ? 1.1 : 0.9;
-    utterance.pitch = priority === 'high' ? 1.2 : 1.0;
-    utterance.volume = priority === 'high' ? 1.0 : 0.8;
-    
-    window.speechSynthesis.speak(utterance);
+    if ('speechSynthesis' in window) {
+      // Cancel any ongoing speech
+      if (priority === 'high') {
+        window.speechSynthesis.cancel();
+      }
+      
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 0.9;
+      utterance.pitch = 1.0;
+      utterance.volume = 0.8;
+      utterance.lang = 'en-US';
+      
+      window.speechSynthesis.speak(utterance);
+    }
   }
   
   // Initialize audio on user interaction
@@ -647,52 +686,115 @@
   }
   
   function checkStateChanges(newState) {
-    // Check for new sold players
-    if (newState.players) {
-      newState.players.forEach(p => {
-        if (p.status === 'sold' && !previousState.soldPlayers.has(p.serial)) {
-          previousState.soldPlayers.add(p.serial);
-          const winner = newState.captains.find(c => c.id === p.soldToCaptainId);
-          if (winner) {
+    // Check for players that were just sold (status changed from 'bidding'/'ready' to 'sold')
+    newState.players.forEach((player, index) => {
+      if (player.status === 'sold' && player.soldToCaptainId) {
+        const playerKey = `${player.serial}-${player.soldToCaptainId}`;
+        
+        // Check if this is a newly sold player (not in our tracking set)
+        if (!previousState.soldPlayers.has(playerKey)) {
+          // Also check if status actually changed (was bidding/ready before)
+          const prevPlayer = previousState.players.find(p => p.serial === player.serial);
+          const wasBidding = prevPlayer && (prevPlayer.status === 'bidding' || prevPlayer.status === 'ready');
+          
+          if (wasBidding || !prevPlayer) {
+            previousState.soldPlayers.add(playerKey);
+            
+            const winner = newState.captains.find(c => c.id === player.soldToCaptainId);
+            const winnerName = winner ? winner.name : 'Unknown';
+            const price = player.currentBid || player.basePrice || 0;
+            
+            // Play clapping sound and announce
             playSound('sold');
             setTimeout(() => {
-              speak(`${winner.name} won ${p.name} for ${p.currentBid || p.basePrice}`, 'high');
-            }, 300);
+              speak(`${winnerName} won ${player.name} for ${price}`, 'high');
+            }, 500);
           }
         }
-      });
+      }
+    });
+    
+    // Check for new player
+    if (newState.currentIndex !== previousState.currentIndex) {
+      if (newState.currentIndex != null) {
+        const p = newState.players[newState.currentIndex];
+        if (p) {
+          playSound('newPlayer');
+          setTimeout(() => {
+            speak(`${p.name} is now up for bidding`, 'high');
+          }, 300);
+        }
+      }
     }
     
-    // Check for new log entries (bids, drops, admin actions)
-    if (newState.logs && newState.logs.length > previousState.logs.length) {
+    // Check for new logs (bids, drops, sales, etc.)
+    if (newState.logs && newState.logs.length > 0) {
       const newLogs = newState.logs.slice(previousState.logs.length);
+      
       newLogs.forEach(log => {
-        const msg = log.msg || '';
-        if (msg.includes('BID:') && !msg.includes('BASE PRICE')) {
-          playSound('bid');
-        } else if (msg.includes('BASE PRICE CLAIMED:')) {
-          playSound('bid');
-          const match = msg.match(/BASE PRICE CLAIMED: (.+?) → (.+?)\s/);
+        if (!log.msg) return;
+        const msg = log.msg;
+        
+        if (msg.includes('BASE PRICE CLAIMED')) {
+          playSound('basePrice');
+          const match = msg.match(/BASE PRICE CLAIMED: (.+?) →/);
           if (match) {
             setTimeout(() => {
-              speak(`${match[1]} claimed base price for ${match[2]}`, 'normal');
+              speak(`${match[1]} claimed base price`, 'normal');
             }, 200);
           }
-        } else if (msg.includes('SOLD:') || msg.includes('FINISHED (Admin)')) {
-          playSound('sold');
-        } else if (msg.includes('PLAYER BROUGHT TO AUCTION')) {
-          playSound('adminAction');
-          const match = msg.match(/PLAYER BROUGHT TO AUCTION: (.+?)\s/);
+        } else if (msg.includes('BID:')) {
+          playSound('bid');
+          const match = msg.match(/BID: (.+?) → .+? @ (\d+)/);
           if (match) {
             setTimeout(() => {
-              speak(`Next player: ${match[1]}`, 'high');
+              speak(`${match[1]} bid ${match[2]}`, 'normal');
             }, 200);
           }
-        } else if (msg.includes('BIDDING STARTED')) {
+        } else if (msg.includes('DROP:')) {
+          playSound('drop');
+          const match = msg.match(/DROP: (.+?) dropped/);
+          if (match) {
+            setTimeout(() => {
+              speak(`${match[1]} dropped from bidding`, 'normal');
+            }, 200);
+          }
+        } else if (msg.includes('SOLD:') || msg.includes('FINISHED (Admin)') || msg.includes('AUTO-ASSIGNED')) {
+          // Extract player and winner info from log message
+          let playerName = '';
+          let winnerName = '';
+          let price = '';
+          
+          // Try different log message formats
+          const soldMatch = msg.match(/(?:SOLD|FINISHED \(Admin\)|AUTO-ASSIGNED): (.+?) \(Serial \d+\)(?: to (.+?) for (\d+)| for (\d+))?/);
+          if (soldMatch) {
+            playerName = soldMatch[1];
+            winnerName = soldMatch[2] || soldMatch[4] || 'Unknown';
+            price = soldMatch[3] || soldMatch[5] || '0';
+          }
+          
+          // If we have the info, announce it (but don't duplicate if already announced via status check)
+          if (playerName && winnerName && price) {
+            // The status check above will handle the announcement, but this ensures we catch it from logs too
+            // We'll let the status check handle it to avoid duplicates
+          }
+        } else if (msg.includes('MOVED TO NEXT ROUND (Admin)') || msg.includes('MOVED TO NEXT ROUND:')) {
           playSound('adminAction');
+          const match = msg.match(/MOVED TO NEXT ROUND(?: \(Admin\))?: (.+?)\s+\(Serial/);
+          if (match) {
+            setTimeout(() => {
+              speak(`${match[1]} moved to next round`, 'normal');
+            }, 200);
+          }
+        } else if (msg.includes('PLAYER BROUGHT TO AUCTION') || msg.includes('BIDDING STARTED')) {
+          playSound('newPlayer');
+          const match = msg.match(/(?:PLAYER BROUGHT TO AUCTION|BIDDING STARTED): (.+?)\s+\(Serial/);
+          if (match) {
+            setTimeout(() => {
+              speak(`${match[1]} ${msg.includes('BIDDING STARTED') ? 'bidding started' : 'brought to auction'}`, 'normal');
+            }, 200);
+          }
         } else if (msg.includes('VOIDED')) {
-          playSound('adminAction');
-        } else if (msg.includes('MOVED TO NEXT ROUND')) {
           playSound('adminAction');
         } else if (msg.includes('FINISHED (Admin)')) {
           playSound('adminAction');
@@ -706,13 +808,14 @@
       });
     }
     
-    // Check for timer warnings
+    // Check for timer warnings (last 10 seconds)
     if (newState.currentIndex != null) {
       const p = newState.players[newState.currentIndex];
       if (p && p.biddingEndsAt && p.status === 'bidding') {
         const timeLeft = Math.max(0, p.biddingEndsAt - Date.now());
         const secondsLeft = Math.ceil(timeLeft / 1000);
         
+        // Play warning sound at 10, 5, 3, 2, 1 seconds (only once per second)
         if (secondsLeft !== previousState.lastTimerSecond && 
             (secondsLeft === 10 || secondsLeft === 5 || secondsLeft === 3 || secondsLeft === 2 || secondsLeft === 1)) {
           playSound('timerWarning');
@@ -728,6 +831,7 @@
       previousState.lastTimerSecond = null;
     }
     
+    // Update previous state (preserve lastTimerSecond and soldPlayers)
     previousState = {
       currentIndex: newState.currentIndex,
       players: [...newState.players],
