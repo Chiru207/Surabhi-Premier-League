@@ -1322,7 +1322,7 @@
       }
     }
     
-    // Function to email PDF
+    // Function to email PDF (retrieve from Drive instead of generating new)
     async function emailPDF() {
       if (!registrationData) {
         alert('No registration data available to email.');
@@ -1332,175 +1332,11 @@
       const btn = document.getElementById('emailPdfBtn');
       if (btn) {
         btn.disabled = true;
-        btn.textContent = 'Generating and sending PDF...';
+        btn.textContent = 'Sending PDF...';
       }
       
-      console.log('Generating PDF with data:', registrationData);
-      
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      
-      // Set font
-      doc.setFontSize(20);
-      doc.setTextColor(0, 0, 0);
-      doc.text('Surabhi Premier League 2025', 105, 20, { align: 'center' });
-      
-      doc.setFontSize(16);
-      doc.text('Registration Confirmation', 105, 30, { align: 'center' });
-      
-      // Draw line
-      doc.setLineWidth(0.5);
-      doc.line(20, 35, 190, 35);
-      
-      // Registration details
-      let yPos = 45;
-      doc.setFontSize(12);
-      doc.setTextColor(0, 0, 0);
-      
-      // Mobile Number (no payment quote text)
-      doc.setFontSize(14);
-      doc.setTextColor(0, 100, 200);
-      doc.setFont(undefined, 'bold');
-      doc.text('Mobile Number:', 20, yPos);
-      doc.text(registrationData.mobile || '', 120, yPos);
-      yPos += 10;
-      
-      doc.setFontSize(12);
-      doc.setTextColor(0, 0, 0);
-      doc.setFont(undefined, 'normal');
-      doc.line(20, yPos, 190, yPos);
-      yPos += 10;
-      
-      // Other details - ensure all fields are included
-      const paymentAmount = sessionStorage.getItem('paymentAmount') || '';
-      const paymentToWhom = sessionStorage.getItem('paymentToWhom') || '';
-      const serialNumber = sessionStorage.getItem('verifiedSerial') || '';
-      
-      // Combine Registration Fee and Amount Paid into Registration Fee Paid
-      const registrationFeePaid = paymentAmount || registrationData.registrationFee || '0';
-      
-      const details = [
-        ['Name:', registrationData.name || ''],
-        ['Father Name:', registrationData.fatherName || ''],
-        ['Category:', registrationData.category || ''],
-        ['Email:', registrationData.email || ''],
-        ['Serial Number:', serialNumber],
-        ['Captaincy:', registrationData.captaincy || ''],
-        ['Registration Fee Paid:', 'Rs. ' + registrationFeePaid]
-      ];
-      
-      // Add payment to whom if available
-      if (paymentToWhom) {
-        details.push(['Paid To:', paymentToWhom]);
-      }
-      
-      // Continue with other details
-      details.push(
-        ['Name on Jersey:', registrationData.jerseyName || ''],
-        ['Jersey Number:', registrationData.jerseyNumber || ''],
-        ['T-shirt Size:', registrationData.tshirtSize || ''],
-        ['Trouser Size:', registrationData.trouserSize || '']
-      );
-      
-      details.forEach(([label, value]) => {
-        if (yPos > 270) {
-          doc.addPage();
-          yPos = 20;
-        }
-        doc.setFont(undefined, 'bold');
-        doc.text(label, 20, yPos);
-        doc.setFont(undefined, 'normal');
-        // Wrap long text if needed
-        const maxWidth = 100;
-        const lines = doc.splitTextToSize(value || '', maxWidth);
-        doc.text(lines, 80, yPos);
-        yPos += Math.max(8, lines.length * 6);
-      });
-      
-      // Thank you message and contact information
-      if (yPos > 250) {
-        doc.addPage();
-        yPos = 20;
-      } else {
-        yPos += 10;
-      }
-      
-      // Thank you message
-      doc.setFontSize(12);
-      doc.setFont(undefined, 'normal');
-      doc.setTextColor(0, 0, 0);
-      const thankYouText = 'Thank you for registering in SPL-2025. All the best. Let\'s make it a memorable experience.';
-      const thankYouLines = doc.splitTextToSize(thankYouText, 170);
-      doc.text(thankYouLines, 20, yPos);
-      yPos += Math.max(8, thankYouLines.length * 6) + 5;
-
-      // Print organizers info and website on 2 lines, only website in blue, italic, hyperlinked
-      doc.setFontSize(12);
-      doc.setFont(undefined, 'normal');
-      doc.setTextColor(0, 0, 0);
-      const organizersLine = 'Organizers: 9395185132, 8074450066.';
-      doc.text(organizersLine, 20, yPos);
-      yPos += 8;
-
-      const websiteText = 'https://surabhipremierleague.info/';
-      doc.setFont(undefined, 'italic');
-      doc.setTextColor(0, 0, 255); // Blue
-      doc.text(websiteText, 20, yPos);
-
-      // Add hyperlink just to website
-      doc.link(20, yPos - 5, doc.getTextWidth(websiteText), 8, { url: websiteText });
-
-      // Restore font and color (optional for subsequent text)
-      doc.setFont(undefined, 'normal');
-      doc.setTextColor(0, 0, 0);
-
-      yPos += 10;
-      // Footer and logo on all pages
-      const pageCount = doc.internal.pages.length - 1;
-      for (let i = 1; i <= pageCount; i++) {
-        doc.setPage(i);
-        
-        // Add logo to each page
-        try {
-          const logoImg = new Image();
-          logoImg.crossOrigin = 'anonymous';
-          await new Promise((resolve) => {
-            logoImg.onload = function() {
-              try {
-                const canvas = document.createElement('canvas');
-                canvas.width = logoImg.width;
-                canvas.height = logoImg.height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(logoImg, 0, 0);
-                const logoDataUrl = canvas.toDataURL('image/png');
-                
-                const logoWidth = 30;
-                const logoHeight = 30;
-                const pageWidth = doc.internal.pageSize.getWidth();
-                const logoX = pageWidth - logoWidth - 5;
-                const logoY = 5;
-                
-                doc.addImage(logoDataUrl, 'PNG', logoX, logoY, logoWidth, logoHeight);
-              } catch (error) {
-                console.error('Error adding logo to page:', error);
-              }
-              resolve();
-            };
-            logoImg.onerror = resolve;
-            logoImg.src = './Surabhi%20yuvasena%20logo.png';
-          });
-        } catch (error) {
-          console.error('Error adding logo to page:', error);
-        }
-        
-        doc.setFontSize(10);
-        doc.setTextColor(128, 128, 128);
-        doc.text('Organised by Surabhi Yuvasena, Surabhi Colony', 105, 285, { align: 'center' });
-      }
-      
-      // Convert PDF to base64
-      const pdfBase64 = doc.output('datauristring').split(',')[1];
       const email = registrationData.email || sessionStorage.getItem('verifiedEmail') || '';
+      const serialNumber = sessionStorage.getItem('verifiedSerial') || '';
       
       if (!email) {
         alert('Email address not found. Cannot send PDF.');
@@ -1511,7 +1347,18 @@
         return;
       }
       
-      // Send PDF to Google Apps Script for emailing
+      if (!serialNumber) {
+        alert('Serial number not found. Cannot retrieve PDF from Drive.');
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = '📧 Email Registration Details (PDF)';
+        }
+        return;
+      }
+      
+      console.log('Retrieving PDF from Drive for serial number:', serialNumber);
+      
+      // Send request to Google Apps Script to retrieve PDF from Drive and email it
       try {
         const response = await fetch(GOOGLE_SCRIPT_URL, {
           method: 'POST',
@@ -1521,7 +1368,7 @@
           body: new URLSearchParams({
             action: 'emailPdf',
             email: email,
-            pdfData: pdfBase64,
+            serialNumber: serialNumber,
             name: registrationData.name || '',
             mobile: registrationData.mobile || ''
           })
