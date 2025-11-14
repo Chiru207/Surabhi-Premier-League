@@ -1052,7 +1052,7 @@
         
         // Automatically generate and save PDF to Drive when success page is shown (only once)
         if (!pdfSavedToDrive) {
-          pdfSavedToDrive = true;
+          console.log('Starting PDF generation...');
           savePDFToDrive();
         } else {
           console.log('PDF already saved to Drive, skipping duplicate save');
@@ -1153,6 +1153,7 @@
       
       // Set flag immediately to prevent concurrent calls
       pdfSavedToDrive = true;
+      console.log('PDF generation started, flag set to prevent duplicates');
       
       try {
         console.log('Generating PDF to save to Drive with data:', registrationData);
@@ -1328,6 +1329,8 @@
         }
       } catch (error) {
         console.error('Error generating PDF for Drive:', error);
+        // Reset flag on error so it can be retried
+        pdfSavedToDrive = false;
         // Don't show alert to user - this is a background operation
       }
     }
