@@ -6,27 +6,30 @@
   <title>Get Serial Number - Payment Entry</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    /* Logo in top-right corner */
+    /* Logo in top-right corner - Always visible */
     .page-logo {
-      position: fixed;
-      top: clamp(10px, 2vh, 20px);
-      right: clamp(10px, 2vw, 20px);
-      width: clamp(60px, 8vw, 120px);
-      height: auto;
-      z-index: 1000;
-      opacity: 0.9;
+      position: fixed !important;
+      top: clamp(10px, 2vh, 20px) !important;
+      right: clamp(10px, 2vw, 20px) !important;
+      width: clamp(60px, 8vw, 120px) !important;
+      height: auto !important;
+      z-index: 9999 !important;
+      opacity: 0.9 !important;
       transition: opacity 0.3s;
+      display: block !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
     }
     
     .page-logo:hover {
-      opacity: 1;
+      opacity: 1 !important;
     }
     
     @media (max-width: 768px) {
       .page-logo {
-        width: clamp(50px, 10vw, 80px);
-        top: clamp(8px, 1.5vh, 15px);
-        right: clamp(8px, 2vw, 15px);
+        width: clamp(50px, 10vw, 80px) !important;
+        top: clamp(8px, 1.5vh, 15px) !important;
+        right: clamp(8px, 2vw, 15px) !important;
       }
     }
     
@@ -206,7 +209,7 @@
 </head>
 <body>
   <!-- Logo in top-right corner -->
-  <img src="Surabhi_Yuvasena_Logo.png" alt="Surabhi Yuvasena Logo" class="page-logo" onerror="console.error('Logo failed to load'); this.style.display='none';">
+  <img src="Surabhi_Yuvasena_Logo.png" alt="Surabhi Yuvasena Logo" class="page-logo" onerror="console.error('Logo failed to load, but keeping it visible');">
   <div class="container">
     <h1>Payment Entry</h1>
     <p class="subtitle">Enter payment details to get serial number</p>
