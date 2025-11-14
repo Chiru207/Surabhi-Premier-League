@@ -833,6 +833,9 @@
     // Backup of form data that persists even after pendingFormData is cleared
     let backupFormData = null;
     
+    // Flag to track if PDF has already been saved to Drive (prevent duplicate saves)
+    let pdfSavedToDrive = false;
+    
     // Listen for postMessage from iframe (Google Apps Script response)
     // This avoids CORS issues when reading iframe content
     window.addEventListener('message', function(event) {
@@ -1043,8 +1046,13 @@
         window.scrollTo(0, 0);
         console.log('Success page displayed successfully');
         
-        // Automatically generate and save PDF to Drive when success page is shown
-        savePDFToDrive();
+        // Automatically generate and save PDF to Drive when success page is shown (only once)
+        if (!pdfSavedToDrive) {
+          pdfSavedToDrive = true;
+          savePDFToDrive();
+        } else {
+          console.log('PDF already saved to Drive, skipping duplicate save');
+        }
       } catch (error) {
         console.error('Error in showSuccessPage:', error);
         alert('Registration successful! Please quote your mobile number when making payment.\n\nError displaying details: ' + error.message);
@@ -1100,6 +1108,15 @@
         console.log('No registration data available to save PDF.');
         return;
       }
+      
+      // Prevent duplicate saves - check flag first
+      if (pdfSavedToDrive) {
+        console.log('PDF already saved to Drive, skipping duplicate save');
+        return;
+      }
+      
+      // Set flag immediately to prevent concurrent calls
+      pdfSavedToDrive = true;
       
       try {
         console.log('Generating PDF to save to Drive with data:', registrationData);
@@ -1289,8 +1306,11 @@
           
           if (result.includes('success') || result.includes('saved')) {
             console.log('✓ PDF saved to Drive successfully with filename: ' + serialNum + '.pdf');
+            pdfSavedToDrive = true; // Mark as saved
           } else {
             console.error('Error saving PDF to Drive: ' + result);
+            // Reset flag on error so it can be retried
+            pdfSavedToDrive = false;
           }
         } catch (error) {
           console.error('Error saving PDF to Drive:', error);
