@@ -303,23 +303,46 @@
         return;
       }
       
-      // Determine organizer email based on "Paid To" selection
-      if (paidTo === 'Subhakar') {
-        organizerEmail = 'saisubhakarv@gmail.com';
-      } else if (paidTo === 'Surya') {
-        organizerEmail = 'suryakumarofficial24@gmail.com';
-      } else {
-        showStatus('Please select a valid person.', 'error');
-        return;
-      }
-      
       const btn = this;
       const originalText = btn.textContent;
-      btn.textContent = 'Sending OTP...';
+      btn.textContent = 'Checking email...';
       btn.disabled = true;
       hideStatus();
       
       try {
+        // First check if email already exists in payment sheet
+        const checkResponse = await fetch(GOOGLE_SCRIPT_URL + '?action=checkEmailInPaymentSheet&email=' + encodeURIComponent(playerEmail));
+        const checkResult = await checkResponse.text();
+        
+        if (checkResult.includes('Error') || checkResult.includes('already registered')) {
+          showStatus('This email address is already registered in the payment sheet. Please use a different email address.', 'error');
+          btn.disabled = false;
+          btn.textContent = originalText;
+          return;
+        }
+        
+        if (!checkResult.includes('success') && !checkResult.includes('available')) {
+          showStatus('Error checking email: ' + checkResult, 'error');
+          btn.disabled = false;
+          btn.textContent = originalText;
+          return;
+        }
+        
+        // Email is available, proceed with OTP
+        btn.textContent = 'Sending OTP...';
+        
+        // Determine organizer email based on "Paid To" selection
+        if (paidTo === 'Subhakar') {
+          organizerEmail = 'saisubhakarv@gmail.com';
+        } else if (paidTo === 'Surya') {
+          organizerEmail = 'suryakumarofficial24@gmail.com';
+        } else {
+          showStatus('Please select a valid person.', 'error');
+          btn.disabled = false;
+          btn.textContent = originalText;
+          return;
+        }
+        
         const response = await fetch(GOOGLE_SCRIPT_URL + '?action=sendOtpToOrganizer&email=' + encodeURIComponent(organizerEmail) + '&paidTo=' + encodeURIComponent(paidTo));
         const result = await response.text();
         
@@ -333,8 +356,8 @@
           showStatus('Error sending OTP: ' + result, 'error');
         }
       } catch (error) {
-        showStatus('Error sending OTP. Please try again.', 'error');
-        console.error('OTP send error:', error);
+        showStatus('Error processing request. Please try again.', 'error');
+        console.error('Error:', error);
       } finally {
         btn.disabled = false;
       }
