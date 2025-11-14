@@ -136,15 +136,27 @@
   <!-- Socket.IO Client Library - Load from CDN -->
   <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
   <script>
-  // Configuration: Get server URL from URL parameter, window variable, or use default
-  // Examples:
-  // - Access with parameter: ?server=https://abc123.ngrok.io
-  // - Or set window.SERVER_URL before loading page
-  // - Or edit this default value
+  // Configuration: Get server URL from URL parameter, window variable, or auto-detect
+  // Priority:
+  // 1. URL parameter: ?server=https://abc123.ngrok.io
+  // 2. window.SERVER_URL (set before loading page)
+  // 3. Auto-detect from current page URL (if accessed from same server)
+  // 4. Default to localhost (for local development)
   const urlParams = new URLSearchParams(window.location.search);
-  const SERVER_URL = urlParams.get('server') || 
-                     window.SERVER_URL || 
-                     'http://localhost:3000';
+  let SERVER_URL = urlParams.get('server') || window.SERVER_URL;
+  
+  // Auto-detect: if accessed from same origin, use current origin
+  if (!SERVER_URL) {
+    const currentOrigin = window.location.origin;
+    // If accessed from the same server (not localhost), use current origin
+    // Otherwise, default to localhost for local development
+    if (currentOrigin.includes('localhost') || currentOrigin.includes('127.0.0.1')) {
+      SERVER_URL = 'http://localhost:3000';
+    } else {
+      // Use the same origin (works if live-standalone.html is served from the same server)
+      SERVER_URL = currentOrigin;
+    }
+  }
   
   console.log('Connecting to server:', SERVER_URL);
   
