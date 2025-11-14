@@ -148,15 +148,26 @@
   // Auto-detect: if accessed from same origin, use current origin
   if (!SERVER_URL) {
     const currentOrigin = window.location.origin;
+    const currentPort = window.location.port;
     // If accessed from the same server (not localhost), use current origin
     // Otherwise, default to localhost for local development
     if (currentOrigin.includes('localhost') || currentOrigin.includes('127.0.0.1')) {
+      // For localhost, use port 3000 (default server port)
       SERVER_URL = 'http://localhost:3000';
     } else {
       // Use the same origin (works if live-standalone.html is served from the same server)
-      SERVER_URL = currentOrigin;
+      // If port is specified, keep it; otherwise use default
+      if (currentPort && currentPort !== '80' && currentPort !== '443') {
+        SERVER_URL = currentOrigin;
+      } else {
+        // No port specified, use current origin (will use default port)
+        SERVER_URL = currentOrigin;
+      }
     }
   }
+  
+  console.log('🔍 Auto-detected SERVER_URL:', SERVER_URL);
+  console.log('📍 Current page origin:', window.location.origin);
   
   console.log('Connecting to server:', SERVER_URL);
   
@@ -175,7 +186,8 @@
   sock.on('connect', () => {
     statusEl.textContent = 'Connected';
     statusEl.className = 'connected';
-    console.log('Connected to server:', SERVER_URL);
+    console.log('✅ Connected to server:', SERVER_URL);
+    // Send hello to identify as viewer - server will send initial state
     sock.emit('hello', { role: 'viewer' });
   });
   
@@ -186,9 +198,12 @@
   });
   
   sock.on('connect_error', (error) => {
-    statusEl.textContent = 'Connection Error';
+    statusEl.textContent = 'Connection Error - Check console';
     statusEl.className = 'disconnected';
-    console.error('Connection error:', error);
+    console.error('❌ Connection error:', error);
+    console.error('Attempted to connect to:', SERVER_URL);
+    console.error('Current page URL:', window.location.href);
+    console.error('If this persists, try accessing with: ?server=http://YOUR_SERVER_IP:3000');
   });
   
   sock.on('reconnect', (attemptNumber) => {
@@ -917,6 +932,7 @@
   
   let st = null;
   sock.on('state:update', (state) => {
+    console.log('📊 State update received:', state ? 'State received successfully' : 'Empty state');
     st = state;
     render(state);
     updateViewerTimer();
