@@ -826,6 +826,7 @@
     
     // Store registration data for success page
     let registrationData = null;
+    let generatedPdfBase64 = null; // Store PDF locally after generation
     
     // Flag to track if we've received postMessage (to prevent duplicate processing)
     let postMessageReceived = false;
@@ -1287,6 +1288,10 @@
         // Convert PDF to base64
         const pdfBase64 = doc.output('datauristring').split(',')[1];
         
+        // Store PDF locally for emailing later
+        generatedPdfBase64 = pdfBase64;
+        console.log('✓ PDF generated and stored locally');
+        
         // Get serial number for filename
         const serialNum = serialNumber || 'unknown';
         
@@ -1324,7 +1329,7 @@
       }
     }
     
-    // Function to email PDF (retrieve from Drive instead of generating new)
+    // Function to email PDF (use locally stored PDF)
     async function emailPDF() {
       if (!registrationData) {
         alert('No registration data available to email.');
@@ -1338,7 +1343,6 @@
       }
       
       const email = registrationData.email || sessionStorage.getItem('verifiedEmail') || '';
-      const serialNumber = sessionStorage.getItem('verifiedSerial') || '';
       
       if (!email) {
         alert('Email address not found. Cannot send PDF.');
@@ -1349,8 +1353,9 @@
         return;
       }
       
-      if (!serialNumber) {
-        alert('Serial number not found. Cannot retrieve PDF from Drive.');
+      // Check if PDF is available locally
+      if (!generatedPdfBase64) {
+        alert('PDF not available. Please wait for PDF generation to complete or contact organizers.');
         if (btn) {
           btn.disabled = false;
           btn.textContent = '📧 Email Registration Details (PDF)';
@@ -1358,9 +1363,9 @@
         return;
       }
       
-      console.log('Retrieving PDF from Drive for serial number:', serialNumber);
+      console.log('Sending locally stored PDF to email:', email);
       
-      // Send request to Google Apps Script to retrieve PDF from Drive and email it
+      // Send locally stored PDF to Google Apps Script for emailing
       try {
         const response = await fetch(GOOGLE_SCRIPT_URL, {
           method: 'POST',
@@ -1370,7 +1375,7 @@
           body: new URLSearchParams({
             action: 'emailPdf',
             email: email,
-            serialNumber: serialNumber,
+            pdfData: generatedPdfBase64,
             name: registrationData.name || '',
             mobile: registrationData.mobile || ''
           })
