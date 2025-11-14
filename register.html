@@ -7,6 +7,30 @@
   <link rel="stylesheet" href="style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
+    /* Logo in top-right corner */
+    .page-logo {
+      position: fixed;
+      top: clamp(10px, 2vh, 20px);
+      right: clamp(10px, 2vw, 20px);
+      width: clamp(60px, 8vw, 120px);
+      height: auto;
+      z-index: 1000;
+      opacity: 0.9;
+      transition: opacity 0.3s;
+    }
+    
+    .page-logo:hover {
+      opacity: 1;
+    }
+    
+    @media (max-width: 768px) {
+      .page-logo {
+        width: clamp(50px, 10vw, 80px);
+        top: clamp(8px, 1.5vh, 15px);
+        right: clamp(8px, 2vw, 15px);
+      }
+    }
+    
     body {
       background: #0f172a;
       color: #e2e8f0;
@@ -660,6 +684,8 @@
   </style>
 </head>
 <body>
+  <!-- Logo in top-right corner -->
+  <img src="Surabhi yuvasena logo.png" alt="Surabhi Yuvasena Logo" class="page-logo">
   <div class="container">
     <h1>Register for Surabhi Premier League 2025</h1>
     <p class="subtitle">Fill in your details to register</p>
@@ -1016,9 +1042,263 @@
         // Scroll to top
         window.scrollTo(0, 0);
         console.log('Success page displayed successfully');
+        
+        // Automatically generate and save PDF to Drive when success page is shown
+        savePDFToDrive();
       } catch (error) {
         console.error('Error in showSuccessPage:', error);
         alert('Registration successful! Please quote your mobile number when making payment.\n\nError displaying details: ' + error.message);
+      }
+    }
+    
+    // Helper function to add logo to PDF
+    async function addLogoToPDF(doc) {
+      try {
+        // Convert logo image to base64
+        const logoImg = new Image();
+        logoImg.crossOrigin = 'anonymous';
+        
+        return new Promise((resolve) => {
+          logoImg.onload = function() {
+            try {
+              const canvas = document.createElement('canvas');
+              canvas.width = logoImg.width;
+              canvas.height = logoImg.height;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(logoImg, 0, 0);
+              const logoDataUrl = canvas.toDataURL('image/png');
+              
+              // Add logo to top-right corner (size: 30x30mm, position: right edge - 5mm margin)
+              const logoWidth = 30;
+              const logoHeight = 30;
+              const pageWidth = doc.internal.pageSize.getWidth();
+              const logoX = pageWidth - logoWidth - 5;
+              const logoY = 5;
+              
+              doc.addImage(logoDataUrl, 'PNG', logoX, logoY, logoWidth, logoHeight);
+              resolve();
+            } catch (error) {
+              console.error('Error adding logo to PDF:', error);
+              resolve(); // Continue even if logo fails
+            }
+          };
+          logoImg.onerror = function() {
+            console.error('Error loading logo image');
+            resolve(); // Continue even if logo fails
+          };
+          logoImg.src = 'Surabhi yuvasena logo.png';
+        });
+      } catch (error) {
+        console.error('Error in addLogoToPDF:', error);
+        return Promise.resolve(); // Continue even if logo fails
+      }
+    }
+    
+    // Function to generate PDF and save it to Drive automatically
+    async function savePDFToDrive() {
+      if (!registrationData) {
+        console.log('No registration data available to save PDF.');
+        return;
+      }
+      
+      try {
+        console.log('Generating PDF to save to Drive with data:', registrationData);
+        
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        
+        // Add logo to PDF
+        await addLogoToPDF(doc);
+        
+        // Set font
+        doc.setFontSize(20);
+        doc.setTextColor(0, 0, 0);
+        doc.text('Surabhi Premier League 2025', 105, 20, { align: 'center' });
+        
+        doc.setFontSize(16);
+        doc.text('Registration Confirmation', 105, 30, { align: 'center' });
+        
+        // Draw line
+        doc.setLineWidth(0.5);
+        doc.line(20, 35, 190, 35);
+        
+        // Registration details
+        let yPos = 45;
+        doc.setFontSize(12);
+        doc.setTextColor(0, 0, 0);
+        
+        // Mobile Number
+        doc.setFontSize(14);
+        doc.setTextColor(0, 100, 200);
+        doc.setFont(undefined, 'bold');
+        doc.text('Mobile Number:', 20, yPos);
+        doc.text(registrationData.mobile || '', 120, yPos);
+        yPos += 10;
+        
+        doc.setFontSize(12);
+        doc.setTextColor(0, 0, 0);
+        doc.setFont(undefined, 'normal');
+        doc.line(20, yPos, 190, yPos);
+        yPos += 10;
+        
+        // Other details
+        const paymentAmount = sessionStorage.getItem('paymentAmount') || '';
+        const paymentToWhom = sessionStorage.getItem('paymentToWhom') || '';
+        const serialNumber = sessionStorage.getItem('verifiedSerial') || '';
+        
+        // Combine Registration Fee and Amount Paid into Registration Fee Paid
+        const registrationFeePaid = paymentAmount || registrationData.registrationFee || '0';
+        
+        const details = [
+          ['Name:', registrationData.name || ''],
+          ['Father Name:', registrationData.fatherName || ''],
+          ['Category:', registrationData.category || ''],
+          ['Email:', registrationData.email || ''],
+          ['Serial Number:', serialNumber],
+          ['Captaincy:', registrationData.captaincy || ''],
+          ['Registration Fee Paid:', 'Rs. ' + registrationFeePaid]
+        ];
+        
+        // Add payment to whom if available
+        if (paymentToWhom) {
+          details.push(['Paid To:', paymentToWhom]);
+        }
+        
+        // Continue with other details
+        details.push(
+          ['Name on Jersey:', registrationData.jerseyName || ''],
+          ['Jersey Number:', registrationData.jerseyNumber || ''],
+          ['T-shirt Size:', registrationData.tshirtSize || ''],
+          ['Trouser Size:', registrationData.trouserSize || '']
+        );
+        
+        details.forEach(([label, value]) => {
+          if (yPos > 270) {
+            doc.addPage();
+            yPos = 20;
+          }
+          doc.setFont(undefined, 'bold');
+          doc.text(label, 20, yPos);
+          doc.setFont(undefined, 'normal');
+          // Wrap long text if needed
+          const maxWidth = 100;
+          const lines = doc.splitTextToSize(value || '', maxWidth);
+          doc.text(lines, 80, yPos);
+          yPos += Math.max(8, lines.length * 6);
+        });
+        
+        // Thank you message and contact information
+        if (yPos > 250) {
+          doc.addPage();
+          yPos = 20;
+        } else {
+          yPos += 10;
+        }
+        
+        // Thank you message
+        doc.setFontSize(12);
+        doc.setFont(undefined, 'normal');
+        doc.setTextColor(0, 0, 0);
+        const thankYouText = 'Thank you for successfully registering for SPL-2025. All the best';
+        const thankYouLines = doc.splitTextToSize(thankYouText, 170);
+        doc.text(thankYouLines, 20, yPos);
+        yPos += Math.max(8, thankYouLines.length * 6) + 5;
+        
+        // Organizers contact info with hyperlink
+        doc.setFontSize(11);
+        doc.setTextColor(0, 0, 255); // Blue color for hyperlink
+        const organizersText = 'Organizers: 9395185132, 8074450066. https://surabhipremierleague.info/';
+        const organizersLines = doc.splitTextToSize(organizersText, 170);
+        doc.text(organizersLines, 20, yPos);
+        
+        // Add hyperlink to the URL (jsPDF supports this)
+        const urlText = 'https://surabhipremierleague.info/';
+        const urlStartIndex = organizersText.indexOf(urlText);
+        if (urlStartIndex >= 0) {
+          // Calculate position of URL in the text
+          const urlX = 20 + doc.getTextWidth(organizersText.substring(0, urlStartIndex));
+          const urlY = yPos;
+          doc.link(urlX, urlY - 5, doc.getTextWidth(urlText), 5, { url: urlText });
+        }
+        yPos += Math.max(8, organizersLines.length * 6);
+        
+        // Footer and logo on all pages
+        const pageCount = doc.internal.pages.length - 1;
+        for (let i = 1; i <= pageCount; i++) {
+          doc.setPage(i);
+          
+          // Add logo to each page
+          try {
+            const logoImg = new Image();
+            logoImg.crossOrigin = 'anonymous';
+            await new Promise((resolve) => {
+              logoImg.onload = function() {
+                try {
+                  const canvas = document.createElement('canvas');
+                  canvas.width = logoImg.width;
+                  canvas.height = logoImg.height;
+                  const ctx = canvas.getContext('2d');
+                  ctx.drawImage(logoImg, 0, 0);
+                  const logoDataUrl = canvas.toDataURL('image/png');
+                  
+                  const logoWidth = 30;
+                  const logoHeight = 30;
+                  const pageWidth = doc.internal.pageSize.getWidth();
+                  const logoX = pageWidth - logoWidth - 5;
+                  const logoY = 5;
+                  
+                  doc.addImage(logoDataUrl, 'PNG', logoX, logoY, logoWidth, logoHeight);
+                } catch (error) {
+                  console.error('Error adding logo to page:', error);
+                }
+                resolve();
+              };
+              logoImg.onerror = resolve;
+              logoImg.src = 'Surabhi yuvasena logo.png';
+            });
+          } catch (error) {
+            console.error('Error adding logo to page:', error);
+          }
+          
+          doc.setFontSize(10);
+          doc.setTextColor(128, 128, 128);
+          doc.text('Organised by Surabhi Yuvasena, Surabhi Colony', 105, 285, { align: 'center' });
+        }
+        
+        // Convert PDF to base64
+        const pdfBase64 = doc.output('datauristring').split(',')[1];
+        
+        // Get serial number for filename
+        const serialNum = serialNumber || 'unknown';
+        
+        // Send PDF to Google Apps Script for saving to Drive
+        try {
+          const response = await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+              action: 'savePdfToDrive',
+              pdfData: pdfBase64,
+              serialNumber: serialNum
+            })
+          });
+          
+          const result = await response.text();
+          
+          if (result.includes('success') || result.includes('saved')) {
+            console.log('✓ PDF saved to Drive successfully with filename: ' + serialNum + '.pdf');
+          } else {
+            console.error('Error saving PDF to Drive: ' + result);
+          }
+        } catch (error) {
+          console.error('Error saving PDF to Drive:', error);
+          // Don't show alert to user - this is a background operation
+        }
+      } catch (error) {
+        console.error('Error generating PDF for Drive:', error);
+        // Don't show alert to user - this is a background operation
       }
     }
     
@@ -1046,7 +1326,7 @@
       doc.text('Surabhi Premier League 2025', 105, 20, { align: 'center' });
       
       doc.setFontSize(16);
-      doc.text('Dummy Registration Confirmation', 105, 30, { align: 'center' });
+      doc.text('Registration Confirmation', 105, 30, { align: 'center' });
       
       // Draw line
       doc.setLineWidth(0.5);
@@ -1155,10 +1435,44 @@
       doc.setTextColor(0, 0, 0);
 
       yPos += 10;
-      // Footer
+      // Footer and logo on all pages
       const pageCount = doc.internal.pages.length - 1;
       for (let i = 1; i <= pageCount; i++) {
         doc.setPage(i);
+        
+        // Add logo to each page
+        try {
+          const logoImg = new Image();
+          logoImg.crossOrigin = 'anonymous';
+          await new Promise((resolve) => {
+            logoImg.onload = function() {
+              try {
+                const canvas = document.createElement('canvas');
+                canvas.width = logoImg.width;
+                canvas.height = logoImg.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(logoImg, 0, 0);
+                const logoDataUrl = canvas.toDataURL('image/png');
+                
+                const logoWidth = 30;
+                const logoHeight = 30;
+                const pageWidth = doc.internal.pageSize.getWidth();
+                const logoX = pageWidth - logoWidth - 5;
+                const logoY = 5;
+                
+                doc.addImage(logoDataUrl, 'PNG', logoX, logoY, logoWidth, logoHeight);
+              } catch (error) {
+                console.error('Error adding logo to page:', error);
+              }
+              resolve();
+            };
+            logoImg.onerror = resolve;
+            logoImg.src = 'Surabhi yuvasena logo.png';
+          });
+        } catch (error) {
+          console.error('Error adding logo to page:', error);
+        }
+        
         doc.setFontSize(10);
         doc.setTextColor(128, 128, 128);
         doc.text('Organised by Surabhi Yuvasena, Surabhi Colony', 105, 285, { align: 'center' });
@@ -2522,5 +2836,4 @@
   </script>
 </body>
 </html>
-
 

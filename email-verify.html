@@ -6,6 +6,30 @@
   <title>Email Verification - Surabhi Premier League 2025</title>
   <link rel="stylesheet" href="style.css">
   <style>
+    /* Logo in top-right corner */
+    .page-logo {
+      position: fixed;
+      top: clamp(10px, 2vh, 20px);
+      right: clamp(10px, 2vw, 20px);
+      width: clamp(60px, 8vw, 120px);
+      height: auto;
+      z-index: 1000;
+      opacity: 0.9;
+      transition: opacity 0.3s;
+    }
+    
+    .page-logo:hover {
+      opacity: 1;
+    }
+    
+    @media (max-width: 768px) {
+      .page-logo {
+        width: clamp(50px, 10vw, 80px);
+        top: clamp(8px, 1.5vh, 15px);
+        right: clamp(8px, 2vw, 15px);
+      }
+    }
+    
     body {
       background: #0f172a;
       color: #e2e8f0;
@@ -161,6 +185,8 @@
   </style>
 </head>
 <body>
+  <!-- Logo in top-right corner -->
+  <img src="Surabhi yuvasena logo.png" alt="Surabhi Yuvasena Logo" class="page-logo">
   <div class="container">
     <h1>Email Verification</h1>
     <div id="paymentConfirmation" style="display: none; background: #065f46; color: #6ee7b7; padding: 16px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #10b981; text-align: center;">
