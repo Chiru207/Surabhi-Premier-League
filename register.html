@@ -685,7 +685,7 @@
 </head>
 <body>
   <!-- Logo in top-right corner -->
-  <img src="./Surabhi%20yuvasena%20logo.png" alt="Surabhi Yuvasena Logo" class="page-logo">
+  <img src="Surabhi_Yuvasena_Logo.png" alt="Surabhi Yuvasena Logo" class="page-logo" onerror="console.error('Logo failed to load'); this.style.display='none';">
   <div class="container">
     <h1>Register for Surabhi Premier League 2025</h1>
     <p class="subtitle">Fill in your details to register</p>
@@ -1059,14 +1059,13 @@
       }
     }
     
-    // Helper function to add logo to PDF
-    async function addLogoToPDF(doc) {
-      try {
-        // Convert logo image to base64
-        const logoImg = new Image();
-        logoImg.crossOrigin = 'anonymous';
-        
-        return new Promise((resolve) => {
+    // Helper function to load logo once and return base64 data URL for reuse
+    async function loadLogoForPDF() {
+      return new Promise((resolve) => {
+        try {
+          const logoImg = new Image();
+          logoImg.crossOrigin = 'anonymous';
+          
           logoImg.onload = function() {
             try {
               const canvas = document.createElement('canvas');
@@ -1075,30 +1074,63 @@
               const ctx = canvas.getContext('2d');
               ctx.drawImage(logoImg, 0, 0);
               const logoDataUrl = canvas.toDataURL('image/png');
-              
-              // Add logo to top-right corner (size: 30x30mm, position: right edge - 5mm margin)
-              const logoWidth = 30;
-              const logoHeight = 30;
-              const pageWidth = doc.internal.pageSize.getWidth();
-              const logoX = pageWidth - logoWidth - 5;
-              const logoY = 5;
-              
-              doc.addImage(logoDataUrl, 'PNG', logoX, logoY, logoWidth, logoHeight);
-              resolve();
+              console.log('✓ Logo loaded successfully for PDF');
+              resolve(logoDataUrl);
             } catch (error) {
-              console.error('Error adding logo to PDF:', error);
-              resolve(); // Continue even if logo fails
+              console.error('Error processing logo for PDF:', error);
+              resolve(null);
             }
           };
+          
+          // Try multiple paths in order
+          const logoPaths = [
+            'Surabhi_Yuvasena_Logo.png',
+            './Surabhi_Yuvasena_Logo.png',
+            'Surabhi yuvasena logo.png',
+            './Surabhi yuvasena logo.png'
+          ];
+          
+          let pathIndex = 0;
+          
           logoImg.onerror = function() {
-            console.error('Error loading logo image');
-            resolve(); // Continue even if logo fails
+            pathIndex++;
+            if (pathIndex < logoPaths.length) {
+              console.log('Trying logo path:', logoPaths[pathIndex]);
+              logoImg.src = logoPaths[pathIndex];
+            } else {
+              console.error('All logo paths failed to load');
+              resolve(null);
+            }
           };
-          logoImg.src = './Surabhi%20yuvasena%20logo.png';
-        });
+          
+          // Start with first path
+          console.log('Loading logo from:', logoPaths[pathIndex]);
+          logoImg.src = logoPaths[pathIndex];
+        } catch (error) {
+          console.error('Error in loadLogoForPDF:', error);
+          resolve(null);
+        }
+      });
+    }
+    
+    // Helper function to add logo to a specific page
+    function addLogoToPage(doc, logoDataUrl, pageNumber) {
+      if (!logoDataUrl) {
+        console.log('No logo data available, skipping logo on page ' + pageNumber);
+        return;
+      }
+      
+      try {
+        const logoWidth = 30;
+        const logoHeight = 30;
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const logoX = pageWidth - logoWidth - 5;
+        const logoY = 5;
+        
+        doc.addImage(logoDataUrl, 'PNG', logoX, logoY, logoWidth, logoHeight);
+        console.log('✓ Logo added to page ' + pageNumber);
       } catch (error) {
-        console.error('Error in addLogoToPDF:', error);
-        return Promise.resolve(); // Continue even if logo fails
+        console.error('Error adding logo to page ' + pageNumber + ':', error);
       }
     }
     
@@ -1124,8 +1156,8 @@
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
         
-        // Add logo to PDF
-        await addLogoToPDF(doc);
+        // Load logo once for reuse across all pages
+        const logoDataUrl = await loadLogoForPDF();
         
         // Set font
         doc.setFontSize(20);
@@ -1244,38 +1276,8 @@
         for (let i = 1; i <= pageCount; i++) {
           doc.setPage(i);
           
-          // Add logo to each page
-          try {
-            const logoImg = new Image();
-            logoImg.crossOrigin = 'anonymous';
-            await new Promise((resolve) => {
-              logoImg.onload = function() {
-                try {
-                  const canvas = document.createElement('canvas');
-                  canvas.width = logoImg.width;
-                  canvas.height = logoImg.height;
-                  const ctx = canvas.getContext('2d');
-                  ctx.drawImage(logoImg, 0, 0);
-                  const logoDataUrl = canvas.toDataURL('image/png');
-                  
-                  const logoWidth = 30;
-                  const logoHeight = 30;
-                  const pageWidth = doc.internal.pageSize.getWidth();
-                  const logoX = pageWidth - logoWidth - 5;
-                  const logoY = 5;
-                  
-                  doc.addImage(logoDataUrl, 'PNG', logoX, logoY, logoWidth, logoHeight);
-                } catch (error) {
-                  console.error('Error adding logo to page:', error);
-                }
-                resolve();
-              };
-              logoImg.onerror = resolve;
-              logoImg.src = './Surabhi%20yuvasena%20logo.png';
-            });
-          } catch (error) {
-            console.error('Error adding logo to page:', error);
-          }
+          // Add logo to each page (using pre-loaded logo data)
+          addLogoToPage(doc, logoDataUrl, i);
           
           doc.setFontSize(10);
           doc.setTextColor(128, 128, 128);
