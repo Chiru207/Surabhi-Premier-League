@@ -123,6 +123,10 @@
   <div class="card" id="announcement" style="display:none;margin-bottom:24px">
     <div id="announcementContent"></div>
   </div>
+  <div class="card" id="roundSummary" style="margin-bottom:24px">
+    <h3 class="live-h3">Bidding Rounds Summary</h3>
+    <div id="roundSummaryContent"></div>
+  </div>
   <!-- Teams Information - Below -->
   <div class="card" id="teamsCard" style="display:none;margin-bottom:24px">
     <h3 class="live-h3">Team Rosters</h3>
@@ -138,7 +142,7 @@
   <script>
   // Configuration: Get server URL from URL parameter, window variable, or auto-detect
   // Priority:
-  // 1. URL parameter: ?server=https://abc123.ngrok.io
+  // 1. URL parameter: ?server=https://abc123.ngrok.io (RECOMMENDED for GitHub Pages)
   // 2. window.SERVER_URL (set before loading page)
   // 3. Auto-detect from current page URL (if accessed from same server)
   // 4. Default to localhost (for local development)
@@ -164,6 +168,13 @@
         SERVER_URL = currentOrigin;
       }
     }
+  }
+  
+  // If SERVER_URL is still not set, show helpful error
+  if (!SERVER_URL) {
+    console.error('❌ SERVER_URL not configured!');
+    console.error('For GitHub Pages, use: ?server=https://your-ngrok-url.ngrok.io');
+    alert('Server URL not configured. Please add ?server=YOUR_SERVER_URL to the page URL.\n\nExample: ?server=https://abc123.ngrok.io');
   }
   
   console.log('🔍 Auto-detected SERVER_URL:', SERVER_URL);
@@ -417,21 +428,25 @@
     
     teamsCard.style.display = 'block';
     
+    // Get queued players count for "Next Round" tab
+    const queuedPlayers = st.players.filter(p => p.status === 'queued');
+    const queuedCount = queuedPlayers.length;
+    
     // Create tabs for each captain + "Next Round" tab
     const tabs = st.captains.map(c => ({
       id: c.id,
-      name: c.name,
+      name: c.name + ' (' + c.teamCount + ')',
       active: false
     }));
     
     // Add "Next Round" tab
-    tabs.push({ id: 'nextRound', name: 'Next Round', active: false });
+    tabs.push({ id: 'nextRound', name: 'Next Round (' + queuedCount + ')', active: false });
     
     // Set first tab as active
     if (tabs.length > 0) tabs[0].active = true;
     
     teamTabs.innerHTML = tabs.map(tab => 
-      '<button class="btn ' + (tab.active ? '' : 'alt') + '" onclick="switchTeamTab(\'' + tab.id + '\')" style="margin-bottom:8px">' + tab.name + '</button>'
+      '<button class="btn ' + (tab.active ? '' : 'alt') + '" onclick="switchTeamTab(\'' + tab.id + '\')" style="margin-bottom:8px;min-width:120px">' + tab.name + '</button>'
     ).join('');
     
     // Render team content
@@ -463,23 +478,28 @@
           return;
         }
         
-        const teamSerials = st.teams && st.teams[captain.id] ? st.teams[captain.id] : [];
-        const teamPlayers = teamSerials.map(serial => st.players.find(p => p.serial == serial)).filter(Boolean);
+        // Filter players by soldToCaptainId and status === 'sold' (same approach as live.html)
+        const boughtPlayers = st.players.filter(p => p.soldToCaptainId === captain.id && p.status === 'sold');
+        boughtPlayers.sort((a, b) => (a.serial || 0) - (b.serial || 0));
         
-        if (teamPlayers.length === 0) {
-          teamContent.innerHTML = '<div style="color:#94a3b8;padding:16px;text-align:center">No players yet</div>';
+        if (boughtPlayers.length === 0) {
+          teamContent.innerHTML = '<div style="color:#94a3b8;padding:16px;text-align:center">No players bought yet</div>';
         } else {
-          teamContent.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">' +
-            teamPlayers.map(p => {
-              const img = p.photoFile && st.photoBase ? '<img class="photo" src="' + st.photoBase + encodeURIComponent(p.photoFile) + '" onerror="this.remove()" style="width:100%;height:auto;border-radius:8px;margin-bottom:8px"/>' : '';
-              return '<div class="card" style="padding:12px">' +
-                img +
-                '<div class="tag">#' + p.serial + '</div>' +
-                '<div class="tag">' + (p.role||'') + '</div>' +
-                '<h4>' + p.name + '</h4>' +
-                '<div style="color:#10b981;font-weight:600">' + (p.currentBid || p.basePrice) + '</div>' +
-              '</div>';
-            }).join('') +
+          teamContent.innerHTML = '<div style="margin-top:16px">' +
+            '<h4 class="live-h4" style="color:#60a5fa;margin-bottom:12px">' + captain.name + '\'s Team (' + boughtPlayers.length + ' players)</h4>' +
+            '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">' +
+              boughtPlayers.map(p => {
+                const price = p.currentBid || p.basePrice || 0;
+                const img = p.photoFile && st.photoBase ? '<img class="photo" src="' + st.photoBase + encodeURIComponent(p.photoFile) + '" onerror="this.remove()" style="width:100%;height:auto;border-radius:8px;margin-bottom:8px"/>' : '';
+                return '<div class="card" style="padding:12px">' +
+                  img +
+                  '<div class="tag">#' + p.serial + '</div>' +
+                  '<div class="tag">' + (p.role||'') + '</div>' +
+                  '<h4>' + p.name + '</h4>' +
+                  '<div style="color:#10b981;font-weight:600">' + price + '</div>' +
+                '</div>';
+              }).join('') +
+            '</div>' +
           '</div>';
         }
       }
@@ -489,10 +509,27 @@
     window.activeTeamTab = tabs[0].id;
     window.switchTeamTab = function(tabId) {
       window.activeTeamTab = tabId;
-      tabs.forEach(t => t.active = (t.id === tabId));
+      
+      // Update tab active states
+      tabs.forEach(tab => tab.active = (tab.id === tabId));
+      
+      // Recalculate team counts for tabs (in case they changed)
+      const currentQueuedCount = st.players.filter(p => p.status === 'queued').length;
+      tabs.forEach(tab => {
+        if (tab.id === 'nextRound') {
+          tab.name = 'Next Round (' + currentQueuedCount + ')';
+        } else {
+          const cap = st.captains.find(c => c.id === tab.id);
+          if (cap) {
+            tab.name = cap.name + ' (' + cap.teamCount + ')';
+          }
+        }
+      });
+      
       teamTabs.innerHTML = tabs.map(tab => 
-        '<button class="btn ' + (tab.active ? '' : 'alt') + '" onclick="switchTeamTab(\'' + tab.id + '\')" style="margin-bottom:8px">' + tab.name + '</button>'
+        '<button class="btn ' + (tab.active ? '' : 'alt') + '" onclick="switchTeamTab(\'' + tab.id + '\')" style="margin-bottom:8px;min-width:120px">' + tab.name + '</button>'
       ).join('');
+      
       renderTeamContent(tabId);
     };
     
@@ -592,10 +629,29 @@
       const secs = Math.ceil(left/1000);
       
       if (isReady) {
-        return '<h3 class="live-h3" style="margin-bottom:16px">Player Ready</h3>' +
+        const currentRound = p.round || 1;
+        return '<h3 class="live-h3" style="margin-bottom:16px">Player Ready (Round ' + currentRound + ')</h3>' +
           '<div style="padding:16px;background:#1e293b;border:1px solid #334155;border-radius:8px;margin-bottom:16px;color:#fbbf24;" class="live-caption">' +
             '<strong>⏸️ Waiting for admin to start bidding...</strong>' +
           '</div>' +
+          '<div class="row">' +
+            (img ? '<div style="min-width:220px;max-width:220px">' + img + '</div>' : '') +
+            '<div style="flex:1">' +
+              '<div class="tag live-tag" style="padding:4px 10px">Serial #' + p.serial + '</div>' +
+              '<div class="tag live-tag" style="padding:4px 10px">' + (p.role||'') + '</div>' +
+              '<h2 class="live-h2" style="margin:12px 0">' + p.name + '</h2>' +
+              '<p class="live-p">Base: <b class="live-bid-amount">' + p.basePrice + '</b></p>' +
+            '</div>' +
+          '</div>';
+      }
+      
+      // Check if player is actually in 'bidding' status
+      const isBidding = p.status === 'bidding';
+      
+      if (!isBidding) {
+        // Player is not in bidding status (could be queued, pending, etc.)
+        const currentRound = p.round || 1;
+        return '<h3 class="live-h3" style="margin-bottom:16px">Player Status: ' + (p.status || 'unknown') + '</h3>' +
           '<div class="row">' +
             (img ? '<div style="min-width:220px;max-width:220px">' + img + '</div>' : '') +
             '<div style="flex:1">' +
@@ -617,7 +673,8 @@
         pausedByCaptainName = pausedByCaptain ? pausedByCaptain.name : pausedByCaptainId;
       }
       
-      return '<h3 class="live-h3" style="margin-bottom:16px">Now Bidding</h3>' +
+      const currentRound = p.round || 1;
+      return '<h3 class="live-h3" style="margin-bottom:16px">Now Bidding (Round ' + currentRound + ')</h3>' +
         '<div class="row" style="align-items:flex-start;gap:20px">' +
           '<div style="flex:1;min-width:0">' +
             '<div class="row">' +
@@ -628,7 +685,7 @@
                 '<h2 class="live-h2" style="margin:12px 0">' + p.name + '</h2>' +
                 '<p class="live-p">Base: <b class="live-bid-amount">' + p.basePrice + '</b> | Current: <b class="live-bid-amount" style="color:#60a5fa">' + Math.max(p.currentBid||0, p.basePrice||0) + '</b></p>' +
                 '<p class="live-p">Leader: <b class="live-bid-amount" style="color:#10b981">' + ((st.captains.find(c=>c.id===p.currentBidderId)||{}).name||'-') + '</b></p>' +
-                '<p class="live-p">Time left: <span class="counter live-countdown" style="color:#fbbf24"><b id="viewerCountdown">' + secs + (isPaused ? 's (PAUSED)' : isFrozen ? 's (FROZEN)' : 's') + '</b></span> <span id="pausedByInfo" style="color:#fbbf24;font-size:14px;margin-left:8px"></span></p>' +
+                (isPaused && pausedByCaptainName ? '<p class="live-p" style="color:#fbbf24;font-weight:600">⏸️ Timer paused by: <b>' + pausedByCaptainName + '</b></p>' : isFrozen ? '<p class="live-p" style="color:#fbbf24;font-weight:600">⏸️ Timer frozen by Admin</p>' : '') +
               '</div>' +
             '</div>' +
           '</div>' +
@@ -648,46 +705,131 @@
       logsEl.scrollTop = 0;
     }
     
-    // Announcement card
+    // Announcement card - Show when player is moved to next round
     const announcementCard = document.getElementById('announcement');
     const announcementContent = document.getElementById('announcementContent');
     if (announcementCard && announcementContent) {
-      const recentLogs = (st.logs || []).slice(-5).reverse();
-      const adminActionLogs = recentLogs.filter(log => 
-        log.msg && (log.msg.includes('MOVED TO NEXT ROUND (Admin)') || log.msg.includes('FINISHED (Admin)'))
-      );
+      // First check if current player was moved to next round
+      const currentPlayer = st.currentIndex != null ? st.players[st.currentIndex] : null;
+      const playerMovedToNextRound = currentPlayer && currentPlayer.status === 'queued';
       
-      if (adminActionLogs.length > 0) {
-        const latestAction = adminActionLogs[0];
-        let announcementHtml = '';
-        
-        if (latestAction.msg.includes('MOVED TO NEXT ROUND (Admin)')) {
-          const match = latestAction.msg.match(/(.+?)\s+\(Serial\s+(\d+)\)/);
-          if (match) {
-            const playerName = match[1].replace('MOVED TO NEXT ROUND (Admin):', '').trim();
-            const serial = match[2];
-            announcementHtml = '<div style="background:#fbbf24;color:#0f172a;padding:12px;border-radius:8px;font-weight:600">' +
-              '📢 Admin Action: <span style="color:#92400e">' + playerName + ' (Serial #' + serial + ')</span> has been moved to next round' +
-            '</div>';
-          }
-        } else if (latestAction.msg.includes('FINISHED (Admin)')) {
-          const match = latestAction.msg.match(/FINISHED \(Admin\): (.+?) \(Serial \d+\) to (.+?) for (\d+)/);
-          if (match) {
-            announcementHtml = '<div style="background:#10b981;color:#fff;padding:12px;border-radius:8px;font-weight:600">' +
-              '🏁 Admin Action: <span>' + match[1] + '</span> sold to <span style="font-weight:700">' + match[2] + '</span> for <span style="font-weight:700">' + match[3] + '</span>' +
-            '</div>';
-          }
-        }
-        
-        if (announcementHtml) {
-          announcementContent.innerHTML = announcementHtml;
-          announcementCard.style.display = 'block';
-        } else {
-          announcementCard.style.display = 'none';
-        }
+      if (playerMovedToNextRound) {
+        // Show prominent banner for current player moved to next round
+        announcementContent.innerHTML = '<div style="background:#fbbf24;color:#0f172a;padding:16px;border-radius:8px;font-weight:600;border:2px solid #f59e0b;font-size:16px">' +
+          '⏭️ <strong>' + currentPlayer.name + ' (Serial #' + currentPlayer.serial + ')</strong> has been moved to Round ' + (currentPlayer.round || 1) + '<br/>' +
+          '<div style="margin-top:8px;font-size:14px;font-weight:normal">This player will be available in the next round of bidding.</div>' +
+          '</div>';
+        announcementCard.style.display = 'block';
       } else {
-        announcementCard.style.display = 'none';
+        // Get the most recent log entries
+        const recentLogs = (st.logs || []).slice(-5).reverse();
+        
+        // Check for drop messages first
+        const dropLogs = recentLogs.filter(log => 
+          log.msg && log.msg.includes('DROP:')
+        );
+        
+        if (dropLogs.length > 0) {
+          const latestDrop = dropLogs[0];
+          const dropMatch = latestDrop.msg.match(/DROP:\s*(.+?)\s+dropped from bidding on (.+?)\s+\(Serial\s+(\d+)\)/);
+          if (dropMatch) {
+            const captainName = dropMatch[1].trim();
+            const playerName = dropMatch[2].trim();
+            const serial = dropMatch[3];
+            announcementContent.innerHTML = '<div style="background:#ef4444;color:#fff;padding:16px;border-radius:8px;font-weight:600;border:2px solid #dc2626;font-size:16px">' +
+              '🚫 <strong>' + captainName + '</strong> dropped from bidding on <strong>' + playerName + ' (Serial #' + serial + ')</strong><br/>' +
+              '<div style="margin-top:8px;font-size:14px;font-weight:normal">This captain is no longer participating in the bidding for this player.</div>' +
+              '</div>';
+            announcementCard.style.display = 'block';
+          } else {
+            announcementCard.style.display = 'none';
+          }
+        } else {
+          // Check for admin actions
+          const adminActionLogs = recentLogs.filter(log => 
+            log.msg && (log.msg.includes('MOVED TO NEXT ROUND (Admin)') || log.msg.includes('MOVED TO NEXT ROUND:') || log.msg.includes('MOVED TO NEXT ROUND (Round') || log.msg.includes('FINISHED (Admin)'))
+          );
+          
+          if (adminActionLogs.length > 0) {
+            const latestAction = adminActionLogs[0];
+            let announcementHtml = '';
+            
+            if (latestAction.msg.includes('MOVED TO NEXT ROUND (Admin)') || latestAction.msg.includes('MOVED TO NEXT ROUND:') || latestAction.msg.includes('MOVED TO NEXT ROUND (Round')) {
+              // Try to extract round number from log message
+              const roundMatch = latestAction.msg.match(/Round\s+(\d+)/);
+              const round = roundMatch ? roundMatch[1] : '';
+              const match = latestAction.msg.match(/MOVED TO NEXT ROUND(?: \(Admin\))?: (.+?)\s+\(Serial\s+(\d+)\)/);
+              if (match) {
+                const playerName = match[1].trim();
+                const serial = match[2];
+                const roundText = round ? ' Round ' + round : ' next round';
+                announcementHtml = '<div style="background:#fbbf24;color:#0f172a;padding:16px;border-radius:8px;font-weight:600;border:2px solid #f59e0b;font-size:16px">' +
+                  '⏭️ <strong>' + playerName + ' (Serial #' + serial + ')</strong> has been moved to' + roundText + '<br/>' +
+                  '<div style="margin-top:8px;font-size:14px;font-weight:normal">This player will be available in the next round of bidding.</div>' +
+                  '</div>';
+              }
+            } else if (latestAction.msg.includes('FINISHED (Admin)')) {
+              const match = latestAction.msg.match(/FINISHED \(Admin\): (.+?) \(Serial \d+\) to (.+?) for (\d+)/);
+              if (match) {
+                announcementHtml = '<div style="background:#10b981;color:#fff;padding:12px;border-radius:8px;font-weight:600">' +
+                  '🏁 Admin Action: <span>' + match[1] + '</span> sold to <span style="font-weight:700">' + match[2] + '</span> for <span style="font-weight:700">' + match[3] + '</span>' +
+                  '</div>';
+              }
+            }
+            
+            if (announcementHtml) {
+              announcementContent.innerHTML = announcementHtml;
+              announcementCard.style.display = 'block';
+            } else {
+              announcementCard.style.display = 'none';
+            }
+          } else {
+            announcementCard.style.display = 'none';
+          }
+        }
       }
+    }
+    
+    // Round Summary
+    const roundSummaryEl = document.getElementById('roundSummaryContent');
+    if (roundSummaryEl) {
+      // Count players by status and round
+      const soldCount = st.players.filter(p => p.status === 'sold').length;
+      const pendingRound1 = st.players.filter(p => p.status === 'pending' && (p.round || 1) === 1).length;
+      const pendingRound2 = st.players.filter(p => p.status === 'pending' && (p.round || 1) === 2).length;
+      const pendingRound3 = st.players.filter(p => p.status === 'pending' && (p.round || 1) >= 3).length;
+      const queuedRound2 = st.players.filter(p => p.status === 'queued' && (p.round || 1) === 2).length;
+      const queuedRound3 = st.players.filter(p => p.status === 'queued' && (p.round || 1) === 3).length;
+      const readyRound1 = st.players.filter(p => p.status === 'ready' && (p.round || 1) === 1).length;
+      const readyRound2 = st.players.filter(p => p.status === 'ready' && (p.round || 1) === 2).length;
+      const readyRound3 = st.players.filter(p => p.status === 'ready' && (p.round || 1) === 3).length;
+      const biddingRound1 = st.players.filter(p => p.status === 'bidding' && (p.round || 1) === 1).length;
+      const biddingRound2 = st.players.filter(p => p.status === 'bidding' && (p.round || 1) === 2).length;
+      const biddingRound3 = st.players.filter(p => p.status === 'bidding' && (p.round || 1) === 3).length;
+      
+      // Calculate pending in each round (pending + queued + ready + bidding)
+      const totalRound1 = pendingRound1 + readyRound1 + biddingRound1;
+      const totalRound2 = pendingRound2 + queuedRound2 + readyRound2 + biddingRound2;
+      const totalRound3 = pendingRound3 + queuedRound3 + readyRound3 + biddingRound3;
+      
+      roundSummaryEl.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:12px">' +
+        '<div style="padding:12px;background:#10b981;border-radius:8px;color:#fff">' +
+          '<div style="font-size:24px;font-weight:700">' + soldCount + '</div>' +
+          '<div style="font-size:14px;opacity:0.9">Players Bought</div>' +
+        '</div>' +
+        '<div style="padding:12px;background:#3b82f6;border-radius:8px;color:#fff">' +
+          '<div style="font-size:24px;font-weight:700">' + totalRound1 + '</div>' +
+          '<div style="font-size:14px;opacity:0.9">Pending Round 1</div>' +
+        '</div>' +
+        '<div style="padding:12px;background:#3b82f6;border-radius:8px;color:#fff">' +
+          '<div style="font-size:24px;font-weight:700">' + totalRound2 + '</div>' +
+          '<div style="font-size:14px;opacity:0.9">Pending Round 2</div>' +
+        '</div>' +
+        '<div style="padding:12px;background:#ef4444;border-radius:8px;color:#fff">' +
+          '<div style="font-size:24px;font-weight:700">' + totalRound3 + '</div>' +
+          '<div style="font-size:14px;opacity:0.9">Pending Round 3 (Admin)</div>' +
+        '</div>' +
+      '</div>';
     }
     
     const sold = st.players.filter(p=>p.status==='sold').reverse().slice(0, 10);
@@ -868,78 +1010,127 @@
     };
   }
   
-  // Timer countdown - synchronized with server state
-  function updateViewerTimer() {
-    const c = document.getElementById('viewerCountdown'); 
-    const pausedByEl = document.getElementById('pausedByInfo');
-    if(!c) return; 
+  // Timer update function removed - timer is not displayed on live pages
+  // Pause info is shown directly in the HTML and updated on each render
+  
+  // Background music functionality - Light Classical
+  let backgroundMusic = null;
+  let isMusicPlaying = false;
+  let musicInterval = null;
+  
+  // Light classical melody pattern (inspired by classical music)
+  const classicalMelody = [
+    { freq: 261.63, duration: 0.6 }, // C4
+    { freq: 293.66, duration: 0.6 }, // D4
+    { freq: 329.63, duration: 0.6 }, // E4
+    { freq: 349.23, duration: 0.6 }, // F4
+    { freq: 392.00, duration: 0.8 }, // G4
+    { freq: 349.23, duration: 0.6 }, // F4
+    { freq: 329.63, duration: 0.6 }, // E4
+    { freq: 293.66, duration: 0.6 }, // D4
+    { freq: 261.63, duration: 0.8 }, // C4
+    { freq: 293.66, duration: 0.6 }, // D4
+    { freq: 329.63, duration: 0.6 }, // E4
+    { freq: 349.23, duration: 0.6 }, // F4
+    { freq: 392.00, duration: 0.8 }, // G4
+    { freq: 440.00, duration: 0.6 }, // A4
+    { freq: 392.00, duration: 0.6 }, // G4
+    { freq: 349.23, duration: 0.8 }, // F4
+  ];
+  
+  function createBackgroundMusic() {
+    const audioContext = getAudioContext();
     
-    if (st && st.currentIndex != null) {
-      const p = st.players[st.currentIndex];
-      if (p && p.biddingEndsAt) {
-        const isPaused = p.pausedBy && Object.keys(p.pausedBy).length > 0;
-        const isFrozen = st.frozen || false;
-        let remainingSeconds = 0;
-        let pausedByCaptainName = null;
-        
-        if (isFrozen && st.frozenTimerRemaining != null) {
-          remainingSeconds = Math.ceil(st.frozenTimerRemaining / 1000);
-        } else if (isPaused) {
-          const pausedByCaptainId = Object.keys(p.pausedBy)[0];
-          const pausedByCaptain = st.captains.find(c => c.id === pausedByCaptainId);
-          pausedByCaptainName = pausedByCaptain ? pausedByCaptain.name : pausedByCaptainId;
-          
-          const pauseInfo = p.pausedBy[pausedByCaptainId];
-          if (pauseInfo && typeof pauseInfo === 'object' && pauseInfo.remainingAtPause !== undefined) {
-            remainingSeconds = Math.ceil(pauseInfo.remainingAtPause / 1000);
-          } else {
-            remainingSeconds = Math.ceil(Math.max(0, p.biddingEndsAt - Date.now()) / 1000);
-          }
-        } else {
-          remainingSeconds = Math.ceil(Math.max(0, p.biddingEndsAt - Date.now()) / 1000);
-        }
-        
-        if (pausedByEl) {
-          if (isFrozen) {
-            pausedByEl.innerText = '(Frozen by Admin)';
-            pausedByEl.style.display = 'inline';
-          } else if (isPaused && pausedByCaptainName) {
-            pausedByEl.innerText = '(Paused by ' + pausedByCaptainName + ')';
-            pausedByEl.style.display = 'inline';
-          } else {
-            pausedByEl.innerText = '';
-            pausedByEl.style.display = 'none';
-          }
-        }
-        
-        if (isFrozen) {
-          c.innerText = remainingSeconds + 's (FROZEN)';
-        } else if (isPaused) {
-          c.innerText = remainingSeconds + 's (PAUSED)';
-        } else {
-          c.innerText = remainingSeconds + 's';
-        }
-        return;
+    const playClassicalNote = (note, time) => {
+      if (!isMusicPlaying) return;
+      
+      const now = audioContext.currentTime + time;
+      
+      // Main melody note
+      const osc1 = audioContext.createOscillator();
+      const gain1 = audioContext.createGain();
+      osc1.type = 'sine';
+      osc1.frequency.value = note.freq;
+      gain1.gain.setValueAtTime(0, now);
+      gain1.gain.linearRampToValueAtTime(0.06, now + 0.05);
+      gain1.gain.linearRampToValueAtTime(0.06, now + note.duration - 0.1);
+      gain1.gain.linearRampToValueAtTime(0, now + note.duration);
+      osc1.connect(gain1);
+      gain1.connect(audioContext.destination);
+      osc1.start(now);
+      osc1.stop(now + note.duration);
+      
+      // Add harmony for richer sound
+      const harmonyFreq = note.freq * 0.75; // Perfect fourth below for classical harmony
+      const osc2 = audioContext.createOscillator();
+      const gain2 = audioContext.createGain();
+      osc2.type = 'sine';
+      osc2.frequency.value = harmonyFreq;
+      gain2.gain.setValueAtTime(0, now);
+      gain2.gain.linearRampToValueAtTime(0.03, now + 0.05);
+      gain2.gain.linearRampToValueAtTime(0.03, now + note.duration - 0.1);
+      gain2.gain.linearRampToValueAtTime(0, now + note.duration);
+      osc2.connect(gain2);
+      gain2.connect(audioContext.destination);
+      osc2.start(now);
+      osc2.stop(now + note.duration);
+    };
+    
+    const playMelody = () => {
+      if (!isMusicPlaying) return;
+      
+      let currentTime = 0;
+      const melody = classicalMelody;
+      
+      melody.forEach((note) => {
+        playClassicalNote(note, currentTime);
+        currentTime += note.duration + 0.1; // Small gap between notes
+      });
+    };
+    
+    return { audioContext, playMelody };
+  }
+  
+  function startBackgroundMusic() {
+    if (isMusicPlaying) return;
+    try {
+      const music = createBackgroundMusic();
+      backgroundMusic = music;
+      
+      // Resume audio context if suspended
+      if (music.audioContext.state === 'suspended') {
+        music.audioContext.resume();
       }
-    }
-    
-    c.innerText = '0s';
-    if (pausedByEl) {
-      pausedByEl.innerText = '';
-      pausedByEl.style.display = 'none';
+      
+      // Play melody - it loops automatically
+      const melodyDuration = classicalMelody.reduce((sum, note) => sum + note.duration + 0.1, 0) * 1000;
+      music.playMelody(); // Play immediately
+      musicInterval = setInterval(() => {
+        if (isMusicPlaying && music.audioContext.state === 'running') {
+          music.playMelody();
+        }
+      }, melodyDuration);
+      
+      isMusicPlaying = true;
+    } catch (e) {
+      console.log('Background music not available:', e);
     }
   }
+  
+  // Start background music after audio is initialized
+  document.addEventListener('click', function() {
+    setTimeout(startBackgroundMusic, 500);
+  }, { once: true });
+  document.addEventListener('touchstart', function() {
+    setTimeout(startBackgroundMusic, 500);
+  }, { once: true });
   
   let st = null;
   sock.on('state:update', (state) => {
     console.log('📊 State update received:', state ? 'State received successfully' : 'Empty state');
     st = state;
     render(state);
-    updateViewerTimer();
   });
-  
-  // Update timer frequently
-  setInterval(updateViewerTimer, 100);
   
   // Listen for admin read-out announcements
   sock.on('announcement:readOut', (data) => {
