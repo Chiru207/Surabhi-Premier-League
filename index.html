@@ -655,8 +655,14 @@
         // Render teams
         renderTeams();
         
+        // Show the grid after rendering
         loadingEl.style.display = 'none';
-        gridEl.style.display = 'grid';
+        if (Object.keys(teamsData).length > 0) {
+          gridEl.style.display = 'grid';
+        } else {
+          errorEl.textContent = 'No teams found in the data. Please check the Google Sheet has the correct columns: S. No., NAME OF THE PLAYER, captain';
+          errorEl.style.display = 'block';
+        }
         
       } catch (error) {
         console.error('Error loading teams:', error);
@@ -673,12 +679,15 @@
       // Debug: log teams data
       console.log('Teams data:', teamsData);
       console.log('Captain serial nos:', window.captainSerialNos);
+      console.log('Number of teams:', Object.keys(teamsData).length);
+      console.log('Team keys:', Object.keys(teamsData));
       
       if (!teamsData || Object.keys(teamsData).length === 0) {
         gridEl.innerHTML = '<div class="error">No teams data found. Please check the Google Sheet.</div>';
         return;
       }
       
+      let teamsRendered = 0;
       Object.keys(teamsData).forEach(captainKey => {
         const captainInfo = CAPTAIN_INFO[captainKey] || { name: captainKey, teamName: '' };
         const captainDisplayName = captainInfo.name;
@@ -742,7 +751,15 @@
         `;
         
         gridEl.appendChild(card);
+        teamsRendered++;
+        console.log(`Rendered team: ${captainKey} - ${captainDisplayName} (${playerCount} players)`);
       });
+      
+      console.log(`Total teams rendered: ${teamsRendered}`);
+      
+      if (teamsRendered === 0) {
+        gridEl.innerHTML = '<div class="error">Teams data loaded but no teams could be rendered. Check console for details.</div>';
+      }
     }
     
     function showTeamDetail(captainKey) {
