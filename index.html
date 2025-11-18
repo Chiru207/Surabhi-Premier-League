@@ -457,12 +457,22 @@
     
     // Captain name and team mapping
     const CAPTAIN_INFO = {
-      'Bhanu': { name: 'C.V. Bhanu', teamName: 'Risers 11' },
-      'Charan': { name: 'R. Charan', teamName: 'RBR Returns' },
-      'Manu': { name: 'S.A. Manohar', teamName: 'Velocity Vipers' },
-      'Sairam': { name: 'V. Sairam', teamName: 'BULLS (TEAM-A)' },
-      'Surya': { name: 'V. Surya Charan', teamName: 'BULLS (TEAM-B)' },
-      'Raghava Sai': { name: 'V. Raghava Sai', teamName: 'Dare Devils' }
+      'Bhanu': { name: 'C.V. Bhanu', teamName: 'Risers 11', serialNo: '34' },
+      'Charan': { name: 'R. Charan', teamName: 'RBR Returns', serialNo: '16' },
+      'Manu': { name: 'S.A. Manohar', teamName: 'Velocity Vipers', serialNo: '29' },
+      'Sairam': { name: 'V. Sairam', teamName: 'BULLS (TEAM-A)', serialNo: '42' },
+      'Surya': { name: 'V. Surya Charan', teamName: 'BULLS (TEAM-B)', serialNo: '66' },
+      'Raghava Sai': { name: 'V. Raghava Sai', teamName: 'Dare Devils', serialNo: '62' }
+    };
+    
+    // Reverse mapping: serial number to captain key
+    const SERIAL_TO_CAPTAIN = {
+      '34': 'Bhanu',
+      '16': 'Charan',
+      '29': 'Manu',
+      '42': 'Sairam',
+      '66': 'Surya',
+      '62': 'Raghava Sai'
     };
     
     // Helper function to get logo filename from team name
@@ -588,19 +598,39 @@
         const worksheet = workbook.Sheets[sheetName];
         const rows = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
         
+        // Debug: Log first few rows and column names
+        console.log('Total rows from sheet:', rows.length);
+        if (rows.length > 0) {
+          console.log('First row sample:', rows[0]);
+          console.log('Column names in first row:', Object.keys(rows[0]));
+        }
+        
         // Process rows
         teamsData = {};
         const captainSerialNos = {}; // Store captain serial numbers
+        let processedCount = 0;
+        let skippedCount = 0;
         
-        rows.forEach(row => {
+        rows.forEach((row, index) => {
           // Try multiple column name variations
-          let serialNo = row['S. No.'] || row['S No.'] || row['Serial No'] || row['Serial No.'] || row['S.No.'] || '';
-          const playerName = row['NAME OF THE PLAYER'] || row['Name'] || row['NAME'] || '';
-          const captain = row['captain'] || row['Captain'] || row['CAPTAIN'] || '';
+          let serialNo = row['S. No.'] || row['S No.'] || row['Serial No'] || row['Serial No.'] || row['S.No.'] || row['S.No'] || '';
+          const playerName = row['NAME OF THE PLAYER'] || row['Name'] || row['NAME'] || row['Name'] || '';
+          const captain = row['captain'] || row['Captain'] || row['CAPTAIN'] || row['Captain'] || '';
           const mobile = row['MOBILE NUMBER'] || row['Mobile Number'] || row['MOBILE'] || row['Mobile'] || '';
           
+          // Debug first few rows
+          if (index < 5) {
+            console.log(`Row ${index}:`, { serialNo, playerName, captain, mobile, allKeys: Object.keys(row) });
+          }
+          
           // Skip rows without captain or player name
-          if (!captain || !playerName) return;
+          if (!captain || !playerName) {
+            skippedCount++;
+            if (index < 5) {
+              console.log(`Skipping row ${index}: missing captain or player name`);
+            }
+            return;
+          }
           
           // Filter out invalid serial numbers (like "Full hands")
           serialNo = String(serialNo).trim();
@@ -615,12 +645,15 @@
             teamsData[captainKey] = [];
           }
           
-          // Check if this player is the captain (usually captain name matches player name or has (C) marker)
+          // Check if this player is the captain using serial number mapping
+          const serialStr = String(serialNo).trim();
+          const isCaptainBySerial = SERIAL_TO_CAPTAIN[serialStr] === captainKey;
+          
+          // Also check by name patterns
           const captainNameLower = captainKey.toLowerCase();
           const playerNameLower = playerName.toLowerCase();
           
-          // More flexible captain detection
-          const isCaptain = playerName.includes('(C)') || 
+          const isCaptainByName = playerName.includes('(C)') || 
                            playerNameLower.includes('captain') ||
                            playerNameLower.includes(captainNameLower) ||
                            captainNameLower.includes(playerNameLower) ||
@@ -632,13 +665,15 @@
                            (captainKey === 'Surya' && (playerNameLower.includes('surya') || playerNameLower.includes('suryacharan'))) ||
                            (captainKey === 'Raghava Sai' && (playerNameLower.includes('raghava') || playerNameLower.includes('raghav')));
           
+          const isCaptain = isCaptainBySerial || isCaptainByName;
+          
           if (isCaptain) {
             captainSerialNos[captainKey] = serialNo;
           }
           
-          // If no captain found yet and this is the first player, use it as fallback
-          if (!captainSerialNos[captainKey] && teamsData[captainKey].length === 0) {
-            captainSerialNos[captainKey] = serialNo;
+          // If no captain found yet, use known serial number from CAPTAIN_INFO
+          if (!captainSerialNos[captainKey] && CAPTAIN_INFO[captainKey] && CAPTAIN_INFO[captainKey].serialNo) {
+            captainSerialNos[captainKey] = CAPTAIN_INFO[captainKey].serialNo;
           }
           
           teamsData[captainKey].push({
@@ -647,7 +682,11 @@
             mobile: mobile.trim(),
             isCaptain: isCaptain
           });
+          processedCount++;
         });
+        
+        console.log(`Processed ${processedCount} players, skipped ${skippedCount} rows`);
+        console.log('Teams found:', Object.keys(teamsData));
         
         // Store captain serial numbers for later use
         window.captainSerialNos = captainSerialNos;
@@ -703,12 +742,28 @@
         // Find captain's serial number - try multiple methods
         let captainSerialNo = null;
         
-        // Method 1: Use stored captain serial number
-        if (window.captainSerialNos && window.captainSerialNos[captainKey]) {
+        // Method 1: Use known serial number from CAPTAIN_INFO
+        if (captainInfo.serialNo) {
+          captainSerialNo = captainInfo.serialNo;
+        }
+        
+        // Method 2: Use stored captain serial number
+        if (!captainSerialNo && window.captainSerialNos && window.captainSerialNos[captainKey]) {
           captainSerialNo = window.captainSerialNos[captainKey];
         }
         
-        // Method 2: Find captain player
+        // Method 3: Find captain player by serial number mapping
+        if (!captainSerialNo) {
+          const captainPlayer = players.find(p => {
+            const serialStr = String(p.serialNo).trim();
+            return SERIAL_TO_CAPTAIN[serialStr] === captainKey;
+          });
+          if (captainPlayer) {
+            captainSerialNo = captainPlayer.serialNo;
+          }
+        }
+        
+        // Method 4: Find captain player by isCaptain flag
         if (!captainSerialNo) {
           const captainPlayer = players.find(p => p.isCaptain);
           if (captainPlayer) {
@@ -716,22 +771,9 @@
           }
         }
         
-        // Method 3: Use first player as fallback
+        // Method 5: Use first player as fallback
         if (!captainSerialNo && players.length > 0) {
           captainSerialNo = players[0].serialNo;
-        }
-        
-        // Method 4: Use captain name mapping (for known captains)
-        if (!captainSerialNo) {
-          // Try to find by matching captain name in player names
-          const captainNameParts = captainDisplayName.toLowerCase().split(' ');
-          const matchingPlayer = players.find(p => {
-            const playerNameLower = p.name.toLowerCase();
-            return captainNameParts.some(part => playerNameLower.includes(part));
-          });
-          if (matchingPlayer) {
-            captainSerialNo = matchingPlayer.serialNo;
-          }
         }
         
         const card = document.createElement('div');
