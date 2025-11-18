@@ -119,10 +119,14 @@
     .flyer-view {
       width: 100%;
       min-height: 100%;
-      display: flex;
+      display: none;
       align-items: center;
       justify-content: center;
       padding: clamp(20px, 3vh, 40px) 0;
+    }
+    
+    .flyer-view.active {
+      display: flex;
     }
     
     .flyer-container {
@@ -152,6 +156,7 @@
       width: 100%;
       display: none;
       min-height: 100%;
+      text-align: center;
     }
     
     .teams-view.active {
@@ -164,7 +169,10 @@
       gap: clamp(20px, 3vw, 30px);
       padding: clamp(20px, 3vh, 40px);
       width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
       box-sizing: border-box;
+      justify-items: center;
     }
     
     .captain-card {
@@ -233,6 +241,7 @@
       width: 100%;
       display: none;
       min-height: 100%;
+      text-align: center;
     }
     
     .team-detail-view.active {
@@ -278,7 +287,10 @@
       gap: clamp(20px, 3vw, 30px);
       padding: clamp(20px, 3vh, 40px);
       width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
       box-sizing: border-box;
+      justify-items: center;
     }
     
     .player-card {
@@ -304,6 +316,7 @@
       margin: 0 auto clamp(10px, 1.5vh, 15px);
       border: 2px solid #334155;
       object-fit: cover;
+      object-position: top;
       aspect-ratio: 1;
     }
     
@@ -334,6 +347,8 @@
       width: 100%;
       display: none;
       padding: clamp(20px, 3vh, 40px);
+      max-width: 1200px;
+      margin: 0 auto;
     }
     
     .schedule-view.active,
@@ -349,11 +364,333 @@
       text-align: center;
     }
     
+    .tournament-dates {
+      text-align: center;
+      color: #94a3b8;
+      font-size: clamp(16px, 2.5vw, 20px);
+      margin-bottom: clamp(20px, 3vh, 30px);
+      font-weight: 500;
+    }
+    
+    .draw-info {
+      text-align: center;
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
+      border: 2px solid #60a5fa;
+      border-radius: 12px;
+      padding: clamp(15px, 2vh, 20px) clamp(20px, 3vw, 30px);
+      margin: 0 auto clamp(30px, 4vh, 50px);
+      max-width: 600px;
+      box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
+    }
+    
+    .draw-info-text {
+      color: #60a5fa;
+      font-size: clamp(16px, 2.5vw, 20px);
+      font-weight: 600;
+      line-height: 1.6;
+    }
+    
+    .draw-info-date {
+      color: #94a3b8;
+      font-size: clamp(14px, 2vw, 18px);
+      margin-top: clamp(8px, 1vh, 12px);
+    }
+    
+    .teams-circle-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: clamp(30px, 4vh, 50px) 0;
+      padding: clamp(20px, 3vh, 40px);
+    }
+    
+    .teams-circle {
+      position: relative;
+      width: clamp(300px, 50vw, 500px);
+      height: clamp(300px, 50vw, 500px);
+      border: 3px solid #60a5fa;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.5) 100%);
+      box-shadow: 0 8px 32px rgba(96, 165, 250, 0.2);
+    }
+    
+    .team-letter {
+      position: absolute;
+      width: clamp(50px, 8vw, 80px);
+      height: clamp(50px, 8vw, 80px);
+      background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+      border: 2px solid #60a5fa;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-size: clamp(24px, 4vw, 36px);
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(96, 165, 250, 0.4);
+      transition: all 0.3s ease;
+    }
+    
+    .team-letter:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(96, 165, 250, 0.6);
+    }
+    
+    /* Position teams in a circle */
+    .team-letter:nth-child(1) { /* A - Top */
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%) translateY(-50%);
+    }
+    
+    .team-letter:nth-child(2) { /* B - Top Right */
+      top: 15%;
+      right: 10%;
+      transform: translate(50%, -50%);
+    }
+    
+    .team-letter:nth-child(3) { /* C - Bottom Right */
+      bottom: 15%;
+      right: 10%;
+      transform: translate(50%, 50%);
+    }
+    
+    .team-letter:nth-child(4) { /* D - Bottom */
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%) translateY(50%);
+    }
+    
+    .team-letter:nth-child(5) { /* E - Bottom Left */
+      bottom: 15%;
+      left: 10%;
+      transform: translate(-50%, 50%);
+    }
+    
+    .team-letter:nth-child(6) { /* F - Top Left */
+      top: 15%;
+      left: 10%;
+      transform: translate(-50%, -50%);
+    }
+    
+    .matches-container {
+      margin-top: clamp(40px, 5vh, 60px);
+    }
+    
+    .day-schedule {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border: 2px solid #334155;
+      border-radius: 16px;
+      padding: clamp(20px, 3vh, 30px);
+      margin-bottom: clamp(20px, 3vh, 30px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    .day-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: clamp(15px, 2vh, 25px);
+      padding-bottom: clamp(10px, 1.5vh, 15px);
+      border-bottom: 2px solid #334155;
+      flex-wrap: wrap;
+      gap: clamp(10px, 2vw, 20px);
+    }
+    
+    .day-title {
+      font-size: clamp(20px, 3vw, 28px);
+      color: #60a5fa;
+      font-weight: 700;
+    }
+    
+    .day-date {
+      font-size: clamp(16px, 2.5vw, 20px);
+      color: #94a3b8;
+      font-weight: 500;
+    }
+    
+    .matches-list {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(12px, 2vh, 20px);
+    }
+    
+    .match-item {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.5) 100%);
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: clamp(15px, 2vh, 20px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(15px, 3vw, 30px);
+      transition: all 0.3s ease;
+    }
+    
+    .match-item:hover {
+      border-color: #60a5fa;
+      box-shadow: 0 4px 12px rgba(96, 165, 250, 0.2);
+      transform: translateY(-2px);
+    }
+    
+    .match-team {
+      font-size: clamp(18px, 3vw, 24px);
+      font-weight: 700;
+      color: #60a5fa;
+      padding: clamp(8px, 1.5vh, 12px) clamp(15px, 3vw, 25px);
+      background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+      border-radius: 8px;
+      border: 2px solid #60a5fa;
+      min-width: clamp(60px, 10vw, 100px);
+      text-align: center;
+    }
+    
+    .match-vs {
+      font-size: clamp(16px, 2.5vw, 20px);
+      color: #94a3b8;
+      font-weight: 600;
+    }
+    
+    .eliminator-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+      color: #ffffff;
+      padding: clamp(6px, 1vh, 10px) clamp(12px, 2vw, 20px);
+      border-radius: 20px;
+      font-size: clamp(12px, 2vw, 16px);
+      font-weight: 600;
+      margin-left: clamp(10px, 2vw, 15px);
+      border: 2px solid #fca5a5;
+    }
+    
     .coming-soon {
       text-align: center;
       padding: clamp(40px, 5vh, 60px);
       color: #94a3b8;
       font-size: clamp(18px, 3vw, 24px);
+    }
+    
+    /* Points Table Styles */
+    .points-table-container {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: clamp(20px, 3vh, 30px);
+    }
+    
+    .points-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    .points-table thead {
+      background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+    }
+    
+    .points-table th {
+      padding: clamp(12px, 2vh, 18px) clamp(10px, 2vw, 20px);
+      text-align: center;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: clamp(14px, 2vw, 18px);
+      border-right: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .points-table th:last-child {
+      border-right: none;
+    }
+    
+    .points-table tbody tr {
+      border-bottom: 1px solid #334155;
+      transition: all 0.3s ease;
+    }
+    
+    .points-table tbody tr:hover {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
+      transform: scale(1.01);
+    }
+    
+    .points-table tbody tr:last-child {
+      border-bottom: none;
+    }
+    
+    .points-table td {
+      padding: clamp(12px, 2vh, 18px) clamp(10px, 2vw, 20px);
+      text-align: center;
+      color: #e2e8f0;
+      font-size: clamp(14px, 2vw, 18px);
+      border-right: 1px solid #334155;
+    }
+    
+    .points-table td:last-child {
+      border-right: none;
+    }
+    
+    .team-cell {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: clamp(10px, 2vw, 15px);
+      text-align: left;
+    }
+    
+    .team-logo-small {
+      width: clamp(30px, 5vw, 50px);
+      height: clamp(30px, 5vw, 50px);
+      object-fit: contain;
+      border-radius: 6px;
+      border: 1px solid #334155;
+      background: #0f172a;
+    }
+    
+    .team-name-cell {
+      font-weight: 600;
+      color: #60a5fa;
+      text-align: left;
+    }
+    
+    .points-highlight {
+      font-weight: 700;
+      color: #60a5fa;
+      font-size: clamp(16px, 2.5vw, 20px);
+    }
+    
+    .nrr-positive {
+      color: #10b981;
+      font-weight: 600;
+    }
+    
+    .nrr-negative {
+      color: #ef4444;
+      font-weight: 600;
+    }
+    
+    @media (max-width: 768px) {
+      .points-table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      
+      .points-table {
+        min-width: 600px;
+      }
+      
+      .points-table th,
+      .points-table td {
+        padding: clamp(10px, 1.5vh, 15px) clamp(8px, 2vw, 15px);
+        font-size: clamp(12px, 2vw, 16px);
+      }
+      
+      .team-logo-small {
+        width: clamp(25px, 4vw, 40px);
+        height: clamp(25px, 4vw, 40px);
+      }
     }
     
     /* Mobile Responsive */
@@ -450,14 +787,113 @@
       
       <!-- Schedule View -->
       <div class="schedule-view" id="schedule-view">
-        <h2 class="section-title">Schedule</h2>
-        <div class="coming-soon">Schedule will be updated soon...</div>
+        <h2 class="section-title">Tournament Schedule</h2>
+        <div class="tournament-dates">02-12-2025 to 04-12-2025</div>
+        
+        <div class="draw-info">
+          <div class="draw-info-text">Teams draw will be updated on</div>
+          <div class="draw-info-date">23-12-2025 at 6pm</div>
+        </div>
+        
+        <div class="teams-circle-container">
+          <div class="teams-circle">
+            <div class="team-letter">A</div>
+            <div class="team-letter">B</div>
+            <div class="team-letter">C</div>
+            <div class="team-letter">D</div>
+            <div class="team-letter">E</div>
+            <div class="team-letter">F</div>
+          </div>
+        </div>
+        
+        <div class="matches-container">
+          <!-- Day 1 -->
+          <div class="day-schedule">
+            <div class="day-header">
+              <div class="day-title">Day 1</div>
+              <div class="day-date">Monday, 02-12-2025</div>
+            </div>
+            <div class="matches-list">
+              <div class="match-item">
+                <div class="match-team">A</div>
+                <div class="match-vs">VS</div>
+                <div class="match-team">B</div>
+              </div>
+              <div class="match-item">
+                <div class="match-team">C</div>
+                <div class="match-vs">VS</div>
+                <div class="match-team">D</div>
+              </div>
+              <div class="match-item">
+                <div class="match-team">E</div>
+                <div class="match-vs">VS</div>
+                <div class="match-team">F</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Day 2 -->
+          <div class="day-schedule">
+            <div class="day-header">
+              <div class="day-title">Day 2</div>
+              <div class="day-date">Tuesday, 03-12-2025</div>
+            </div>
+            <div class="matches-list">
+              <div class="match-item">
+                <div class="match-team">B</div>
+                <div class="match-vs">VS</div>
+                <div class="match-team">C</div>
+              </div>
+              <div class="match-item">
+                <div class="match-team">A</div>
+                <div class="match-vs">VS</div>
+                <div class="match-team">F</div>
+              </div>
+              <div class="match-item">
+                <div class="match-team">D</div>
+                <div class="match-vs">VS</div>
+                <div class="match-team">E</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Day 3 -->
+          <div class="day-schedule">
+            <div class="day-header">
+              <div class="day-title">Day 3 <span class="eliminator-badge">ELIMINATOR</span></div>
+              <div class="day-date">Wednesday, 04-12-2025</div>
+            </div>
+            <div class="matches-list">
+              <div class="match-item">
+                <div class="match-team">2nd Place</div>
+                <div class="match-vs">VS</div>
+                <div class="match-team">3rd Place</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       
       <!-- Points Table View -->
       <div class="points-view" id="points-view">
         <h2 class="section-title">Points Table</h2>
-        <div class="coming-soon">Points table will be updated soon...</div>
+        <div class="points-table-container">
+          <table class="points-table">
+            <thead>
+              <tr>
+                <th>Team</th>
+                <th>MP</th>
+                <th>Won</th>
+                <th>Lost</th>
+                <th>Points</th>
+                <th>NRR</th>
+              </tr>
+            </thead>
+            <tbody id="points-table-body">
+              <!-- Teams will be populated here -->
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -552,22 +988,33 @@
         item.classList.toggle('active', item.getAttribute('data-view') === view);
       });
       
-      // Hide all views
-      document.getElementById('flyer-view').classList.remove('active');
-      document.getElementById('teams-view').classList.remove('active');
-      document.getElementById('team-detail-view').classList.remove('active');
-      document.getElementById('schedule-view').classList.remove('active');
-      document.getElementById('points-view').classList.remove('active');
+      // Get all view elements
+      const flyerView = document.getElementById('flyer-view');
+      const teamsView = document.getElementById('teams-view');
+      const teamDetailView = document.getElementById('team-detail-view');
+      const scheduleView = document.getElementById('schedule-view');
+      const pointsView = document.getElementById('points-view');
       
-      // Show selected view
+      // Hide all views
+      flyerView.classList.remove('active');
+      teamsView.classList.remove('active');
+      teamDetailView.classList.remove('active');
+      scheduleView.classList.remove('active');
+      pointsView.classList.remove('active');
+      
+      // Show selected view and hide flyer on non-home pages
       if (view === 'flyer') {
-        document.getElementById('flyer-view').classList.add('active');
-      } else if (view === 'teams') {
-        document.getElementById('teams-view').classList.add('active');
-      } else if (view === 'schedule') {
-        document.getElementById('schedule-view').classList.add('active');
-      } else if (view === 'points') {
-        document.getElementById('points-view').classList.add('active');
+        flyerView.classList.add('active');
+      } else {
+        // Hide flyer on all other pages
+        flyerView.classList.remove('active');
+        if (view === 'teams') {
+          teamsView.classList.add('active');
+        } else if (view === 'schedule') {
+          scheduleView.classList.add('active');
+        } else if (view === 'points') {
+          pointsView.classList.add('active');
+        }
       }
     }
     
@@ -871,13 +1318,21 @@
         
         // Use local path for captain photo
         const photoSrc = getPhotoUrl(captainSerialNo);
-        const logoSrc = getLogoFileName(teamName);
+        const logoSrc = getLogoUrl(teamName);
+        
+        // Try multiple logo filename formats
+        const logoVariations = logoSrc ? [
+          logoSrc, // "Risers 11.jpg"
+          logoSrc.replace(/\s+/g, '_'), // "Risers_11.jpg"
+          logoSrc.replace(/\s+/g, ''), // "Risers11.jpg"
+          logoSrc.toLowerCase().replace(/\s+/g, '_') // "risers_11.jpg"
+        ] : [];
         
         card.innerHTML = `
           <img src="${photoSrc}" alt="${captainDisplayName}" class="captain-photo" onerror="this.src='${FALLBACK_IMAGE}';">
           <div class="captain-name">${captainDisplayName}</div>
           ${teamName ? `<div class="team-name">${teamName}</div>` : ''}
-          ${logoSrc ? `<img src="${logoSrc}" alt="${teamName}" class="team-logo" onerror="this.style.display='none';" />` : ''}
+          ${logoSrc ? `<img src="${logoSrc}" alt="${teamName}" class="team-logo" onerror="this.onerror=null; this.src='${logoVariations[1] || ''}'; if(!this.src) this.style.display='none';" />` : ''}
           <div class="team-count">${playerCount} Players</div>
         `;
         
@@ -905,7 +1360,7 @@
       
       // Update title with logo if available
       const titleEl = document.getElementById('team-detail-title');
-      const logoSrc = getLogoFileName(teamName);
+      const logoSrc = getLogoUrl(teamName);
       if (logoSrc) {
         titleEl.innerHTML = `
           <div style="display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap;">
@@ -960,13 +1415,67 @@
       document.getElementById('team-detail-view').classList.add('active');
     }
     
-    // Initialize: Load xlsx library if needed
+    // Initialize points table
+    function initializePointsTable() {
+      const tbody = document.getElementById('points-table-body');
+      if (!tbody) return;
+      
+      // Get all teams from CAPTAIN_INFO
+      const teams = Object.values(CAPTAIN_INFO);
+      
+      // Sort teams alphabetically by team name for initial display
+      teams.sort((a, b) => a.teamName.localeCompare(b.teamName));
+      
+      tbody.innerHTML = '';
+      
+      teams.forEach((team, index) => {
+        const row = document.createElement('tr');
+        const logoSrc = getLogoUrl(team.teamName);
+        
+        row.innerHTML = `
+          <td>
+            <div class="team-cell">
+              ${logoSrc ? `<img src="${logoSrc}" alt="${team.teamName}" class="team-logo-small" onerror="this.style.display='none';" />` : ''}
+              <span class="team-name-cell">${team.teamName}</span>
+            </div>
+          </td>
+          <td>0</td>
+          <td>0</td>
+          <td>0</td>
+          <td class="points-highlight">0</td>
+          <td class="nrr-positive">0.000</td>
+        `;
+        
+        tbody.appendChild(row);
+      });
+    }
+    
+    // Initialize: Load xlsx library if needed and setup points table
     window.addEventListener('DOMContentLoaded', () => {
       // Check if xlsx is already loaded
       if (typeof XLSX === 'undefined') {
         const script = document.createElement('script');
         script.src = 'https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js';
         document.head.appendChild(script);
+      }
+      
+      // Initialize points table
+      initializePointsTable();
+    });
+    
+    // Also initialize when points view is shown
+    document.addEventListener('DOMContentLoaded', () => {
+      const pointsMenuItem = document.querySelector('.menu-item[data-view="points"]');
+      if (pointsMenuItem) {
+        pointsMenuItem.addEventListener('click', () => {
+          // Ensure points table is initialized when view is shown
+          setTimeout(() => {
+            const tbody = document.getElementById('points-table-body');
+            if (tbody && tbody.children.length === 0) {
+              initializePointsTable();
+            }
+          }, 100);
+        });
       }
     });
   </script>
