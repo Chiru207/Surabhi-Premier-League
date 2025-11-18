@@ -601,10 +601,9 @@
         
         // Debug: Log first few rows and column names
         console.log('Total rows from sheet:', rows.length);
-        if (rows.length > 1) {
-          console.log('Row 0 (first row, skip):', rows[0]);
-          console.log('Row 1 (header row):', rows[1]);
-          const columnNames = Object.keys(rows[1]);
+        if (rows.length > 0) {
+          console.log('Row 0 (header row):', rows[0]);
+          const columnNames = Object.keys(rows[0]);
           console.log('Column names in header row:', columnNames);
         }
         
@@ -614,64 +613,72 @@
         let processedCount = 0;
         let skippedCount = 0;
         
-        // Column names from header row (row 1, index 1)
-        // Expected: S. No., NAME OF THE PLAYER, captain, Name, MOBILE NUMBER
-        let serialCol = 'S. No.';
-        let nameCol = 'NAME OF THE PLAYER';
-        let captainCol = 'captain';
-        let mobileCol = 'MOBILE NUMBER';
+        // Map column names from row 0 (header row)
+        // Row 0 has: __EMPTY="S. No.", __EMPTY_1="NAME OF THE PLAYER ", __EMPTY_8="S. No.", __EMPTY_9="captain", __EMPTY_10="Name", __EMPTY_11="MOBILE NUMBER"
+        let serialCol = null;
+        let nameCol = null;
+        let captainCol = null;
+        let mobileCol = null;
         
-        // Auto-detect column names from header row (row 1, index 1)
-        if (rows.length > 1) {
-          const headerRow = rows[1];
+        // Auto-detect column names from header row (row 0, index 0)
+        if (rows.length > 0) {
+          const headerRow = rows[0];
           const allKeys = Object.keys(headerRow);
           
-          // Find columns by checking all keys case-insensitively
+          // Find columns by checking header values
           for (const key of allKeys) {
-            const keyLower = key.toLowerCase().trim();
+            const headerValue = String(headerRow[key] || '').trim();
+            const headerLower = headerValue.toLowerCase();
             
-            // Find serial number column (prefer first occurrence)
-            if (!serialCol && (keyLower.includes('s. no') || keyLower.includes('s no') || keyLower.includes('serial') || keyLower === 's.no.')) {
-              serialCol = key;
-            } else if (keyLower.includes('s. no') || keyLower.includes('s no')) {
-              // Use the first S. No. column found
-              if (!serialCol || serialCol === 'S. No.') {
+            // Find serial number column - use __EMPTY_8 (second S. No.) or __EMPTY (first S. No.)
+            if (headerLower === 's. no.' || headerLower === 's no.') {
+              if (!serialCol) {
+                serialCol = key;
+              } else if (key === '__EMPTY_8') {
+                // Prefer the second S. No. column (__EMPTY_8) as it's in the data section
                 serialCol = key;
               }
             }
             
             // Find player name column - prefer "NAME OF THE PLAYER" over "Name"
-            if (keyLower.includes('name of the player') || (keyLower === 'name of the player')) {
+            if (headerLower.includes('name of the player')) {
               nameCol = key;
-            } else if (!nameCol && (keyLower.includes('name') || keyLower.includes('player'))) {
+            } else if (!nameCol && (headerLower === 'name' || headerLower.includes('name'))) {
               nameCol = key;
             }
             
             // Find captain column
-            if (keyLower === 'captain' || keyLower.includes('captain')) {
+            if (headerLower === 'captain') {
               captainCol = key;
             }
             
             // Find mobile column
-            if (keyLower.includes('mobile') || keyLower.includes('phone')) {
+            if (headerLower.includes('mobile') || headerLower.includes('phone')) {
               mobileCol = key;
             }
           }
           
           console.log('Detected columns:', { serialCol, nameCol, captainCol, mobileCol });
+          console.log('Column mapping:', {
+            serialCol: serialCol ? `${serialCol} = "${headerRow[serialCol]}"` : 'not found',
+            nameCol: nameCol ? `${nameCol} = "${headerRow[nameCol]}"` : 'not found',
+            captainCol: captainCol ? `${captainCol} = "${headerRow[captainCol]}"` : 'not found',
+            mobileCol: mobileCol ? `${mobileCol} = "${headerRow[mobileCol]}"` : 'not found'
+          });
         }
         
-        // Process data rows starting from row 2 (index 2) - skip row 0 and row 1
+        // Process data rows starting from row 1 (index 1) - skip row 0 (header row)
         rows.forEach((row, index) => {
-          // Skip first row (row 0) and header row (row 1, index 1)
-          if (index < 2) {
+          // Skip header row (row 0, index 0)
+          if (index < 1) {
             return;
           }
-          // Use detected columns or fallback to direct access
-          let serialNo = serialCol ? row[serialCol] : (row['S. No.'] || row['S No.'] || row['Serial No'] || row['Serial No.'] || row['S.No.'] || '');
-          let playerName = nameCol ? row[nameCol] : (row['NAME OF THE PLAYER'] || row['Name'] || row['NAME'] || '');
-          let captain = captainCol ? row[captainCol] : (row['captain'] || row['Captain'] || row['CAPTAIN'] || '');
-          let mobile = mobileCol ? row[mobileCol] : (row['MOBILE NUMBER'] || row['Mobile Number'] || row['MOBILE'] || '');
+          
+          // Use detected columns
+          let serialNo = serialCol ? row[serialCol] : '';
+          let playerName = nameCol ? row[nameCol] : '';
+          let captain = captainCol ? row[captainCol] : '';
+          let mobile = mobileCol ? row[mobileCol] : '';
           
           // Convert to strings and trim
           serialNo = String(serialNo || '').trim();
