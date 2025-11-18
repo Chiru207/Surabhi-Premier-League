@@ -412,7 +412,9 @@
     
     /* Schedule and Points Table Views */
     .schedule-view,
-    .points-view {
+    .points-view,
+    .sponsors-view,
+    .playing-conditions-view {
       width: 100%;
       display: none;
       padding: clamp(20px, 3vh, 40px);
@@ -421,7 +423,9 @@
     }
     
     .schedule-view.active,
-    .points-view.active {
+    .points-view.active,
+    .sponsors-view.active,
+    .playing-conditions-view.active {
       display: block;
     }
     
@@ -431,6 +435,114 @@
       font-weight: 700;
       margin-bottom: clamp(20px, 3vh, 30px);
       text-align: center;
+    }
+    
+    /* Sponsors View Styles */
+    .sponsors-container {
+      width: 100%;
+      margin-top: clamp(20px, 3vh, 40px);
+    }
+    
+    .sponsors-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: clamp(20px, 3vw, 30px);
+      margin-top: clamp(20px, 3vh, 30px);
+    }
+    
+    .sponsor-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.6) 100%);
+      border: 2px solid #334155;
+      border-radius: 12px;
+      padding: clamp(20px, 3vh, 30px);
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    
+    .sponsor-card:hover {
+      border-color: #60a5fa;
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(96, 165, 250, 0.3);
+    }
+    
+    .sponsor-placeholder {
+      grid-column: 1 / -1;
+    }
+    
+    /* Playing Conditions View Styles */
+    .conditions-container {
+      width: 100%;
+      margin-top: clamp(20px, 3vh, 40px);
+    }
+    
+    .conditions-table-container {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: clamp(20px, 3vh, 30px);
+    }
+    
+    .conditions-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border-radius: 12px;
+      overflow: hidden;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    .conditions-table thead {
+      background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+    }
+    
+    .conditions-table th {
+      padding: clamp(12px, 2vh, 18px) clamp(10px, 2vw, 20px);
+      text-align: center;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: clamp(14px, 2vw, 18px);
+      border-right: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .conditions-table th:last-child {
+      border-right: none;
+    }
+    
+    .conditions-table tbody tr {
+      border-bottom: 1px solid #334155;
+      transition: all 0.3s ease;
+    }
+    
+    .conditions-table tbody tr:hover {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
+      transform: scale(1.01);
+    }
+    
+    .conditions-table tbody tr:last-child {
+      border-bottom: none;
+    }
+    
+    .conditions-table td {
+      padding: clamp(12px, 2vh, 18px) clamp(10px, 2vw, 20px);
+      text-align: center;
+      color: #e2e8f0;
+      font-size: clamp(14px, 2vw, 18px);
+      border-right: 1px solid #334155;
+    }
+    
+    .conditions-table td:first-child {
+      text-align: left;
+      font-weight: 600;
+      color: #60a5fa;
+    }
+    
+    .conditions-table td:last-child {
+      border-right: none;
+    }
+    
+    .conditions-table td strong {
+      color: #60a5fa;
+      font-weight: 700;
     }
     
     .tournament-dates {
@@ -790,17 +902,21 @@
     }
     
     @media (max-width: 768px) {
-      .points-table-container {
+      .points-table-container,
+      .conditions-table-container {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
       }
       
-      .points-table {
+      .points-table,
+      .conditions-table {
         min-width: 600px;
       }
       
       .points-table th,
-      .points-table td {
+      .points-table td,
+      .conditions-table th,
+      .conditions-table td {
         padding: clamp(10px, 1.5vh, 15px) clamp(8px, 2vw, 15px);
         font-size: clamp(12px, 2vw, 16px);
       }
@@ -887,6 +1003,8 @@
     <div class="menu-item" data-view="teams">Teams</div>
     <div class="menu-item" data-view="schedule">Schedule</div>
     <div class="menu-item" data-view="points">Points Table</div>
+    <div class="menu-item" data-view="sponsors">Sponsors</div>
+    <div class="menu-item" data-view="playing-conditions">Playing Conditions</div>
   </div>
   
   <!-- Main Content Area -->
@@ -925,13 +1043,10 @@
         <div class="draw-info-marquee">
           <div class="marquee-wrapper">
             <div class="marquee-content">
-              Teams draw will be updated on 23-11-2025 at 6pm &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              Teams draw will be updated on 23-12-2025 at 6pm &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             </div>
             <div class="marquee-content" aria-hidden="true">
-              Teams draw will be updated on 23-11-2025 at 6pm &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            </div>
-            <div class="marquee-content" aria-hidden="true">
-              Teams draw will be updated on 23-11-2025 at 6pm &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              Teams draw will be updated on 23-12-2025 at 6pm &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             </div>
           </div>
         </div>
@@ -1043,6 +1158,54 @@
           </table>
         </div>
       </div>
+      
+      <!-- Sponsors View -->
+      <div class="sponsors-view" id="sponsors-view">
+        <h2 class="section-title">Our Sponsors</h2>
+        <div class="sponsors-container">
+          <div class="sponsors-grid">
+            <!-- Sponsors will be displayed here -->
+            <div class="sponsor-placeholder">
+              <p style="text-align: center; color: #94a3b8; font-size: clamp(16px, 2.5vw, 20px); padding: clamp(40px, 6vh, 80px);">
+                Sponsor information will be updated soon.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Playing Conditions View -->
+      <div class="playing-conditions-view" id="playing-conditions-view">
+        <h2 class="section-title">Playing Conditions</h2>
+        <div class="conditions-container">
+          <div class="conditions-table-container">
+            <table class="conditions-table">
+              <thead>
+                <tr>
+                  <th>Match Type</th>
+                  <th>Total Overs</th>
+                  <th>Max Overs</th>
+                  <th>Powerplay</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Group Matches</strong></td>
+                  <td>16</td>
+                  <td>4 for one and 3 for rest</td>
+                  <td>5 overs</td>
+                </tr>
+                <tr>
+                  <td><strong>Final</strong></td>
+                  <td>20</td>
+                  <td>5 for each</td>
+                  <td>6 overs</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   
@@ -1061,7 +1224,7 @@
       'Manu': { name: 'S.A. Manohar', teamName: 'Velocity Vipers', serialNo: '16' },
       'Sairam': { name: 'V. Sairam', teamName: 'BULLS (TEAM-A)', serialNo: '62' },
       'Surya': { name: 'V. Surya Charan', teamName: 'BULLS (TEAM-B)', serialNo: '66' },
-      'Raghava': { name: 'V. Raghava Sai', teamName: 'Daredevils', serialNo: '29' }
+      'Raghava': { name: 'V. Raghava Sai', teamName: 'Dare Devils', serialNo: '29' }
     };
     
     // Reverse mapping: serial number to captain key
@@ -1081,7 +1244,7 @@
       'Velocity Vipers': 'Velocity_Vipers.JPG',
       'BULLS (TEAM-A)': 'Bulls_A.jpg',
       'BULLS (TEAM-B)': 'Bulls_B.jpg',
-      'Dardevils': 'Dare_devils.jpg'
+      'Dare Devils': 'Dare_devils.jpg'
     };
     
     // Helper function to get logo filename from team name
@@ -1167,6 +1330,8 @@
       const teamDetailView = document.getElementById('team-detail-view');
       const scheduleView = document.getElementById('schedule-view');
       const pointsView = document.getElementById('points-view');
+      const sponsorsView = document.getElementById('sponsors-view');
+      const playingConditionsView = document.getElementById('playing-conditions-view');
       
       // Hide all views
       flyerView.classList.remove('active');
@@ -1174,6 +1339,8 @@
       teamDetailView.classList.remove('active');
       scheduleView.classList.remove('active');
       pointsView.classList.remove('active');
+      sponsorsView.classList.remove('active');
+      playingConditionsView.classList.remove('active');
       
       // Show selected view and hide flyer on non-home pages
       if (view === 'flyer') {
@@ -1187,6 +1354,10 @@
           scheduleView.classList.add('active');
         } else if (view === 'points') {
           pointsView.classList.add('active');
+        } else if (view === 'sponsors') {
+          sponsorsView.classList.add('active');
+        } else if (view === 'playing-conditions') {
+          playingConditionsView.classList.add('active');
         }
       }
     }
