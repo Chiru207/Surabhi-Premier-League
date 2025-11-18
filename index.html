@@ -184,6 +184,9 @@
       cursor: pointer;
       transition: all 0.3s ease;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
     
     .captain-card:hover {
@@ -230,10 +233,11 @@
       height: auto;
       max-height: 120px;
       border-radius: 8px;
-      margin: 0 auto clamp(10px, 1.5vh, 15px);
+      margin: 0 auto clamp(15px, 2vh, 20px);
       border: 2px solid #334155;
       object-fit: contain;
       background: #0f172a;
+      order: -1; /* Ensure logo appears first */
     }
     
     /* Team Detail View */
@@ -528,6 +532,7 @@
       justify-content: center;
       gap: clamp(15px, 3vw, 30px);
       transition: all 0.3s ease;
+      position: relative;
     }
     
     .match-item:hover {
@@ -552,6 +557,37 @@
       font-size: clamp(16px, 2.5vw, 20px);
       color: #94a3b8;
       font-weight: 600;
+    }
+    
+    .match-label {
+      position: absolute;
+      top: -8px;
+      right: 10px;
+      background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+      color: #ffffff;
+      font-size: clamp(10px, 1.5vw, 12px);
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .final-match {
+      border: 2px solid #fbbf24;
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(245, 158, 11, 0.1) 100%);
+    }
+    
+    .final-match:hover {
+      border-color: #fbbf24;
+      box-shadow: 0 4px 16px rgba(251, 191, 36, 0.3);
+    }
+    
+    .final-label {
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+      color: #1e293b;
+      font-size: clamp(11px, 1.8vw, 14px);
+      padding: 6px 14px;
     }
     
     .eliminator-badge {
@@ -860,7 +896,7 @@
           <!-- Day 3 -->
           <div class="day-schedule">
             <div class="day-header">
-              <div class="day-title">Day 3 <span class="eliminator-badge">ELIMINATOR</span></div>
+              <div class="day-title">Day 3 <span class="eliminator-badge">ELIMINATOR & FINAL</span></div>
               <div class="day-date">Wednesday, 04-12-2025</div>
             </div>
             <div class="matches-list">
@@ -868,6 +904,13 @@
                 <div class="match-team">2nd Place</div>
                 <div class="match-vs">VS</div>
                 <div class="match-team">3rd Place</div>
+                <div class="match-label">Eliminator</div>
+              </div>
+              <div class="match-item final-match">
+                <div class="match-team">1st Place</div>
+                <div class="match-vs">VS</div>
+                <div class="match-team">Winner of Eliminator</div>
+                <div class="match-label final-label">FINAL</div>
               </div>
             </div>
           </div>
@@ -909,21 +952,21 @@
     // Note: Captain names in sheet are: Bhanu, Charan, Manu, Raghava, Sairam, Surya
     const CAPTAIN_INFO = {
       'Bhanu': { name: 'C.V. Bhanu', teamName: 'Risers 11', serialNo: '34' },
-      'Charan': { name: 'R. Charan', teamName: 'RBR Returns', serialNo: '16' },
-      'Manu': { name: 'S.A. Manohar', teamName: 'Velocity Vipers', serialNo: '29' },
-      'Sairam': { name: 'V. Sairam', teamName: 'BULLS (TEAM-A)', serialNo: '42' },
+      'Charan': { name: 'R. Charan', teamName: 'RBR Returns', serialNo: '42' },
+      'Manu': { name: 'S.A. Manohar', teamName: 'Velocity Vipers', serialNo: '16' },
+      'Sairam': { name: 'V. Sairam', teamName: 'BULLS (TEAM-A)', serialNo: '62' },
       'Surya': { name: 'V. Surya Charan', teamName: 'BULLS (TEAM-B)', serialNo: '66' },
-      'Raghava': { name: 'V. Raghava Sai', teamName: 'Dare Devils', serialNo: '62' }
+      'Raghava': { name: 'V. Raghava Sai', teamName: 'Dare Devils', serialNo: '29' }
     };
     
     // Reverse mapping: serial number to captain key
     const SERIAL_TO_CAPTAIN = {
       '34': 'Bhanu',
-      '16': 'Charan',
-      '29': 'Manu',
-      '42': 'Sairam',
+      '42': 'Charan',
+      '16': 'Manu',
+      '62': 'Sairam',
       '66': 'Surya',
-      '62': 'Raghava'
+      '29': 'Raghava'
     };
     
     // Logo filename mapping based on actual file names
@@ -1300,17 +1343,19 @@
           return;
         }
         
-        // Find captain's serial number - try multiple methods
+        // Find captain's serial number - prioritize CAPTAIN_INFO first
         let captainSerialNo = null;
         
-        // Method 1: Use known serial number from CAPTAIN_INFO
+        // Method 1: Use known serial number from CAPTAIN_INFO (most reliable)
         if (captainInfo.serialNo) {
-          captainSerialNo = captainInfo.serialNo;
+          captainSerialNo = String(captainInfo.serialNo).trim();
+          console.log(`Using CAPTAIN_INFO serial for ${captainKey}: ${captainSerialNo}`);
         }
         
-        // Method 2: Use stored captain serial number
+        // Method 2: Use stored captain serial number from data processing
         if (!captainSerialNo && window.captainSerialNos && window.captainSerialNos[captainKey]) {
-          captainSerialNo = window.captainSerialNos[captainKey];
+          captainSerialNo = String(window.captainSerialNos[captainKey]).trim();
+          console.log(`Using stored serial for ${captainKey}: ${captainSerialNo}`);
         }
         
         // Method 3: Find captain player by serial number mapping
@@ -1320,7 +1365,8 @@
             return SERIAL_TO_CAPTAIN[serialStr] === captainKey;
           });
           if (captainPlayer) {
-            captainSerialNo = captainPlayer.serialNo;
+            captainSerialNo = String(captainPlayer.serialNo).trim();
+            console.log(`Using SERIAL_TO_CAPTAIN mapping for ${captainKey}: ${captainSerialNo}`);
           }
         }
         
@@ -1328,13 +1374,21 @@
         if (!captainSerialNo) {
           const captainPlayer = players.find(p => p.isCaptain);
           if (captainPlayer) {
-            captainSerialNo = captainPlayer.serialNo;
+            captainSerialNo = String(captainPlayer.serialNo).trim();
+            console.log(`Using isCaptain flag for ${captainKey}: ${captainSerialNo}`);
           }
         }
         
-        // Method 5: Use first player as fallback
+        // Method 5: Use first player as fallback (should not happen if data is correct)
         if (!captainSerialNo && players.length > 0) {
-          captainSerialNo = players[0].serialNo;
+          captainSerialNo = String(players[0].serialNo).trim();
+          console.warn(`Using first player as fallback for ${captainKey}: ${captainSerialNo}`);
+        }
+        
+        // Final validation: ensure serial number is valid
+        if (captainSerialNo && (isNaN(parseInt(captainSerialNo)) || parseInt(captainSerialNo) <= 0)) {
+          console.error(`Invalid serial number for ${captainKey}: ${captainSerialNo}`);
+          captainSerialNo = null;
         }
         
         const card = document.createElement('div');
@@ -1353,11 +1407,14 @@
           logoSrc.toLowerCase().replace(/\s+/g, '_') // "risers_11.jpg"
         ] : [];
         
+        // Debug: log captain serial number
+        console.log(`Captain: ${captainKey}, Serial No: ${captainSerialNo}, Photo: ${photoSrc}`);
+        
         card.innerHTML = `
-          <img src="${photoSrc}" alt="${captainDisplayName}" class="captain-photo" onerror="this.src='${FALLBACK_IMAGE}';">
+          ${logoSrc ? `<img src="${logoSrc}" alt="${teamName}" class="team-logo" onerror="this.onerror=null; this.src='${logoVariations[1] || ''}'; if(!this.src) this.style.display='none';" />` : ''}
+          <img src="${photoSrc}" alt="${captainDisplayName}" class="captain-photo" onerror="console.error('Photo not found: ${photoSrc}'); this.src='${FALLBACK_IMAGE}';">
           <div class="captain-name">${captainDisplayName}</div>
           ${teamName ? `<div class="team-name">${teamName}</div>` : ''}
-          ${logoSrc ? `<img src="${logoSrc}" alt="${teamName}" class="team-logo" onerror="this.onerror=null; this.src='${logoVariations[1] || ''}'; if(!this.src) this.style.display='none';" />` : ''}
           <div class="team-count">${playerCount} Players</div>
         `;
         
