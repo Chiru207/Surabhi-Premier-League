@@ -926,27 +926,52 @@
       '62': 'Raghava'
     };
     
+    // Logo filename mapping based on actual file names
+    const LOGO_FILE_MAP = {
+      'Risers 11': 'Risers_11_logo.jpg',
+      'RBR Returns': 'RBR_Returns_Logo.jpg',
+      'Velocity Vipers': 'Velocity_Vipers.JPG',
+      'BULLS (TEAM-A)': 'Bulls_A.jpg',
+      'BULLS (TEAM-B)': 'Bulls_B.jpg',
+      'Dare Devils': 'Dare_devils.jpg'
+    };
+    
     // Helper function to get logo filename from team name
-    // Tries multiple filename formats based on team name
-    function getLogoFileName(teamName) {
+    function getLogoUrl(teamName) {
       if (!teamName) return '';
       
-      // Handle special cases
-      if (teamName.includes('BULLS')) {
-        return 'BULLS.jpg';
+      // Check direct mapping first
+      if (LOGO_FILE_MAP[teamName]) {
+        return LOGO_FILE_MAP[teamName];
       }
       
-      // Remove parentheses and content inside them, trim spaces
-      let cleanName = teamName.replace(/\([^)]*\)/g, '').trim();
+      // Handle BULLS teams
+      if (teamName.includes('BULLS') || teamName.includes('TEAM-A')) {
+        return 'Bulls_A.jpg';
+      }
+      if (teamName.includes('TEAM-B')) {
+        return 'Bulls_B.jpg';
+      }
       
-      // Try different filename formats (will be handled by onerror if not found)
-      // Format 1: With spaces (e.g., "Risers 11.jpg")
-      // Format 2: With underscores (e.g., "Risers_11.jpg")
-      // Format 3: Without spaces (e.g., "Risers11.jpg")
-      // Format 4: Lowercase with underscores (e.g., "risers_11.jpg")
+      // Try to find by partial match
+      for (const [key, filename] of Object.entries(LOGO_FILE_MAP)) {
+        const cleanKey = key.replace(/\([^)]*\)/g, '').trim();
+        const cleanTeamName = teamName.replace(/\([^)]*\)/g, '').trim();
+        if (teamName.includes(cleanKey) || cleanKey.includes(cleanTeamName)) {
+          return filename;
+        }
+      }
       
-      // Return the most likely format (with spaces, as shown in images)
-      return `${cleanName}.jpg`;
+      // Fallback: try common patterns
+      const cleanName = teamName.replace(/\([^)]*\)/g, '').trim();
+      const variations = [
+        `${cleanName.replace(/\s+/g, '_')}_logo.jpg`,
+        `${cleanName.replace(/\s+/g, '_')}.jpg`,
+        `${cleanName.replace(/\s+/g, '_')}_Logo.jpg`,
+        `${cleanName.replace(/\s+/g, '_')}.JPG`
+      ];
+      
+      return variations[0];
     }
     
     // Fallback image
@@ -1432,10 +1457,13 @@
         const row = document.createElement('tr');
         const logoSrc = getLogoUrl(team.teamName);
         
+        // Debug: log logo source
+        console.log(`Team: ${team.teamName}, Logo: ${logoSrc}`);
+        
         row.innerHTML = `
           <td>
             <div class="team-cell">
-              ${logoSrc ? `<img src="${logoSrc}" alt="${team.teamName}" class="team-logo-small" onerror="this.style.display='none';" />` : ''}
+              ${logoSrc ? `<img src="${logoSrc}" alt="${team.teamName}" class="team-logo-small" onerror="console.error('Logo not found: ${logoSrc}'); this.style.display='none';" />` : ''}
               <span class="team-name-cell">${team.teamName}</span>
             </div>
           </td>
