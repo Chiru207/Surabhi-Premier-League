@@ -452,17 +452,18 @@
     // ============================================
     // CONFIGURATION
     // ============================================
-    // Google Sheet URL
-    const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1xK_LYzZyycxwqbbAnF80Oson4N6pJH1v2-rPgJxjyr4/export?format=xlsx&gid=0';
+    // Local Excel file (in the same folder as photos)
+    const EXCEL_FILE = 'SPL-2025 team wise details.xlsx';
     
     // Captain name and team mapping
+    // Note: Captain names in sheet are: Bhanu, Charan, Manu, Raghava, Sairam, Surya
     const CAPTAIN_INFO = {
       'Bhanu': { name: 'C.V. Bhanu', teamName: 'Risers 11', serialNo: '34' },
       'Charan': { name: 'R. Charan', teamName: 'RBR Returns', serialNo: '16' },
       'Manu': { name: 'S.A. Manohar', teamName: 'Velocity Vipers', serialNo: '29' },
       'Sairam': { name: 'V. Sairam', teamName: 'BULLS (TEAM-A)', serialNo: '42' },
       'Surya': { name: 'V. Surya Charan', teamName: 'BULLS (TEAM-B)', serialNo: '66' },
-      'Raghava Sai': { name: 'V. Raghava Sai', teamName: 'Dare Devils', serialNo: '62' }
+      'Raghava': { name: 'V. Raghava Sai', teamName: 'Dare Devils', serialNo: '62' }
     };
     
     // Reverse mapping: serial number to captain key
@@ -472,7 +473,7 @@
       '29': 'Manu',
       '42': 'Sairam',
       '66': 'Surya',
-      '62': 'Raghava Sai'
+      '62': 'Raghava'
     };
     
     // Helper function to get logo filename from team name
@@ -560,7 +561,7 @@
       showView('teams');
     }
     
-    // Load teams data from Google Sheet
+    // Load teams data from local Excel file
     async function loadTeamsData() {
       const loadingEl = document.getElementById('teams-loading');
       const gridEl = document.getElementById('teams-grid');
@@ -571,10 +572,10 @@
       errorEl.style.display = 'none';
       
       try {
-        // Fetch the sheet as XLSX
-        const response = await fetch(SHEET_URL);
+        // Fetch the local Excel file
+        const response = await fetch(EXCEL_FILE);
         if (!response.ok) {
-          throw new Error(`Failed to fetch sheet: ${response.status}`);
+          throw new Error(`Failed to fetch Excel file: ${response.status}. Make sure the file "${EXCEL_FILE}" exists in the same folder.`);
         }
         
         const blob = await response.blob();
@@ -602,7 +603,9 @@
         console.log('Total rows from sheet:', rows.length);
         if (rows.length > 0) {
           console.log('First row sample:', rows[0]);
-          console.log('Column names in first row:', Object.keys(rows[0]));
+          const columnNames = Object.keys(rows[0]);
+          console.log('Column names in first row:', columnNames);
+          console.log('Full first row data:', JSON.stringify(rows[0], null, 2));
         }
         
         // Process rows
@@ -611,23 +614,74 @@
         let processedCount = 0;
         let skippedCount = 0;
         
-        rows.forEach((row, index) => {
-          // Try multiple column name variations
-          let serialNo = row['S. No.'] || row['S No.'] || row['Serial No'] || row['Serial No.'] || row['S.No.'] || row['S.No'] || '';
-          const playerName = row['NAME OF THE PLAYER'] || row['Name'] || row['NAME'] || row['Name'] || '';
-          const captain = row['captain'] || row['Captain'] || row['CAPTAIN'] || row['Captain'] || '';
-          const mobile = row['MOBILE NUMBER'] || row['Mobile Number'] || row['MOBILE'] || row['Mobile'] || '';
+        // Auto-detect column names from first data row
+        let serialCol = null;
+        let nameCol = null;
+        let captainCol = null;
+        let mobileCol = null;
+        
+        if (rows.length > 0) {
+          const firstRow = rows[0];
+          const allKeys = Object.keys(firstRow);
           
-          // Debug first few rows
+          // Find columns by checking all keys case-insensitively
+          for (const key of allKeys) {
+            const keyLower = key.toLowerCase().trim();
+            
+            // Find serial number column
+            if (!serialCol && (keyLower.includes('s. no') || keyLower.includes('s no') || keyLower.includes('serial') || keyLower === 's.no.')) {
+              serialCol = key;
+            }
+            
+            // Find player name column
+            if (!nameCol && (keyLower.includes('name') || keyLower.includes('player'))) {
+              nameCol = key;
+            }
+            
+            // Find captain column
+            if (!captainCol && (keyLower.includes('captain') || keyLower === 'team')) {
+              captainCol = key;
+            }
+            
+            // Find mobile column
+            if (!mobileCol && (keyLower.includes('mobile') || keyLower.includes('phone'))) {
+              mobileCol = key;
+            }
+          }
+          
+          console.log('Detected columns:', { serialCol, nameCol, captainCol, mobileCol });
+        }
+        
+        rows.forEach((row, index) => {
+          // Use detected columns or fallback to direct access
+          let serialNo = serialCol ? row[serialCol] : (row['S. No.'] || row['S No.'] || row['Serial No'] || row['Serial No.'] || row['S.No.'] || '');
+          let playerName = nameCol ? row[nameCol] : (row['NAME OF THE PLAYER'] || row['Name'] || row['NAME'] || '');
+          let captain = captainCol ? row[captainCol] : (row['captain'] || row['Captain'] || row['CAPTAIN'] || '');
+          let mobile = mobileCol ? row[mobileCol] : (row['MOBILE NUMBER'] || row['Mobile Number'] || row['MOBILE'] || '');
+          
+          // Convert to strings and trim
+          serialNo = String(serialNo || '').trim();
+          playerName = String(playerName || '').trim();
+          captain = String(captain || '').trim();
+          mobile = String(mobile || '').trim();
+          
+          // Debug first few rows with actual values
           if (index < 5) {
-            console.log(`Row ${index}:`, { serialNo, playerName, captain, mobile, allKeys: Object.keys(row) });
+            console.log(`Row ${index}:`, { 
+              serialNo, 
+              playerName, 
+              captain, 
+              mobile, 
+              allKeys: Object.keys(row),
+              allValues: row
+            });
           }
           
           // Skip rows without captain or player name
           if (!captain || !playerName) {
             skippedCount++;
             if (index < 5) {
-              console.log(`Skipping row ${index}: missing captain or player name`);
+              console.log(`Skipping row ${index}: missing captain (${captain}) or player name (${playerName})`);
             }
             return;
           }
@@ -663,7 +717,7 @@
                            (captainKey === 'Manu' && (playerNameLower.includes('manohar') || playerNameLower.includes('manu'))) ||
                            (captainKey === 'Sairam' && playerNameLower.includes('sairam')) ||
                            (captainKey === 'Surya' && (playerNameLower.includes('surya') || playerNameLower.includes('suryacharan'))) ||
-                           (captainKey === 'Raghava Sai' && (playerNameLower.includes('raghava') || playerNameLower.includes('raghav')));
+                           (captainKey === 'Raghava' && (playerNameLower.includes('raghava') || playerNameLower.includes('raghav')));
           
           const isCaptain = isCaptainBySerial || isCaptainByName;
           
@@ -699,7 +753,7 @@
         if (Object.keys(teamsData).length > 0) {
           gridEl.style.display = 'grid';
         } else {
-          errorEl.textContent = 'No teams found in the data. Please check the Google Sheet has the correct columns: S. No., NAME OF THE PLAYER, captain';
+          errorEl.textContent = `No teams found in the data. Please check the Excel file "${EXCEL_FILE}" has the correct columns: S. No. (or Serial No), NAME OF THE PLAYER (or Name), captain (or Captain). Detected columns: ${serialCol || 'not found'}, ${nameCol || 'not found'}, ${captainCol || 'not found'}`;
           errorEl.style.display = 'block';
         }
         
@@ -722,7 +776,7 @@
       console.log('Team keys:', Object.keys(teamsData));
       
       if (!teamsData || Object.keys(teamsData).length === 0) {
-        gridEl.innerHTML = '<div class="error">No teams data found. Please check the Google Sheet.</div>';
+        gridEl.innerHTML = `<div class="error">No teams data found. Please check the Excel file "${EXCEL_FILE}".</div>`;
         return;
       }
       
