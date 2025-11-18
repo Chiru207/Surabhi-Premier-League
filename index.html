@@ -601,11 +601,11 @@
         
         // Debug: Log first few rows and column names
         console.log('Total rows from sheet:', rows.length);
-        if (rows.length > 0) {
-          console.log('First row sample:', rows[0]);
-          const columnNames = Object.keys(rows[0]);
-          console.log('Column names in first row:', columnNames);
-          console.log('Full first row data:', JSON.stringify(rows[0], null, 2));
+        if (rows.length > 1) {
+          console.log('Row 0 (first row, skip):', rows[0]);
+          console.log('Row 1 (header row):', rows[1]);
+          const columnNames = Object.keys(rows[1]);
+          console.log('Column names in header row:', columnNames);
         }
         
         // Process rows
@@ -614,37 +614,46 @@
         let processedCount = 0;
         let skippedCount = 0;
         
-        // Auto-detect column names from first data row
-        let serialCol = null;
-        let nameCol = null;
-        let captainCol = null;
-        let mobileCol = null;
+        // Column names from header row (row 1, index 1)
+        // Expected: S. No., NAME OF THE PLAYER, captain, Name, MOBILE NUMBER
+        let serialCol = 'S. No.';
+        let nameCol = 'NAME OF THE PLAYER';
+        let captainCol = 'captain';
+        let mobileCol = 'MOBILE NUMBER';
         
-        if (rows.length > 0) {
-          const firstRow = rows[0];
-          const allKeys = Object.keys(firstRow);
+        // Auto-detect column names from header row (row 1, index 1)
+        if (rows.length > 1) {
+          const headerRow = rows[1];
+          const allKeys = Object.keys(headerRow);
           
           // Find columns by checking all keys case-insensitively
           for (const key of allKeys) {
             const keyLower = key.toLowerCase().trim();
             
-            // Find serial number column
+            // Find serial number column (prefer first occurrence)
             if (!serialCol && (keyLower.includes('s. no') || keyLower.includes('s no') || keyLower.includes('serial') || keyLower === 's.no.')) {
               serialCol = key;
+            } else if (keyLower.includes('s. no') || keyLower.includes('s no')) {
+              // Use the first S. No. column found
+              if (!serialCol || serialCol === 'S. No.') {
+                serialCol = key;
+              }
             }
             
-            // Find player name column
-            if (!nameCol && (keyLower.includes('name') || keyLower.includes('player'))) {
+            // Find player name column - prefer "NAME OF THE PLAYER" over "Name"
+            if (keyLower.includes('name of the player') || (keyLower === 'name of the player')) {
+              nameCol = key;
+            } else if (!nameCol && (keyLower.includes('name') || keyLower.includes('player'))) {
               nameCol = key;
             }
             
             // Find captain column
-            if (!captainCol && (keyLower.includes('captain') || keyLower === 'team')) {
+            if (keyLower === 'captain' || keyLower.includes('captain')) {
               captainCol = key;
             }
             
             // Find mobile column
-            if (!mobileCol && (keyLower.includes('mobile') || keyLower.includes('phone'))) {
+            if (keyLower.includes('mobile') || keyLower.includes('phone')) {
               mobileCol = key;
             }
           }
@@ -652,7 +661,12 @@
           console.log('Detected columns:', { serialCol, nameCol, captainCol, mobileCol });
         }
         
+        // Process data rows starting from row 2 (index 2) - skip row 0 and row 1
         rows.forEach((row, index) => {
+          // Skip first row (row 0) and header row (row 1, index 1)
+          if (index < 2) {
+            return;
+          }
           // Use detected columns or fallback to direct access
           let serialNo = serialCol ? row[serialCol] : (row['S. No.'] || row['S No.'] || row['Serial No'] || row['Serial No.'] || row['S.No.'] || '');
           let playerName = nameCol ? row[nameCol] : (row['NAME OF THE PLAYER'] || row['Name'] || row['NAME'] || '');
