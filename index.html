@@ -202,6 +202,19 @@
       color: #60a5fa;
       font-weight: 600;
       font-style: italic;
+      margin-bottom: clamp(8px, 1vh, 12px);
+    }
+    
+    .team-logo {
+      width: 100%;
+      max-width: 180px;
+      height: auto;
+      max-height: 120px;
+      border-radius: 8px;
+      margin: 0 auto clamp(10px, 1.5vh, 15px);
+      border: 2px solid #334155;
+      object-fit: contain;
+      background: #0f172a;
     }
     
     /* Team Detail View */
@@ -452,6 +465,29 @@
       'Raghava Sai': { name: 'V. Raghava Sai', teamName: 'Dare Devils' }
     };
     
+    // Helper function to get logo filename from team name
+    // Tries multiple filename formats based on team name
+    function getLogoFileName(teamName) {
+      if (!teamName) return '';
+      
+      // Handle special cases
+      if (teamName.includes('BULLS')) {
+        return 'BULLS.jpg';
+      }
+      
+      // Remove parentheses and content inside them, trim spaces
+      let cleanName = teamName.replace(/\([^)]*\)/g, '').trim();
+      
+      // Try different filename formats (will be handled by onerror if not found)
+      // Format 1: With spaces (e.g., "Risers 11.jpg")
+      // Format 2: With underscores (e.g., "Risers_11.jpg")
+      // Format 3: Without spaces (e.g., "Risers11.jpg")
+      // Format 4: Lowercase with underscores (e.g., "risers_11.jpg")
+      
+      // Return the most likely format (with spaces, as shown in images)
+      return `${cleanName}.jpg`;
+    }
+    
     // Fallback image
     const FALLBACK_IMAGE = 'Surabhi_Yuvasena_Logo.png';
     
@@ -580,11 +616,28 @@
           }
           
           // Check if this player is the captain (usually captain name matches player name or has (C) marker)
-          const isCaptain = playerName.toLowerCase().includes(captainKey.toLowerCase()) || 
-                           playerName.includes('(C)') || 
-                           playerName.toLowerCase().includes('captain');
+          const captainNameLower = captainKey.toLowerCase();
+          const playerNameLower = playerName.toLowerCase();
+          
+          // More flexible captain detection
+          const isCaptain = playerName.includes('(C)') || 
+                           playerNameLower.includes('captain') ||
+                           playerNameLower.includes(captainNameLower) ||
+                           captainNameLower.includes(playerNameLower) ||
+                           // Check if captain key matches common patterns
+                           (captainKey === 'Bhanu' && playerNameLower.includes('bhanu') && !playerNameLower.includes('raghava')) ||
+                           (captainKey === 'Charan' && playerNameLower.includes('charan')) ||
+                           (captainKey === 'Manu' && (playerNameLower.includes('manohar') || playerNameLower.includes('manu'))) ||
+                           (captainKey === 'Sairam' && playerNameLower.includes('sairam')) ||
+                           (captainKey === 'Surya' && (playerNameLower.includes('surya') || playerNameLower.includes('suryacharan'))) ||
+                           (captainKey === 'Raghava Sai' && (playerNameLower.includes('raghava') || playerNameLower.includes('raghav')));
           
           if (isCaptain) {
+            captainSerialNos[captainKey] = serialNo;
+          }
+          
+          // If no captain found yet and this is the first player, use it as fallback
+          if (!captainSerialNos[captainKey] && teamsData[captainKey].length === 0) {
             captainSerialNos[captainKey] = serialNo;
           }
           
@@ -617,6 +670,15 @@
       const gridEl = document.getElementById('teams-grid');
       gridEl.innerHTML = '';
       
+      // Debug: log teams data
+      console.log('Teams data:', teamsData);
+      console.log('Captain serial nos:', window.captainSerialNos);
+      
+      if (!teamsData || Object.keys(teamsData).length === 0) {
+        gridEl.innerHTML = '<div class="error">No teams data found. Please check the Google Sheet.</div>';
+        return;
+      }
+      
       Object.keys(teamsData).forEach(captainKey => {
         const captainInfo = CAPTAIN_INFO[captainKey] || { name: captainKey, teamName: '' };
         const captainDisplayName = captainInfo.name;
@@ -624,11 +686,44 @@
         const players = teamsData[captainKey];
         const playerCount = players.length;
         
-        // Find captain's serial number
-        const captainPlayer = players.find(p => p.isCaptain) || players[0];
-        const captainSerialNo = window.captainSerialNos && window.captainSerialNos[captainKey] 
-          ? window.captainSerialNos[captainKey] 
-          : captainPlayer.serialNo;
+        if (playerCount === 0) {
+          console.warn(`No players found for captain: ${captainKey}`);
+          return;
+        }
+        
+        // Find captain's serial number - try multiple methods
+        let captainSerialNo = null;
+        
+        // Method 1: Use stored captain serial number
+        if (window.captainSerialNos && window.captainSerialNos[captainKey]) {
+          captainSerialNo = window.captainSerialNos[captainKey];
+        }
+        
+        // Method 2: Find captain player
+        if (!captainSerialNo) {
+          const captainPlayer = players.find(p => p.isCaptain);
+          if (captainPlayer) {
+            captainSerialNo = captainPlayer.serialNo;
+          }
+        }
+        
+        // Method 3: Use first player as fallback
+        if (!captainSerialNo && players.length > 0) {
+          captainSerialNo = players[0].serialNo;
+        }
+        
+        // Method 4: Use captain name mapping (for known captains)
+        if (!captainSerialNo) {
+          // Try to find by matching captain name in player names
+          const captainNameParts = captainDisplayName.toLowerCase().split(' ');
+          const matchingPlayer = players.find(p => {
+            const playerNameLower = p.name.toLowerCase();
+            return captainNameParts.some(part => playerNameLower.includes(part));
+          });
+          if (matchingPlayer) {
+            captainSerialNo = matchingPlayer.serialNo;
+          }
+        }
         
         const card = document.createElement('div');
         card.className = 'captain-card';
@@ -636,10 +731,13 @@
         
         // Use local path for captain photo
         const photoSrc = getPhotoUrl(captainSerialNo);
+        const logoSrc = getLogoFileName(teamName);
+        
         card.innerHTML = `
           <img src="${photoSrc}" alt="${captainDisplayName}" class="captain-photo" onerror="this.src='${FALLBACK_IMAGE}';">
           <div class="captain-name">${captainDisplayName}</div>
           ${teamName ? `<div class="team-name">${teamName}</div>` : ''}
+          ${logoSrc ? `<img src="${logoSrc}" alt="${teamName}" class="team-logo" onerror="this.style.display='none';" />` : ''}
           <div class="team-count">${playerCount} Players</div>
         `;
         
@@ -656,7 +754,20 @@
       const titleText = teamName 
         ? `${captainDisplayName} - ${teamName}`
         : `${captainDisplayName}'s Team`;
-      document.getElementById('team-detail-title').textContent = titleText;
+      
+      // Update title with logo if available
+      const titleEl = document.getElementById('team-detail-title');
+      const logoSrc = getLogoFileName(teamName);
+      if (logoSrc) {
+        titleEl.innerHTML = `
+          <div style="display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap;">
+            <img src="${logoSrc}" alt="${teamName}" style="max-height: 60px; max-width: 200px; object-fit: contain;" onerror="this.style.display='none';" />
+            <span>${titleText}</span>
+          </div>
+        `;
+      } else {
+        titleEl.textContent = titleText;
+      }
       
       const loadingEl = document.getElementById('team-loading');
       const gridEl = document.getElementById('players-grid');
