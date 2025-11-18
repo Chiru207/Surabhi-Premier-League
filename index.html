@@ -180,6 +180,236 @@
       min-height: fit-content;
     }
     
+    /* Flyer View */
+    .flyer-view {
+      width: 100%;
+      min-height: 100%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(20px, 3vh, 40px) 0;
+    }
+    
+    .flyer-view.active {
+      display: flex;
+    }
+    
+    .flyer-container {
+      max-width: 90%;
+      max-height: 90%;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border: 2px solid #334155;
+      border-radius: 16px;
+      padding: clamp(20px, 3vw, 40px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .flyer-image {
+      max-width: 100%;
+      max-height: 80vh;
+      width: auto;
+      height: auto;
+      border-radius: 12px;
+      object-fit: contain;
+    }
+    
+    /* Teams View */
+    .teams-view {
+      width: 100%;
+      display: none;
+      min-height: 100%;
+      text-align: center;
+    }
+    
+    .teams-view.active {
+      display: block;
+    }
+    
+    .teams-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: clamp(20px, 3vw, 30px);
+      padding: clamp(20px, 3vh, 40px);
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      box-sizing: border-box;
+      justify-items: center;
+    }
+    
+    .captain-card {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border: 2px solid #334155;
+      border-radius: 16px;
+      padding: clamp(20px, 3vw, 30px);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .captain-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 24px rgba(96, 165, 250, 0.3);
+      border-color: #60a5fa;
+    }
+    
+    .captain-photo {
+      width: 100%;
+      max-width: 200px;
+      height: auto;
+      border-radius: 12px;
+      margin: 0 auto clamp(15px, 2vh, 20px);
+      border: 2px solid #334155;
+      object-fit: cover;
+      aspect-ratio: 1;
+    }
+    
+    .captain-name {
+      font-size: clamp(18px, 3vw, 24px);
+      font-weight: 700;
+      color: #60a5fa;
+      margin-bottom: clamp(8px, 1vh, 12px);
+    }
+    
+    .team-count {
+      font-size: clamp(14px, 2vw, 16px);
+      color: #94a3b8;
+      margin-bottom: clamp(4px, 0.5vh, 8px);
+    }
+    
+    .team-name {
+      font-size: clamp(16px, 2.5vw, 20px);
+      color: #60a5fa;
+      font-weight: 600;
+      font-style: italic;
+      margin-bottom: clamp(8px, 1vh, 12px);
+    }
+    
+    .team-logo {
+      width: 100%;
+      max-width: 180px;
+      height: auto;
+      max-height: 120px;
+      border-radius: 8px;
+      margin: 0 auto clamp(15px, 2vh, 20px);
+      border: 2px solid #334155;
+      object-fit: contain;
+      background: #0f172a;
+      order: -1; /* Ensure logo appears first */
+    }
+    
+    /* Team Detail View */
+    .team-detail-view {
+      width: 100%;
+      display: none;
+      min-height: 100%;
+      text-align: center;
+    }
+    
+    .team-detail-view.active {
+      display: block;
+    }
+    
+    .team-header {
+      text-align: center;
+      padding: clamp(20px, 3vh, 40px);
+      border-bottom: 2px solid #334155;
+      margin-bottom: clamp(20px, 3vh, 40px);
+    }
+    
+    .back-button {
+      display: inline-block;
+      padding: clamp(10px, 1.5vh, 15px) clamp(20px, 3vw, 30px);
+      background: linear-gradient(135deg, #1e40af 0%, #1e293b 100%);
+      border: 2px solid #60a5fa;
+      border-radius: 8px;
+      color: #60a5fa;
+      font-size: clamp(14px, 2vw, 18px);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: clamp(15px, 2vh, 25px);
+    }
+    
+    .back-button:hover {
+      background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
+      transform: translateX(-5px);
+    }
+    
+    .team-detail-title {
+      font-size: clamp(24px, 4vw, 36px);
+      color: #60a5fa;
+      font-weight: 700;
+      margin-bottom: clamp(10px, 2vh, 20px);
+    }
+    
+    .players-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: clamp(20px, 3vw, 30px);
+      padding: clamp(20px, 3vh, 40px);
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      box-sizing: border-box;
+      justify-items: center;
+    }
+    
+    .player-card {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border: 2px solid #334155;
+      border-radius: 12px;
+      padding: clamp(15px, 2vw, 20px);
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    
+    .player-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(96, 165, 250, 0.2);
+      border-color: #60a5fa;
+    }
+    
+    .player-photo {
+      width: 100%;
+      max-width: 150px;
+      height: auto;
+      border-radius: 8px;
+      margin: 0 auto clamp(10px, 1.5vh, 15px);
+      border: 2px solid #334155;
+      object-fit: cover;
+      object-position: top;
+      aspect-ratio: 1;
+    }
+    
+    .player-name {
+      font-size: clamp(14px, 2vw, 18px);
+      font-weight: 600;
+      color: #e2e8f0;
+      word-wrap: break-word;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: clamp(40px, 5vh, 60px);
+      color: #94a3b8;
+      font-size: clamp(16px, 2.5vw, 20px);
+    }
+    
+    .error {
+      text-align: center;
+      padding: clamp(40px, 5vh, 60px);
+      color: #ef4444;
+      font-size: clamp(16px, 2.5vw, 20px);
+    }
+    
     /* Schedule and Points Table Views */
     .schedule-view,
     .points-view,
@@ -239,9 +469,518 @@
       grid-column: 1 / -1;
     }
     
+    /* Playing Conditions View Styles */
+    .conditions-container {
+      width: 100%;
+      margin-top: clamp(20px, 3vh, 40px);
+    }
+    
+    .conditions-table-container {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: clamp(20px, 3vh, 30px);
+    }
+    
+    .conditions-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border-radius: 12px;
+      overflow: hidden;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    .conditions-table thead {
+      background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+    }
+    
+    .conditions-table th {
+      padding: clamp(12px, 2vh, 18px) clamp(10px, 2vw, 20px);
+      text-align: center;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: clamp(14px, 2vw, 18px);
+      border-right: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .conditions-table th:last-child {
+      border-right: none;
+    }
+    
+    .conditions-table tbody tr {
+      border-bottom: 1px solid #334155;
+      transition: all 0.3s ease;
+    }
+    
+    .conditions-table tbody tr:hover {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
+      transform: scale(1.01);
+    }
+    
+    .conditions-table tbody tr:last-child {
+      border-bottom: none;
+    }
+    
+    .conditions-table td {
+      padding: clamp(12px, 2vh, 18px) clamp(10px, 2vw, 20px);
+      text-align: center;
+      color: #e2e8f0;
+      font-size: clamp(14px, 2vw, 18px);
+      border-right: 1px solid #334155;
+    }
+    
+    .conditions-table td:first-child {
+      text-align: left;
+      font-weight: 600;
+      color: #60a5fa;
+    }
+    
+    .conditions-table td:last-child {
+      border-right: none;
+    }
+    
+    .conditions-table td strong {
+      color: #60a5fa;
+      font-weight: 700;
+    }
+    
+    .tournament-dates {
+      text-align: center;
+      color: #94a3b8;
+      font-size: clamp(16px, 2.5vw, 20px);
+      margin-bottom: clamp(20px, 3vh, 30px);
+      font-weight: 500;
+    }
+    
+    /* Scrolling marquee for draw info */
+    .draw-info-marquee {
+      width: 100%;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.3) 0%, rgba(15, 23, 42, 0.3) 100%);
+      border-top: 2px solid #334155;
+      border-bottom: 2px solid #334155;
+      padding: clamp(12px, 2vh, 18px) 0;
+      margin: clamp(20px, 3vh, 30px) 0;
+      position: relative;
+    }
+    
+    .marquee-wrapper {
+      display: flex;
+      width: fit-content;
+      animation: scroll-left 25s linear infinite;
+    }
+    
+    .marquee-content {
+      display: inline-block;
+      font-size: clamp(16px, 2.5vw, 22px);
+      color: #60a5fa;
+      font-weight: 600;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    
+    @keyframes scroll-left {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+    
+    /* Pause animation on hover */
+    .draw-info-marquee:hover .marquee-wrapper {
+      animation-play-state: paused;
+    }
+    
+    .teams-circle-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: clamp(30px, 4vh, 50px) 0;
+      padding: clamp(20px, 3vh, 40px);
+    }
+    
+    .teams-circle {
+      position: relative;
+      width: clamp(300px, 50vw, 500px);
+      height: clamp(300px, 50vw, 500px);
+      border: 3px solid #60a5fa;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.5) 100%);
+      box-shadow: 0 8px 32px rgba(96, 165, 250, 0.2);
+    }
+    
+    .team-letter {
+      position: absolute;
+      width: clamp(50px, 8vw, 80px);
+      height: clamp(50px, 8vw, 80px);
+      background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+      border: 2px solid #60a5fa;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-size: clamp(24px, 4vw, 36px);
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(96, 165, 250, 0.4);
+      transition: all 0.3s ease;
+    }
+    
+    .team-letter:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(96, 165, 250, 0.6);
+    }
+    
+    /* Position teams in a circle */
+    .team-letter:nth-child(1) { /* A - Top */
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%) translateY(-50%);
+    }
+    
+    .team-letter:nth-child(2) { /* B - Top Right */
+      top: 15%;
+      right: 10%;
+      transform: translate(50%, -50%);
+    }
+    
+    .team-letter:nth-child(3) { /* C - Bottom Right */
+      bottom: 15%;
+      right: 10%;
+      transform: translate(50%, 50%);
+    }
+    
+    .team-letter:nth-child(4) { /* D - Bottom */
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%) translateY(50%);
+    }
+    
+    .team-letter:nth-child(5) { /* E - Bottom Left */
+      bottom: 15%;
+      left: 10%;
+      transform: translate(-50%, 50%);
+    }
+    
+    .team-letter:nth-child(6) { /* F - Top Left */
+      top: 15%;
+      left: 10%;
+      transform: translate(-50%, -50%);
+    }
+    
+    .matches-container {
+      margin-top: clamp(40px, 5vh, 60px);
+    }
+    
+    .day-schedule {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border: 2px solid #334155;
+      border-radius: 16px;
+      padding: clamp(20px, 3vh, 30px);
+      margin-bottom: clamp(20px, 3vh, 30px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    .day-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: clamp(15px, 2vh, 25px);
+      padding-bottom: clamp(10px, 1.5vh, 15px);
+      border-bottom: 2px solid #334155;
+      flex-wrap: wrap;
+      gap: clamp(10px, 2vw, 20px);
+    }
+    
+    .day-title {
+      font-size: clamp(20px, 3vw, 28px);
+      color: #60a5fa;
+      font-weight: 700;
+    }
+    
+    .day-date {
+      font-size: clamp(16px, 2.5vw, 20px);
+      color: #94a3b8;
+      font-weight: 500;
+    }
+    
+    .matches-list {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(12px, 2vh, 20px);
+    }
+    
+    .match-item {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.5) 100%);
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: clamp(15px, 2vh, 20px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(15px, 3vw, 30px);
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    .match-item:hover {
+      border-color: #60a5fa;
+      box-shadow: 0 4px 12px rgba(96, 165, 250, 0.2);
+      transform: translateY(-2px);
+    }
+    
+    .match-team {
+      font-size: clamp(18px, 3vw, 24px);
+      font-weight: 700;
+      color: #60a5fa;
+      padding: clamp(8px, 1.5vh, 12px) clamp(15px, 3vw, 25px);
+      background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+      border-radius: 8px;
+      border: 2px solid #60a5fa;
+      min-width: clamp(60px, 10vw, 100px);
+      text-align: center;
+    }
+    
+    .match-vs {
+      font-size: clamp(16px, 2.5vw, 20px);
+      color: #94a3b8;
+      font-weight: 600;
+    }
+    
+    .match-label {
+      position: absolute;
+      top: -8px;
+      right: 10px;
+      background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+      color: #ffffff;
+      font-size: clamp(10px, 1.5vw, 12px);
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .final-match {
+      border: 2px solid #fbbf24;
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(245, 158, 11, 0.1) 100%);
+    }
+    
+    .final-match:hover {
+      border-color: #fbbf24;
+      box-shadow: 0 4px 16px rgba(251, 191, 36, 0.3);
+    }
+    
+    .final-label {
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+      color: #1e293b;
+      font-size: clamp(11px, 1.8vw, 14px);
+      padding: 6px 14px;
+    }
+    
+    .eliminator-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+      color: #ffffff;
+      padding: clamp(6px, 1vh, 10px) clamp(12px, 2vw, 20px);
+      border-radius: 20px;
+      font-size: clamp(12px, 2vw, 16px);
+      font-weight: 600;
+      margin-left: clamp(10px, 2vw, 15px);
+      border: 2px solid #fca5a5;
+    }
+    
+    .coming-soon {
+      text-align: center;
+      padding: clamp(40px, 5vh, 60px);
+      color: #94a3b8;
+      font-size: clamp(18px, 3vw, 24px);
+    }
+    
+    /* Points Table Styles */
+    .points-table-container {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: clamp(20px, 3vh, 30px);
+    }
+    
+    .points-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    .points-table thead {
+      background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+    }
+    
+    .points-table th {
+      padding: clamp(12px, 2vh, 18px) clamp(10px, 2vw, 20px);
+      text-align: center;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: clamp(14px, 2vw, 18px);
+      border-right: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .points-table th:last-child {
+      border-right: none;
+    }
+    
+    .points-table tbody tr {
+      border-bottom: 1px solid #334155;
+      transition: all 0.3s ease;
+    }
+    
+    .points-table tbody tr:hover {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
+      transform: scale(1.01);
+    }
+    
+    .points-table tbody tr:last-child {
+      border-bottom: none;
+    }
+    
+    .points-table td {
+      padding: clamp(12px, 2vh, 18px) clamp(10px, 2vw, 20px);
+      text-align: center;
+      color: #e2e8f0;
+      font-size: clamp(14px, 2vw, 18px);
+      border-right: 1px solid #334155;
+    }
+    
+    .points-table td:last-child {
+      border-right: none;
+    }
+    
+    .team-cell {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: clamp(10px, 2vw, 15px);
+      text-align: left;
+    }
+    
+    .team-logo-small {
+      width: clamp(30px, 5vw, 50px);
+      height: clamp(30px, 5vw, 50px);
+      object-fit: contain;
+      border-radius: 6px;
+      border: 1px solid #334155;
+      background: #0f172a;
+    }
+    
+    .team-name-cell {
+      font-weight: 600;
+      color: #60a5fa;
+      text-align: left;
+    }
+    
+    .points-highlight {
+      font-weight: 700;
+      color: #60a5fa;
+      font-size: clamp(16px, 2.5vw, 20px);
+    }
+    
+    .nrr-positive {
+      color: #10b981;
+      font-weight: 600;
+    }
+    
+    .nrr-negative {
+      color: #ef4444;
+      font-weight: 600;
+    }
+    
     @media (max-width: 768px) {
-      .sponsors-grid {
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      .points-table-container,
+      .conditions-table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      
+      .points-table,
+      .conditions-table {
+        min-width: 600px;
+      }
+      
+      .points-table th,
+      .points-table td,
+      .conditions-table th,
+      .conditions-table td {
+        padding: clamp(10px, 1.5vh, 15px) clamp(8px, 2vw, 15px);
+        font-size: clamp(12px, 2vw, 16px);
+      }
+      
+      .team-logo-small {
+        width: clamp(25px, 4vw, 40px);
+        height: clamp(25px, 4vw, 40px);
+      }
+    }
+    
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+      }
+      
+      .menu-toggle {
+        width: clamp(35px, 6vw, 45px);
+        height: clamp(35px, 6vw, 45px);
+        top: clamp(5px, 1vh, 10px);
+        left: clamp(5px, 1vw, 10px);
+      }
+      
+      .sidebar {
+        width: 80%;
+        max-width: 280px;
+        border-right: 2px solid #334155;
+        flex-direction: column;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: clamp(20px, 3vh, 30px) clamp(15px, 2vw, 20px);
+      }
+      
+      .sidebar-title {
+        display: block;
+      }
+      
+      .menu-item {
+        white-space: normal;
+        min-width: auto;
+        padding: clamp(12px, 2vh, 18px) clamp(15px, 2vw, 25px);
+      }
+      
+      .content-area {
+        padding: clamp(15px, 2vh, 25px);
+        margin-top: clamp(50px, 8vh, 60px);
+      }
+      
+      .teams-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: clamp(15px, 2vw, 20px);
+        padding: clamp(15px, 2vh, 25px);
+      }
+      
+      .players-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: clamp(15px, 2vw, 20px);
+        padding: clamp(15px, 2vh, 25px);
+      }
+      
+      .page-logo {
+        width: clamp(40px, 8vw, 60px);
+        top: clamp(5px, 1vh, 10px);
+        right: clamp(5px, 1vw, 10px);
       }
     }
   </style>
@@ -257,7 +996,7 @@
   <!-- Logo in top-right corner -->
   <img src="Surabhi_Yuvasena_Logo.png" alt="Surabhi Yuvasena Logo" class="page-logo" onerror="console.error('Logo failed to load');">
   
-  <!-- Sidebar Menu (simplified) -->
+  <!-- Sidebar Menu -->
   <div class="sidebar">
     <div class="sidebar-title">Surabhi Premier League</div>
     <div class="menu-item">Home</div>
@@ -269,6 +1008,42 @@
 
   <div class="main-content">
     <div class="content-area">
+      <!-- Flyer View -->
+      <div class="flyer-view">
+        <div class="flyer-container">
+          <img src="SPL_flyer.png" alt="SPL Flyer" class="flyer-image" onerror="console.error('Flyer failed to load');">
+        </div>
+      </div>
+
+      <!-- Teams View -->
+      <div class="teams-view">
+        <div class="section-title">Teams — SPL-2025</div>
+        <div class="teams-grid" id="teamsGrid">
+          <div class="captain-card">
+            <img src="team_logo_A.png" alt="Team A" class="team-logo">
+            <div class="captain-name">Team A Captain</div>
+            <div class="team-name">A Team</div>
+            <div class="team-count">Players: 11</div>
+          </div>
+          <!-- More team cards (A-F) -->
+        </div>
+      </div>
+
+      <!-- Team Detail View -->
+      <div class="team-detail-view" id="teamDetailView">
+        <div class="team-header">
+          <button class="back-button" id="backToTeams">Back to Teams</button>
+          <div class="team-detail-title" id="teamDetailTitle">Team A Details</div>
+        </div>
+        <div class="players-grid" id="playersGrid">
+          <!-- Player cards go here -->
+          <div class="player-card">
+            <img src="player_placeholder.png" class="player-photo" alt="Player">
+            <div class="player-name">Player 1</div>
+          </div>
+        </div>
+      </div>
+
       <!-- Sponsors View -->
       <div class="sponsors-view active">
         <div class="section-title">Sponsors / స్పాన్సర్లు — SPL-2025</div>
@@ -346,7 +1121,7 @@
 
             <div class="sponsor-card">
               <h3 class="sponsor-name">కీ. శే. శ్రీ వనారస మధుసూదన్ గారి జ్ఞాపకార్థం</h3>
-              <p class="sponsor-desc">వారి కుమారులు వి రాఘవ సాయి &amp; వి. ఉదయ్ శంకర్ — భోజనంలో ఒక రోజు చికెన్</p>
+              <p class="sponsor-desc">వారి కుమారులు వి రాఘవ సాయి &amp; వి. ఉదయ్ శంకర్ — భోజనంలో ఒక రోజు</p>
             </div>
 
             <div class="sponsor-card">
@@ -417,6 +1192,66 @@
           </div>
         </div>
       </div>
+
+      <!-- Points View -->
+      <div class="points-view">
+        <div class="section-title">Points Table — SPL-2025</div>
+        <div class="points-table-container">
+          <table class="points-table">
+            <thead>
+              <tr>
+                <th>Pos</th>
+                <th>Team</th>
+                <th>Played</th>
+                <th>W</th>
+                <th>L</th>
+                <th>NRR</th>
+                <th>Points</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td class="team-cell"><img src="team_logo_A.png" class="team-logo-small" alt=""><span class="team-name-cell">A Team</span></td>
+                <td>3</td>
+                <td>3</td>
+                <td>0</td>
+                <td class="nrr-positive">+1.23</td>
+                <td class="points-highlight">6</td>
+              </tr>
+              <!-- More rows -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Playing Conditions View -->
+      <div class="playing-conditions-view">
+        <div class="section-title">Playing Conditions — SPL-2025</div>
+        <div class="conditions-container">
+          <div class="conditions-table-container">
+            <table class="conditions-table">
+              <thead>
+                <tr>
+                  <th>Rule</th>
+                  <th>Details</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Match Length</strong></td>
+                  <td>20 overs per side</td>
+                </tr>
+                <tr>
+                  <td><strong>Ball Type</strong></td>
+                  <td>White Kookaburra</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -426,8 +1261,39 @@
       item.addEventListener('click', () => {
         document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
         item.classList.add('active');
+
+        // Basic view switching by text content (Home / Teams / Schedule / Sponsors / Points)
+        const text = item.textContent.trim().toLowerCase();
+        document.querySelectorAll('.flyer-view, .teams-view, .sponsors-view, .points-view, .team-detail-view, .playing-conditions-view').forEach(v => v.classList.remove('active'));
+
+        if (text === 'home') {
+          document.querySelector('.flyer-view').classList.add('active');
+        } else if (text === 'teams') {
+          document.querySelector('.teams-view').classList.add('active');
+        } else if (text === 'schedule') {
+          document.querySelector('.matches-container')?.classList.add('active');
+          // If no schedule implemented, show coming soon
+          document.querySelector('.coming-soon')?.classList.add('active');
+        } else if (text === 'sponsors') {
+          document.querySelector('.sponsors-view').classList.add('active');
+        } else if (text === 'points') {
+          document.querySelector('.points-view').classList.add('active');
+        }
       });
     });
+
+    // Back to teams in team detail view
+    const backBtn = document.getElementById('backToTeams');
+    if (backBtn) {
+      backBtn.addEventListener('click', () => {
+        document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+        const teamsMenu = Array.from(document.querySelectorAll('.menu-item')).find(i => i.textContent.trim().toLowerCase() === 'teams');
+        teamsMenu?.classList.add('active');
+
+        document.querySelectorAll('.teams-view, .team-detail-view').forEach(v => v.classList.remove('active'));
+        document.querySelector('.teams-view')?.classList.add('active');
+      });
+    }
   </script>
 </body>
 </html>
