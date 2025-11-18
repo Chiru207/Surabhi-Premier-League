@@ -465,6 +465,26 @@
       box-shadow: 0 8px 20px rgba(96, 165, 250, 0.3);
     }
     
+    .sponsor-name {
+      font-size: clamp(16px, 2.5vw, 20px);
+      color: #60a5fa;
+      font-weight: 700;
+      margin-bottom: clamp(12px, 2vh, 18px);
+      line-height: 1.4;
+    }
+    
+    .sponsor-desc {
+      font-size: clamp(14px, 2vw, 16px);
+      color: #cbd5e1;
+      line-height: 1.6;
+      margin: 0;
+    }
+    
+    .sponsor-desc strong {
+      color: #94a3b8;
+      font-weight: 600;
+    }
+    
     .sponsor-placeholder {
       grid-column: 1 / -1;
     }
@@ -998,302 +1018,953 @@
   
   <!-- Sidebar Menu -->
   <div class="sidebar">
-    <div class="sidebar-title">Surabhi Premier League</div>
-    <div class="menu-item">Home</div>
-    <div class="menu-item">Teams</div>
-    <div class="menu-item">Schedule</div>
-    <div class="menu-item active">Sponsors</div>
-    <div class="menu-item">Points</div>
+    <div class="sidebar-title">SPL 2025</div>
+    <div class="menu-item active" data-view="flyer">Home</div>
+    <div class="menu-item" data-view="teams">Teams</div>
+    <div class="menu-item" data-view="schedule">Schedule</div>
+    <div class="menu-item" data-view="points">Points Table</div>
+    <div class="menu-item" data-view="sponsors">Sponsors</div>
+    <div class="menu-item" data-view="playing-conditions">Playing Conditions</div>
   </div>
-
+  
+  <!-- Main Content Area -->
   <div class="main-content">
     <div class="content-area">
-      <!-- Flyer View -->
-      <div class="flyer-view">
+      <!-- Flyer View (Default) -->
+      <div class="flyer-view active" id="flyer-view">
         <div class="flyer-container">
-          <img src="SPL_flyer.png" alt="SPL Flyer" class="flyer-image" onerror="console.error('Flyer failed to load');">
+          <img src="flyer.png" alt="Surabhi Premier League 2025 Flyer" class="flyer-image" onerror="this.style.display='none'; this.parentElement.innerHTML='&lt;div class=&quot;error&quot;&gt;Flyer image not found&lt;/div&gt;';">
         </div>
       </div>
-
+      
       <!-- Teams View -->
-      <div class="teams-view">
-        <div class="section-title">Teams — SPL-2025</div>
-        <div class="teams-grid" id="teamsGrid">
-          <div class="captain-card">
-            <img src="team_logo_A.png" alt="Team A" class="team-logo">
-            <div class="captain-name">Team A Captain</div>
-            <div class="team-name">A Team</div>
-            <div class="team-count">Players: 11</div>
-          </div>
-          <!-- More team cards (A-F) -->
-        </div>
+      <div class="teams-view" id="teams-view">
+        <div class="loading" id="teams-loading">Loading teams...</div>
+        <div class="teams-grid" id="teams-grid" style="display: none;"></div>
+        <div class="error" id="teams-error" style="display: none;"></div>
       </div>
-
+      
       <!-- Team Detail View -->
-      <div class="team-detail-view" id="teamDetailView">
+      <div class="team-detail-view" id="team-detail-view">
         <div class="team-header">
-          <button class="back-button" id="backToTeams">Back to Teams</button>
-          <div class="team-detail-title" id="teamDetailTitle">Team A Details</div>
+          <button class="back-button" onclick="showTeamsView()">← Back to Teams</button>
+          <div class="team-detail-title" id="team-detail-title"></div>
         </div>
-        <div class="players-grid" id="playersGrid">
-          <!-- Player cards go here -->
-          <div class="player-card">
-            <img src="player_placeholder.png" class="player-photo" alt="Player">
-            <div class="player-name">Player 1</div>
+        <div class="loading" id="team-loading">Loading team...</div>
+        <div class="players-grid" id="players-grid" style="display: none;"></div>
+        <div class="error" id="team-error" style="display: none;"></div>
+      </div>
+      
+      <!-- Schedule View -->
+      <div class="schedule-view" id="schedule-view">
+        <h2 class="section-title">Tournament Schedule</h2>
+        <div class="tournament-dates">02-12-2025 to 04-12-2025</div>
+        
+        <div class="draw-info-marquee">
+          <div class="marquee-wrapper">
+            <div class="marquee-content">
+              Teams draw will be updated on 23-12-2025 at 6pm &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </div>
+            <div class="marquee-content" aria-hidden="true">
+              Teams draw will be updated on 23-12-2025 at 6pm &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </div>
+          </div>
+        </div>
+        
+        <div class="teams-circle-container">
+          <div class="teams-circle">
+            <div class="team-letter">A</div>
+            <div class="team-letter">B</div>
+            <div class="team-letter">C</div>
+            <div class="team-letter">D</div>
+            <div class="team-letter">E</div>
+            <div class="team-letter">F</div>
+          </div>
+        </div>
+        
+        <div class="matches-container">
+          <!-- Day 1 -->
+          <div class="day-schedule">
+            <div class="day-header">
+              <div class="day-title">Day 1</div>
+              <div class="day-date">Monday, 02-12-2025</div>
+            </div>
+            <div class="matches-list">
+              <div class="match-item">
+                <div class="match-team">A</div>
+                <div class="match-vs">VS</div>
+                <div class="match-team">B</div>
+              </div>
+              <div class="match-item">
+                <div class="match-team">C</div>
+                <div class="match-vs">VS</div>
+                <div class="match-team">D</div>
+              </div>
+              <div class="match-item">
+                <div class="match-team">E</div>
+                <div class="match-vs">VS</div>
+                <div class="match-team">F</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Day 2 -->
+          <div class="day-schedule">
+            <div class="day-header">
+              <div class="day-title">Day 2</div>
+              <div class="day-date">Tuesday, 03-12-2025</div>
+            </div>
+            <div class="matches-list">
+              <div class="match-item">
+                <div class="match-team">B</div>
+                <div class="match-vs">VS</div>
+                <div class="match-team">C</div>
+              </div>
+              <div class="match-item">
+                <div class="match-team">A</div>
+                <div class="match-vs">VS</div>
+                <div class="match-team">F</div>
+              </div>
+              <div class="match-item">
+                <div class="match-team">D</div>
+                <div class="match-vs">VS</div>
+                <div class="match-team">E</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Day 3 -->
+          <div class="day-schedule">
+            <div class="day-header">
+              <div class="day-title">Day 3 <span class="eliminator-badge">ELIMINATOR & FINAL</span></div>
+              <div class="day-date">Wednesday, 04-12-2025</div>
+            </div>
+            <div class="matches-list">
+              <div class="match-item">
+                <div class="match-team">2nd Place</div>
+                <div class="match-vs">VS</div>
+                <div class="match-team">3rd Place</div>
+                <div class="match-label">Eliminator</div>
+              </div>
+              <div class="match-item final-match">
+                <div class="match-team">1st Place</div>
+                <div class="match-vs">VS</div>
+                <div class="match-team">Winner of Eliminator</div>
+                <div class="match-label final-label">FINAL</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-
+      
+      <!-- Points Table View -->
+      <div class="points-view" id="points-view">
+        <h2 class="section-title">Points Table</h2>
+        <div class="points-table-container">
+          <table class="points-table">
+            <thead>
+              <tr>
+                <th>Team</th>
+                <th>MP</th>
+                <th>Won</th>
+                <th>Lost</th>
+                <th>Points</th>
+                <th>NRR</th>
+              </tr>
+            </thead>
+            <tbody id="points-table-body">
+              <!-- Teams will be populated here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
       <!-- Sponsors View -->
-      <div class="sponsors-view active">
-        <div class="section-title">Sponsors / స్పాన్సర్లు — SPL-2025</div>
+      <div class="sponsors-view" id="sponsors-view">
+        <h2 class="section-title">Sponsors / స్పాన్సర్లు — SPL-2025</h2>
         <div class="sponsors-container">
           <div class="sponsors-grid">
             <div class="sponsor-card">
               <h3 class="sponsor-name">VJR Transport</h3>
               <p class="sponsor-desc"><strong>Owner:</strong> V. జితేందర్ రెడ్డి — మూడు రోజుల రవాణా సౌకర్యం</p>
             </div>
-
             <div class="sponsor-card">
-              <h3 class="sponsor-name">కీ.శే. వనారస వేణుగోపాల్ (జ్ఞాపకార్థం)</h3>
-              <p class="sponsor-desc">వారి మనవడు V. మోహన్ గారు — టోర్నమెంట్ కప్స్</p>
+              <h3 class="sponsor-name">కీ.శే. వనారస వేణుగోపాల్ గారి జ్ఞాపకార్థం</h3>
+              <p class="sponsor-desc">వారి మనవడు V. మోహన్ గారు — మొత్తం టోర్నమెంట్ కప్స్</p>
             </div>
-
             <div class="sponsor-card">
-              <h3 class="sponsor-name">Cv భాను గారు</h3>
-              <p class="sponsor-desc">నివేదన: 5000/-</p>
+              <h3 class="sponsor-name">C. V. భాను గారు</h3>
+              <p class="sponsor-desc">Rs. 5000/-</p>
             </div>
-
             <div class="sponsor-card">
-              <h3 class="sponsor-name">Cv పుష్ప గారు</h3>
-              <p class="sponsor-desc">నివేదన: 1000/-</p>
+              <h3 class="sponsor-name">C. V. పుష్ప గారు</h3>
+              <p class="sponsor-desc">Rs. 1000/-</p>
             </div>
-
             <div class="sponsor-card">
-              <h3 class="sponsor-name">కీ|| శే సుధాకర్ గారి జ్ఞాపకార్థం — R. శ్రీనివాస్ (Bhupalapally)</h3>
+              <h3 class="sponsor-name">కీ. శే. R.సుధాకర్ గారి జ్ఞాపకార్థం — R. శ్రీనివాస్ గారు, భూపాలపల్లి</h3>
               <p class="sponsor-desc">నివేదన: 5016/-</p>
             </div>
-
             <div class="sponsor-card">
-              <h3 class="sponsor-name">CV Ravi గారు</h3>
+              <h3 class="sponsor-name">C. V. రవి గారు</h3>
               <p class="sponsor-desc">టోర్నమెంట్‌కు సరిపడా బాల్స్</p>
             </div>
-
             <div class="sponsor-card">
-              <h3 class="sponsor-name">S.K ఈవెంట్స్ (A.కరుణాకర్) — సిద్దిపేట</h3>
+              <h3 class="sponsor-name">SK ఈవెంట్స్ (A.కరుణాకర్) — సిద్దిపేట</h3>
               <p class="sponsor-desc">మొదటి రోజు భోజనం</p>
             </div>
-
             <div class="sponsor-card">
-              <h3 class="sponsor-name">V. చెన్న కేశవ గారు</h3>
+              <h3 class="sponsor-name">V. చెన్నకేశవ గారు</h3>
               <p class="sponsor-desc">3 రోజులకు సరిపడా డ్రింకింగ్ వాటర్</p>
             </div>
-
             <div class="sponsor-card">
-              <h3 class="sponsor-name">కీ || శే|| T.పూర్ణ గారి జ్ఞాపకార్థం</h3>
-              <p class="sponsor-desc">ఇవరు (రాము, గోపి కృష్ణ) — కూల్ డ్రింక్స్</p>
+              <h3 class="sponsor-name">కీ. శే. T.పూర్ణ గారి జ్ఞాపకార్థం</h3>
+              <p class="sponsor-desc">వారి కుమారులు T.రాము గారు   , T.గోపికృష్ణ — కూల్ డ్రింక్స్</p>
             </div>
-
             <div class="sponsor-card">
-              <h3 class="sponsor-name">కీ. శే. V. రాజులమ్మ (జ్ఞాపకార్థం)</h3>
-              <p class="sponsor-desc">వారి కుమారులు V. వినోద్ &amp; జయ వర్ధన్ — Eggs (3 days)</p>
+              <h3 class="sponsor-name">కీ. శే. V. రాజులమ్మ గారి జ్ఞాపకార్థం</h3>
+              <p class="sponsor-desc">వారి కుమారులు V. వినోద్ గారు, జయ వర్ధన్ గారు — Eggs (3 days)</p>
             </div>
-
             <div class="sponsor-card">
-              <h3 class="sponsor-name">శ్రీమతి &amp; శ్రీ V. ధనలక్ష్మి (ప్రసాదరావు గారి జ్ఞాపకార్థం)</h3>
-              <p class="sponsor-desc">a. Man of the Series: Rs. 5000 నగదు బహుమతి.<br>b. For SPL Organising: Rs. 5000.</p>
+              <h3 class="sponsor-name">శ్రీమతి &amp; శ్రీ V. ధనలక్ష్మి - ప్రసాదరావు గార్ల జ్ఞాపకార్థం</h3>
+              <p class="sponsor-desc">a. Man of the Series: Rs. 5000 నగదు బహుమతి.<br>b. For Organising the Tournament: Rs. 5000.</p>
             </div>
-
             <div class="sponsor-card">
               <h3 class="sponsor-name">R. శ్రీను (సునీల్) గారు</h3>
-              <p class="sponsor-desc">నివేదన: 2000/-</p>
+              <p class="sponsor-desc">Rs. 2000/-</p>
             </div>
-
             <div class="sponsor-card">
-              <h3 class="sponsor-name">Oreo (లోచన సాయి గారు) — జ్ఞాపకార్థం</h3>
-              <p class="sponsor-desc">నివేదన: 2000/-</p>
+              <h3 class="sponsor-name">Oreo జ్ఞాపకార్థం — లోచన సాయి గారు</h3>
+              <p class="sponsor-desc">Rs. 2000/-</p>
             </div>
-
             <div class="sponsor-card">
               <h3 class="sponsor-name">భానోదయ నాట్యమండలి</h3>
               <p class="sponsor-desc">3 రోజుల సౌండ్ సిస్టమ్</p>
             </div>
-
             <div class="sponsor-card">
               <h3 class="sponsor-name">కీ. శే. శ్రీ వనారస మధుసూదన్ గారి జ్ఞాపకార్థం</h3>
-              <p class="sponsor-desc">వారి కుమారులు వి రాఘవ సాయి &amp; వి. ఉదయ్ శంకర్ — భోజనంలో ఒక రోజు</p>
+              <p class="sponsor-desc">వారి కుమారులు V. రాఘవ సాయి గారు, V. ఉదయ్ శంకర్ గారు — ఒక రోజు చికెన్ భోజనం</p>
             </div>
-
             <div class="sponsor-card">
               <h3 class="sponsor-name">సింధూరి ఉన్నత్ గారి జ్ఞాపకార్థం</h3>
               <p class="sponsor-desc">వారి అత్తగారు V. కవిత — 3 రోజులు అరటిపండ్లు</p>
             </div>
-
             <div class="sponsor-card">
-              <h3 class="sponsor-name">కీ.శే. శ్రీ వనారస కుమార్ బాబు (రామ్ నగర్) జ్ఞాపకార్థం</h3>
-              <p class="sponsor-desc">వారి సతీమణి V.కళ్యాణి — 2000/- (డ్రై ఫ్రూట్స్)</p>
+              <h3 class="sponsor-name">కీ.శే. శ్రీ వనారస కుమార్ బాబు గారి జ్ఞాపకార్థం</h3>
+              <p class="sponsor-desc">వారి సతీమణి V.కళ్యాణి గారు, రామ్ నగర్ Rs. 2000/- (డ్రై ఫ్రూట్స్)</p>
             </div>
-
             <div class="sponsor-card">
-              <h3 class="sponsor-name">నార్మల్ మదర్ డైరీ — వనస్థలిపురం</h3>
+              <h3 class="sponsor-name">నార్మల్ మదర్ డైరీ, వనస్థలిపురం</h3>
               <p class="sponsor-desc">శ్రీ అశోక్ రెడ్డి గారు — బాదం పాలు</p>
             </div>
-
             <div class="sponsor-card">
               <h3 class="sponsor-name">సింధూరి సుబ్బారావు గారి జ్ఞాపకార్థం</h3>
               <p class="sponsor-desc">వారి కుటుంబ సభ్యులు — జ్ఞాపికలు</p>
             </div>
-
             <div class="sponsor-card">
               <h3 class="sponsor-name">రేకందర్ భాస్కర్ గారు</h3>
-              <p class="sponsor-desc">నివేదన: 2000/-</p>
+              <p class="sponsor-desc">Rs. 2000/-</p>
             </div>
-
             <div class="sponsor-card">
-              <h3 class="sponsor-name">రేకందర్ మురళీకృష్ణ (జ్ఞాపకార్థం)</h3>
-              <p class="sponsor-desc">వారి కుమారుడు — రేకందర్ వెంకటేశ్ గారు: ఒక రోజు భోజనాలు</p>
+              <h3 class="sponsor-name">రేకందర్ మురళీకృష్ణ గారి జ్ఞాపకార్థం</h3>
+              <p class="sponsor-desc">వారి కుమారుడు రేకందర్ వెంకటేశ్ గారు: ఒక రోజు భోజనాలు</p>
             </div>
-
             <div class="sponsor-card">
-              <h3 class="sponsor-name">వనారస దాసరది (జ్ఞాపకార్థం)</h3>
-              <p class="sponsor-desc">వరి కుమారుడు వనారస కార్తీక్ గారు — 1116/-</p>
+              <h3 class="sponsor-name">వనారస దాశరధి గారి జ్ఞాపకార్థం</h3>
+              <p class="sponsor-desc">వారి కుమారుడు వనారస కార్తీక్ గారు — Rs. 1116/-</p>
             </div>
-
             <div class="sponsor-card">
               <h3 class="sponsor-name">నల్లపాటి రాజారాం గారు</h3>
-              <p class="sponsor-desc">ఆయిల్, నిత్యావసరాల కోసం — 3000/-</p>
+              <p class="sponsor-desc">ఆయిల్, నిత్యావసరాల కోసం — Rs. 3000/-</p>
             </div>
-
             <div class="sponsor-card">
               <h3 class="sponsor-name">S.A వెంకటేష్ ప్రసాద్ గారు</h3>
               <p class="sponsor-desc">మూడు రోజులకు టిఫిన్స్ స్పాన్సర్</p>
             </div>
-
             <div class="sponsor-card">
               <h3 class="sponsor-name">S. పవన్ కుమార్ గారు</h3>
-              <p class="sponsor-desc">నివేదన: 2000/-</p>
+              <p class="sponsor-desc">Rs. 2000/-</p>
             </div>
-
             <div class="sponsor-card">
               <h3 class="sponsor-name">S. హిమ కుమార్ గారు</h3>
-              <p class="sponsor-desc">నివేదన: 2000/-</p>
+              <p class="sponsor-desc">Rs. 2000/-</p>
             </div>
-
             <div class="sponsor-card">
-              <h3 class="sponsor-name">V. ఉదయ్ కృష్ణ మోహన్ (మణుగూరు)</h3>
-              <p class="sponsor-desc">నివేదన: 2000/-</p>
+              <h3 class="sponsor-name">V. ఉదయకృష్ణ మోహన్ గారు, మణుగూరు</h3>
+              <p class="sponsor-desc">Rs. 2000/-</p>
             </div>
-
             <div class="sponsor-card sponsor-placeholder">
               <h3 class="sponsor-name">M. నాగరాజు గారు</h3>
-              <p class="sponsor-desc">ఉత్తమ టీం కి — Fair Play Award</p>
+              <p class="sponsor-desc">ఉత్తమ క్రీడాస్ఫూర్థి కలిగిన జట్టు  — Fair Play Award</p>
             </div>
-
           </div>
         </div>
       </div>
-
-      <!-- Points View -->
-      <div class="points-view">
-        <div class="section-title">Points Table — SPL-2025</div>
-        <div class="points-table-container">
-          <table class="points-table">
-            <thead>
-              <tr>
-                <th>Pos</th>
-                <th>Team</th>
-                <th>Played</th>
-                <th>W</th>
-                <th>L</th>
-                <th>NRR</th>
-                <th>Points</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td class="team-cell"><img src="team_logo_A.png" class="team-logo-small" alt=""><span class="team-name-cell">A Team</span></td>
-                <td>3</td>
-                <td>3</td>
-                <td>0</td>
-                <td class="nrr-positive">+1.23</td>
-                <td class="points-highlight">6</td>
-              </tr>
-              <!-- More rows -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-
+      
       <!-- Playing Conditions View -->
-      <div class="playing-conditions-view">
-        <div class="section-title">Playing Conditions — SPL-2025</div>
+      <div class="playing-conditions-view" id="playing-conditions-view">
+        <h2 class="section-title">Playing Conditions</h2>
         <div class="conditions-container">
           <div class="conditions-table-container">
             <table class="conditions-table">
               <thead>
                 <tr>
-                  <th>Rule</th>
-                  <th>Details</th>
+                  <th>Match Type</th>
+                  <th>Total Overs</th>
+                  <th>Max Overs</th>
+                  <th>Powerplay</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td><strong>Match Length</strong></td>
-                  <td>20 overs per side</td>
+                  <td><strong>Group Matches</strong></td>
+                  <td>16</td>
+                  <td>4 for one and 3 for rest</td>
+                  <td>5 overs</td>
                 </tr>
                 <tr>
-                  <td><strong>Ball Type</strong></td>
-                  <td>White Kookaburra</td>
+                  <td><strong>Final</strong></td>
+                  <td>20</td>
+                  <td>5 for each</td>
+                  <td>6 overs</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
       </div>
-
     </div>
   </div>
-
+  
   <script>
-    // Simple toggle to keep sidebar accessible on mobile
+    // ============================================
+    // CONFIGURATION
+    // ============================================
+    // Local Excel file (in the same folder as photos)
+    const EXCEL_FILE = 'SPL-2025 team wise details.xlsx';
+    
+    // Captain name and team mapping
+    // Note: Captain names in sheet are: Bhanu, Charan, Manu, Raghava, Sairam, Surya
+    const CAPTAIN_INFO = {
+      'Bhanu': { name: 'C.V. Bhanu', teamName: 'Risers 11', serialNo: '34' },
+      'Charan': { name: 'R. Charan', teamName: 'RBR Returns', serialNo: '42' },
+      'Manu': { name: 'S.A. Manohar', teamName: 'Velocity Vipers', serialNo: '16' },
+      'Sairam': { name: 'V. Sairam', teamName: 'BULLS (TEAM-A)', serialNo: '62' },
+      'Surya': { name: 'V. Surya Charan', teamName: 'BULLS (TEAM-B)', serialNo: '66' },
+      'Raghava': { name: 'V. Raghava Sai', teamName: 'Dare Devils', serialNo: '29' }
+    };
+    
+    // Reverse mapping: serial number to captain key
+    const SERIAL_TO_CAPTAIN = {
+      '34': 'Bhanu',
+      '42': 'Charan',
+      '16': 'Manu',
+      '62': 'Sairam',
+      '66': 'Surya',
+      '29': 'Raghava'
+    };
+    
+    // Logo filename mapping based on actual file names
+    const LOGO_FILE_MAP = {
+      'Risers 11': 'Risers_11_logo.jpg',
+      'RBR Returns': 'RBR_Returns_Logo.jpg',
+      'Velocity Vipers': 'Velocity_Vipers.JPG',
+      'BULLS (TEAM-A)': 'Bulls_A.jpg',
+      'BULLS (TEAM-B)': 'Bulls_B.jpg',
+      'Dare Devils': 'Dare_devils.jpg'
+    };
+    
+    // Helper function to get logo filename from team name
+    function getLogoUrl(teamName) {
+      if (!teamName) return '';
+      
+      // Check direct mapping first
+      if (LOGO_FILE_MAP[teamName]) {
+        return LOGO_FILE_MAP[teamName];
+      }
+      
+      // Handle BULLS teams
+      if (teamName.includes('BULLS') || teamName.includes('TEAM-A')) {
+        return 'Bulls_A.jpg';
+      }
+      if (teamName.includes('TEAM-B')) {
+        return 'Bulls_B.jpg';
+      }
+      
+      // Try to find by partial match
+      for (const [key, filename] of Object.entries(LOGO_FILE_MAP)) {
+        const cleanKey = key.replace(/\([^)]*\)/g, '').trim();
+        const cleanTeamName = teamName.replace(/\([^)]*\)/g, '').trim();
+        if (teamName.includes(cleanKey) || cleanKey.includes(cleanTeamName)) {
+          return filename;
+        }
+      }
+      
+      // Fallback: try common patterns
+      const cleanName = teamName.replace(/\([^)]*\)/g, '').trim();
+      const variations = [
+        `${cleanName.replace(/\s+/g, '_')}_logo.jpg`,
+        `${cleanName.replace(/\s+/g, '_')}.jpg`,
+        `${cleanName.replace(/\s+/g, '_')}_Logo.jpg`,
+        `${cleanName.replace(/\s+/g, '_')}.JPG`
+      ];
+      
+      return variations[0];
+    }
+    
+    // Fallback image
+    const FALLBACK_IMAGE = 'Surabhi_Yuvasena_Logo.png';
+    
+    // ============================================
+    // Application Code
+    // ============================================
+    
+    let teamsData = {};
+    let currentView = 'flyer';
+    
+    // Helper function to get local photo URL (photos are in current folder)
+    function getPhotoUrl(serialNo) {
+      if (!serialNo) return FALLBACK_IMAGE;
+      const serial = String(serialNo).trim();
+      if (!serial || isNaN(parseInt(serial))) return FALLBACK_IMAGE;
+      
+      // Use local path: just the filename in current folder
+      return `${serial}.jpg`;
+    }
+    
+    // Menu navigation
     document.querySelectorAll('.menu-item').forEach(item => {
       item.addEventListener('click', () => {
-        document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
-        item.classList.add('active');
-
-        // Basic view switching by text content (Home / Teams / Schedule / Sponsors / Points)
-        const text = item.textContent.trim().toLowerCase();
-        document.querySelectorAll('.flyer-view, .teams-view, .sponsors-view, .points-view, .team-detail-view, .playing-conditions-view').forEach(v => v.classList.remove('active'));
-
-        if (text === 'home') {
-          document.querySelector('.flyer-view').classList.add('active');
-        } else if (text === 'teams') {
-          document.querySelector('.teams-view').classList.add('active');
-        } else if (text === 'schedule') {
-          document.querySelector('.matches-container')?.classList.add('active');
-          // If no schedule implemented, show coming soon
-          document.querySelector('.coming-soon')?.classList.add('active');
-        } else if (text === 'sponsors') {
-          document.querySelector('.sponsors-view').classList.add('active');
-        } else if (text === 'points') {
-          document.querySelector('.points-view').classList.add('active');
+        const view = item.getAttribute('data-view');
+        if (view === 'teams' && Object.keys(teamsData).length === 0) {
+          loadTeamsData();
         }
+        showView(view);
       });
     });
-
-    // Back to teams in team detail view
-    const backBtn = document.getElementById('backToTeams');
-    if (backBtn) {
-      backBtn.addEventListener('click', () => {
-        document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
-        const teamsMenu = Array.from(document.querySelectorAll('.menu-item')).find(i => i.textContent.trim().toLowerCase() === 'teams');
-        teamsMenu?.classList.add('active');
-
-        document.querySelectorAll('.teams-view, .team-detail-view').forEach(v => v.classList.remove('active'));
-        document.querySelector('.teams-view')?.classList.add('active');
+    
+    function showView(view) {
+      currentView = view;
+      
+      // Update menu active state
+      document.querySelectorAll('.menu-item').forEach(item => {
+        item.classList.toggle('active', item.getAttribute('data-view') === view);
+      });
+      
+      // Get all view elements
+      const flyerView = document.getElementById('flyer-view');
+      const teamsView = document.getElementById('teams-view');
+      const teamDetailView = document.getElementById('team-detail-view');
+      const scheduleView = document.getElementById('schedule-view');
+      const pointsView = document.getElementById('points-view');
+      const sponsorsView = document.getElementById('sponsors-view');
+      const playingConditionsView = document.getElementById('playing-conditions-view');
+      
+      // Hide all views
+      flyerView.classList.remove('active');
+      teamsView.classList.remove('active');
+      teamDetailView.classList.remove('active');
+      scheduleView.classList.remove('active');
+      pointsView.classList.remove('active');
+      sponsorsView.classList.remove('active');
+      playingConditionsView.classList.remove('active');
+      
+      // Show selected view and hide flyer on non-home pages
+      if (view === 'flyer') {
+        flyerView.classList.add('active');
+      } else {
+        // Hide flyer on all other pages
+        flyerView.classList.remove('active');
+        if (view === 'teams') {
+          teamsView.classList.add('active');
+        } else if (view === 'schedule') {
+          scheduleView.classList.add('active');
+        } else if (view === 'points') {
+          pointsView.classList.add('active');
+        } else if (view === 'sponsors') {
+          sponsorsView.classList.add('active');
+        } else if (view === 'playing-conditions') {
+          playingConditionsView.classList.add('active');
+        }
+      }
+    }
+    
+    function showTeamsView() {
+      showView('teams');
+    }
+    
+    // Load teams data from local Excel file
+    async function loadTeamsData() {
+      const loadingEl = document.getElementById('teams-loading');
+      const gridEl = document.getElementById('teams-grid');
+      const errorEl = document.getElementById('teams-error');
+      
+      loadingEl.style.display = 'block';
+      gridEl.style.display = 'none';
+      errorEl.style.display = 'none';
+      
+      try {
+        // Fetch the local Excel file
+        const response = await fetch(EXCEL_FILE);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch Excel file: ${response.status}. Make sure the file "${EXCEL_FILE}" exists in the same folder.`);
+        }
+        
+        const blob = await response.blob();
+        const arrayBuffer = await blob.arrayBuffer();
+        
+        // Parse XLSX using SheetJS (xlsx library)
+        if (typeof XLSX === 'undefined') {
+          // Load xlsx library if not already loaded
+          const script = document.createElement('script');
+          script.src = 'https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js';
+          document.head.appendChild(script);
+          await new Promise((resolve, reject) => {
+            script.onload = resolve;
+            script.onerror = reject;
+            setTimeout(reject, 10000);
+          });
+        }
+        
+        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const rows = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+        
+        // Debug: Log first few rows and column names
+        console.log('Total rows from sheet:', rows.length);
+        if (rows.length > 0) {
+          console.log('Row 0 (header row):', rows[0]);
+          const columnNames = Object.keys(rows[0]);
+          console.log('Column names in header row:', columnNames);
+        }
+        
+        // Process rows
+        teamsData = {};
+        const captainSerialNos = {}; // Store captain serial numbers
+        let processedCount = 0;
+        let skippedCount = 0;
+        
+        // Map column names from row 0 (header row)
+        // Row 0 has: __EMPTY="S. No.", __EMPTY_1="NAME OF THE PLAYER ", __EMPTY_8="S. No.", __EMPTY_9="captain", __EMPTY_10="Name", __EMPTY_11="MOBILE NUMBER"
+        let serialCol = null;
+        let nameCol = null;
+        let captainCol = null;
+        let mobileCol = null;
+        
+        // Auto-detect column names from header row (row 0, index 0)
+        if (rows.length > 0) {
+          const headerRow = rows[0];
+          const allKeys = Object.keys(headerRow);
+          
+          // Find columns by checking header values
+          for (const key of allKeys) {
+            const headerValue = String(headerRow[key] || '').trim();
+            const headerLower = headerValue.toLowerCase();
+            
+            // Find serial number column - use __EMPTY_8 (second S. No.) or __EMPTY (first S. No.)
+            if (headerLower === 's. no.' || headerLower === 's no.') {
+              if (!serialCol) {
+                serialCol = key;
+              } else if (key === '__EMPTY_8') {
+                // Prefer the second S. No. column (__EMPTY_8) as it's in the data section
+                serialCol = key;
+              }
+            }
+            
+            // Find player name column - prefer "NAME OF THE PLAYER" over "Name"
+            if (headerLower.includes('name of the player')) {
+              nameCol = key;
+            } else if (!nameCol && (headerLower === 'name' || headerLower.includes('name'))) {
+              nameCol = key;
+            }
+            
+            // Find captain column
+            if (headerLower === 'captain') {
+              captainCol = key;
+            }
+            
+            // Find mobile column
+            if (headerLower.includes('mobile') || headerLower.includes('phone')) {
+              mobileCol = key;
+            }
+          }
+          
+          console.log('Detected columns:', { serialCol, nameCol, captainCol, mobileCol });
+          console.log('Column mapping:', {
+            serialCol: serialCol ? `${serialCol} = "${headerRow[serialCol]}"` : 'not found',
+            nameCol: nameCol ? `${nameCol} = "${headerRow[nameCol]}"` : 'not found',
+            captainCol: captainCol ? `${captainCol} = "${headerRow[captainCol]}"` : 'not found',
+            mobileCol: mobileCol ? `${mobileCol} = "${headerRow[mobileCol]}"` : 'not found'
+          });
+        }
+        
+        // Process data rows starting from row 1 (index 1) - skip row 0 (header row)
+        rows.forEach((row, index) => {
+          // Skip header row (row 0, index 0)
+          if (index < 1) {
+            return;
+          }
+          
+          // Use detected columns
+          let serialNo = serialCol ? row[serialCol] : '';
+          let playerName = nameCol ? row[nameCol] : '';
+          let captain = captainCol ? row[captainCol] : '';
+          let mobile = mobileCol ? row[mobileCol] : '';
+          
+          // Convert to strings and trim
+          serialNo = String(serialNo || '').trim();
+          playerName = String(playerName || '').trim();
+          captain = String(captain || '').trim();
+          mobile = String(mobile || '').trim();
+          
+          // Debug first few rows with actual values
+          if (index < 5) {
+            console.log(`Row ${index}:`, { 
+              serialNo, 
+              playerName, 
+              captain, 
+              mobile, 
+              allKeys: Object.keys(row),
+              allValues: row
+            });
+          }
+          
+          // Skip rows without captain or player name
+          if (!captain || !playerName) {
+            skippedCount++;
+            if (index < 5) {
+              console.log(`Skipping row ${index}: missing captain (${captain}) or player name (${playerName})`);
+            }
+            return;
+          }
+          
+          // Filter out invalid serial numbers (like "Full hands")
+          serialNo = String(serialNo).trim();
+          if (!serialNo || isNaN(parseInt(serialNo))) {
+            return;
+          }
+          
+          // Normalize captain name
+          const captainKey = captain.trim();
+          
+          if (!teamsData[captainKey]) {
+            teamsData[captainKey] = [];
+          }
+          
+          // Check if this player is the captain using serial number mapping
+          const serialStr = String(serialNo).trim();
+          const isCaptainBySerial = SERIAL_TO_CAPTAIN[serialStr] === captainKey;
+          
+          // Also check by name patterns
+          const captainNameLower = captainKey.toLowerCase();
+          const playerNameLower = playerName.toLowerCase();
+          
+          const isCaptainByName = playerName.includes('(C)') || 
+                           playerNameLower.includes('captain') ||
+                           playerNameLower.includes(captainNameLower) ||
+                           captainNameLower.includes(playerNameLower) ||
+                           // Check if captain key matches common patterns
+                           (captainKey === 'Bhanu' && playerNameLower.includes('bhanu') && !playerNameLower.includes('raghava')) ||
+                           (captainKey === 'Charan' && playerNameLower.includes('charan')) ||
+                           (captainKey === 'Manu' && (playerNameLower.includes('manohar') || playerNameLower.includes('manu'))) ||
+                           (captainKey === 'Sairam' && playerNameLower.includes('sairam')) ||
+                           (captainKey === 'Surya' && (playerNameLower.includes('surya') || playerNameLower.includes('suryacharan'))) ||
+                           (captainKey === 'Raghava' && (playerNameLower.includes('raghava') || playerNameLower.includes('raghav')));
+          
+          const isCaptain = isCaptainBySerial || isCaptainByName;
+          
+          if (isCaptain) {
+            captainSerialNos[captainKey] = serialNo;
+          }
+          
+          // If no captain found yet, use known serial number from CAPTAIN_INFO
+          if (!captainSerialNos[captainKey] && CAPTAIN_INFO[captainKey] && CAPTAIN_INFO[captainKey].serialNo) {
+            captainSerialNos[captainKey] = CAPTAIN_INFO[captainKey].serialNo;
+          }
+          
+          teamsData[captainKey].push({
+            serialNo: serialNo,
+            name: playerName.trim(),
+            mobile: mobile.trim(),
+            isCaptain: isCaptain
+          });
+          processedCount++;
+        });
+        
+        console.log(`Processed ${processedCount} players, skipped ${skippedCount} rows`);
+        console.log('Teams found:', Object.keys(teamsData));
+        
+        // Store captain serial numbers for later use
+        window.captainSerialNos = captainSerialNos;
+        
+        // Render teams
+        renderTeams();
+        
+        // Show the grid after rendering
+        loadingEl.style.display = 'none';
+        if (Object.keys(teamsData).length > 0) {
+          gridEl.style.display = 'grid';
+        } else {
+          errorEl.textContent = `No teams found in the data. Please check the Excel file "${EXCEL_FILE}" has the correct columns: S. No. (or Serial No), NAME OF THE PLAYER (or Name), captain (or Captain). Detected columns: ${serialCol || 'not found'}, ${nameCol || 'not found'}, ${captainCol || 'not found'}`;
+          errorEl.style.display = 'block';
+        }
+        
+      } catch (error) {
+        console.error('Error loading teams:', error);
+        loadingEl.style.display = 'none';
+        errorEl.textContent = `Error loading teams: ${error.message}`;
+        errorEl.style.display = 'block';
+      }
+    }
+    
+    function renderTeams() {
+      const gridEl = document.getElementById('teams-grid');
+      gridEl.innerHTML = '';
+      
+      // Debug: log teams data
+      console.log('Teams data:', teamsData);
+      console.log('Captain serial nos:', window.captainSerialNos);
+      console.log('Number of teams:', Object.keys(teamsData).length);
+      console.log('Team keys:', Object.keys(teamsData));
+      
+      if (!teamsData || Object.keys(teamsData).length === 0) {
+        gridEl.innerHTML = `<div class="error">No teams data found. Please check the Excel file "${EXCEL_FILE}".</div>`;
+        return;
+      }
+      
+      let teamsRendered = 0;
+      Object.keys(teamsData).forEach(captainKey => {
+        const captainInfo = CAPTAIN_INFO[captainKey] || { name: captainKey, teamName: '' };
+        const captainDisplayName = captainInfo.name;
+        const teamName = captainInfo.teamName;
+        const players = teamsData[captainKey];
+        const playerCount = players.length;
+        
+        if (playerCount === 0) {
+          console.warn(`No players found for captain: ${captainKey}`);
+          return;
+        }
+        
+        // Find captain's serial number - prioritize CAPTAIN_INFO first
+        let captainSerialNo = null;
+        
+        // Method 1: Use known serial number from CAPTAIN_INFO (most reliable)
+        if (captainInfo.serialNo) {
+          captainSerialNo = String(captainInfo.serialNo).trim();
+          console.log(`Using CAPTAIN_INFO serial for ${captainKey}: ${captainSerialNo}`);
+        }
+        
+        // Method 2: Use stored captain serial number from data processing
+        if (!captainSerialNo && window.captainSerialNos && window.captainSerialNos[captainKey]) {
+          captainSerialNo = String(window.captainSerialNos[captainKey]).trim();
+          console.log(`Using stored serial for ${captainKey}: ${captainSerialNo}`);
+        }
+        
+        // Method 3: Find captain player by serial number mapping
+        if (!captainSerialNo) {
+          const captainPlayer = players.find(p => {
+            const serialStr = String(p.serialNo).trim();
+            return SERIAL_TO_CAPTAIN[serialStr] === captainKey;
+          });
+          if (captainPlayer) {
+            captainSerialNo = String(captainPlayer.serialNo).trim();
+            console.log(`Using SERIAL_TO_CAPTAIN mapping for ${captainKey}: ${captainSerialNo}`);
+          }
+        }
+        
+        // Method 4: Find captain player by isCaptain flag
+        if (!captainSerialNo) {
+          const captainPlayer = players.find(p => p.isCaptain);
+          if (captainPlayer) {
+            captainSerialNo = String(captainPlayer.serialNo).trim();
+            console.log(`Using isCaptain flag for ${captainKey}: ${captainSerialNo}`);
+          }
+        }
+        
+        // Method 5: Use first player as fallback (should not happen if data is correct)
+        if (!captainSerialNo && players.length > 0) {
+          captainSerialNo = String(players[0].serialNo).trim();
+          console.warn(`Using first player as fallback for ${captainKey}: ${captainSerialNo}`);
+        }
+        
+        // Final validation: ensure serial number is valid
+        if (captainSerialNo && (isNaN(parseInt(captainSerialNo)) || parseInt(captainSerialNo) <= 0)) {
+          console.error(`Invalid serial number for ${captainKey}: ${captainSerialNo}`);
+          captainSerialNo = null;
+        }
+        
+        const card = document.createElement('div');
+        card.className = 'captain-card';
+        card.onclick = () => showTeamDetail(captainKey);
+        
+        // Use local path for captain photo
+        const photoSrc = getPhotoUrl(captainSerialNo);
+        const logoSrc = getLogoUrl(teamName);
+        
+        // Try multiple logo filename formats
+        const logoVariations = logoSrc ? [
+          logoSrc, // "Risers 11.jpg"
+          logoSrc.replace(/\s+/g, '_'), // "Risers_11.jpg"
+          logoSrc.replace(/\s+/g, ''), // "Risers11.jpg"
+          logoSrc.toLowerCase().replace(/\s+/g, '_') // "risers_11.jpg"
+        ] : [];
+        
+        // Debug: log captain serial number
+        console.log(`Captain: ${captainKey}, Serial No: ${captainSerialNo}, Photo: ${photoSrc}`);
+        
+        card.innerHTML = `
+          ${logoSrc ? `<img src="${logoSrc}" alt="${teamName}" class="team-logo" onerror="this.onerror=null; this.src='${logoVariations[1] || ''}'; if(!this.src) this.style.display='none';" />` : ''}
+          <img src="${photoSrc}" alt="${captainDisplayName}" class="captain-photo" onerror="console.error('Photo not found: ${photoSrc}'); this.src='${FALLBACK_IMAGE}';">
+          <div class="captain-name">${captainDisplayName}</div>
+          ${teamName ? `<div class="team-name">${teamName}</div>` : ''}
+          <div class="team-count">${playerCount} Players</div>
+        `;
+        
+        gridEl.appendChild(card);
+        teamsRendered++;
+        console.log(`Rendered team: ${captainKey} - ${captainDisplayName} (${playerCount} players)`);
+      });
+      
+      console.log(`Total teams rendered: ${teamsRendered}`);
+      
+      if (teamsRendered === 0) {
+        gridEl.innerHTML = '<div class="error">Teams data loaded but no teams could be rendered. Check console for details.</div>';
+      }
+    }
+    
+    function showTeamDetail(captainKey) {
+      const captainInfo = CAPTAIN_INFO[captainKey] || { name: captainKey, teamName: '' };
+      const captainDisplayName = captainInfo.name;
+      const teamName = captainInfo.teamName;
+      const players = teamsData[captainKey] || [];
+      
+      const titleText = teamName 
+        ? `${captainDisplayName} - ${teamName}`
+        : `${captainDisplayName}'s Team`;
+      
+      // Update title with logo if available
+      const titleEl = document.getElementById('team-detail-title');
+      const logoSrc = getLogoUrl(teamName);
+      if (logoSrc) {
+        titleEl.innerHTML = `
+          <div style="display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap;">
+            <img src="${logoSrc}" alt="${teamName}" style="max-height: 60px; max-width: 200px; object-fit: contain;" onerror="this.style.display='none';" />
+            <span>${titleText}</span>
+          </div>
+        `;
+      } else {
+        titleEl.textContent = titleText;
+      }
+      
+      const loadingEl = document.getElementById('team-loading');
+      const gridEl = document.getElementById('players-grid');
+      const errorEl = document.getElementById('team-error');
+      
+      loadingEl.style.display = 'block';
+      gridEl.style.display = 'none';
+      errorEl.style.display = 'none';
+      
+      setTimeout(() => {
+        gridEl.innerHTML = '';
+        
+        // Sort players: captain first, then others
+        const sortedPlayers = [...players].sort((a, b) => {
+          if (a.isCaptain) return -1;
+          if (b.isCaptain) return 1;
+          return parseInt(a.serialNo) - parseInt(b.serialNo);
+        });
+        
+        sortedPlayers.forEach(player => {
+          const card = document.createElement('div');
+          card.className = 'player-card';
+          
+          // Use local path for player photo (photos are in current folder)
+          const photoSrc = getPhotoUrl(player.serialNo);
+          const displayName = player.name;
+          
+          card.innerHTML = `
+            <img src="${photoSrc}" alt="${player.name}" class="player-photo" onerror="this.src='${FALLBACK_IMAGE}';">
+            <div class="player-name">${displayName}</div>
+          `;
+          
+          gridEl.appendChild(card);
+        });
+        
+        loadingEl.style.display = 'none';
+        gridEl.style.display = 'grid';
+      }, 300);
+      
+      // Hide teams view and show team detail view
+      document.getElementById('teams-view').classList.remove('active');
+      document.getElementById('team-detail-view').classList.add('active');
+    }
+    
+    // Initialize points table
+    function initializePointsTable() {
+      const tbody = document.getElementById('points-table-body');
+      if (!tbody) return;
+      
+      // Get all teams from CAPTAIN_INFO
+      const teams = Object.values(CAPTAIN_INFO);
+      
+      // Sort teams alphabetically by team name for initial display
+      teams.sort((a, b) => a.teamName.localeCompare(b.teamName));
+      
+      tbody.innerHTML = '';
+      
+      teams.forEach((team, index) => {
+        const row = document.createElement('tr');
+        const logoSrc = getLogoUrl(team.teamName);
+        
+        // Debug: log logo source
+        console.log(`Team: ${team.teamName}, Logo: ${logoSrc}`);
+        
+        row.innerHTML = `
+          <td>
+            <div class="team-cell">
+              ${logoSrc ? `<img src="${logoSrc}" alt="${team.teamName}" class="team-logo-small" onerror="console.error('Logo not found: ${logoSrc}'); this.style.display='none';" />` : ''}
+              <span class="team-name-cell">${team.teamName}</span>
+            </div>
+          </td>
+          <td>0</td>
+          <td>0</td>
+          <td>0</td>
+          <td class="points-highlight">0</td>
+          <td class="nrr-positive">0.000</td>
+        `;
+        
+        tbody.appendChild(row);
       });
     }
+    
+    // Initialize: Load xlsx library if needed and setup points table
+    window.addEventListener('DOMContentLoaded', () => {
+      // Check if xlsx is already loaded
+      if (typeof XLSX === 'undefined') {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js';
+        document.head.appendChild(script);
+      }
+      
+      // Initialize points table
+      initializePointsTable();
+    });
+    
+    // Also initialize when points view is shown
+    document.addEventListener('DOMContentLoaded', () => {
+      const pointsMenuItem = document.querySelector('.menu-item[data-view="points"]');
+      if (pointsMenuItem) {
+        pointsMenuItem.addEventListener('click', () => {
+          // Ensure points table is initialized when view is shown
+          setTimeout(() => {
+            const tbody = document.getElementById('points-table-body');
+            if (tbody && tbody.children.length === 0) {
+              initializePointsTable();
+            }
+          }, 100);
+        });
+      }
+    });
   </script>
 </body>
 </html>
