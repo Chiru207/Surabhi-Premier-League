@@ -614,18 +614,26 @@
       animation-play-state: paused;
     }
     
+    .schedule-layout-wrapper {
+      display: flex;
+      gap: clamp(20px, 3vw, 40px);
+      align-items: flex-start;
+      margin: clamp(30px, 4vh, 50px) 0;
+      flex-wrap: wrap;
+    }
+    
     .teams-circle-container {
       display: flex;
       justify-content: center;
       align-items: center;
-      margin: clamp(30px, 4vh, 50px) 0;
+      flex-shrink: 0;
       padding: clamp(20px, 3vh, 40px);
     }
     
     .teams-circle {
       position: relative;
-      width: clamp(300px, 50vw, 500px);
-      height: clamp(300px, 50vw, 500px);
+      width: clamp(200px, 30vw, 300px);
+      height: clamp(200px, 30vw, 300px);
       border: 3px solid #60a5fa;
       border-radius: 50%;
       display: flex;
@@ -635,10 +643,18 @@
       box-shadow: 0 8px 32px rgba(96, 165, 250, 0.2);
     }
     
+    .first-two-days-container {
+      flex: 1;
+      min-width: 300px;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(20px, 3vh, 30px);
+    }
+    
     .team-letter {
       position: absolute;
-      width: clamp(50px, 8vw, 80px);
-      height: clamp(50px, 8vw, 80px);
+      width: clamp(40px, 6vw, 60px);
+      height: clamp(40px, 6vw, 60px);
       background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
       border: 2px solid #60a5fa;
       border-radius: 50%;
@@ -646,7 +662,7 @@
       align-items: center;
       justify-content: center;
       color: #ffffff;
-      font-size: clamp(24px, 4vw, 36px);
+      font-size: clamp(18px, 3vw, 28px);
       font-weight: 700;
       box-shadow: 0 4px 12px rgba(96, 165, 250, 0.4);
       transition: all 0.3s ease;
@@ -960,6 +976,20 @@
         left: clamp(5px, 1vw, 10px);
       }
       
+      .schedule-layout-wrapper {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .teams-circle {
+        width: clamp(180px, 50vw, 250px);
+        height: clamp(180px, 50vw, 250px);
+      }
+      
+      .first-two-days-container {
+        width: 100%;
+      }
+      
       .sidebar {
         width: 80%;
         max-width: 280px;
@@ -1071,68 +1101,72 @@
           </div>
         </div>
         
-        <div class="teams-circle-container">
-          <div class="teams-circle">
-            <div class="team-letter">A</div>
-            <div class="team-letter">B</div>
-            <div class="team-letter">C</div>
-            <div class="team-letter">D</div>
-            <div class="team-letter">E</div>
-            <div class="team-letter">F</div>
+        <div class="schedule-layout-wrapper">
+          <div class="teams-circle-container">
+            <div class="teams-circle">
+              <div class="team-letter">A</div>
+              <div class="team-letter">B</div>
+              <div class="team-letter">C</div>
+              <div class="team-letter">D</div>
+              <div class="team-letter">E</div>
+              <div class="team-letter">F</div>
+            </div>
+          </div>
+          
+          <div class="first-two-days-container">
+            <!-- Day 1 -->
+            <div class="day-schedule">
+              <div class="day-header">
+                <div class="day-title">Day 1</div>
+                <div class="day-date">Monday, 02-12-2025</div>
+              </div>
+              <div class="matches-list">
+                <div class="match-item">
+                  <div class="match-team">A</div>
+                  <div class="match-vs">VS</div>
+                  <div class="match-team">B</div>
+                </div>
+                <div class="match-item">
+                  <div class="match-team">C</div>
+                  <div class="match-vs">VS</div>
+                  <div class="match-team">D</div>
+                </div>
+                <div class="match-item">
+                  <div class="match-team">E</div>
+                  <div class="match-vs">VS</div>
+                  <div class="match-team">F</div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Day 2 -->
+            <div class="day-schedule">
+              <div class="day-header">
+                <div class="day-title">Day 2</div>
+                <div class="day-date">Tuesday, 03-12-2025</div>
+              </div>
+              <div class="matches-list">
+                <div class="match-item">
+                  <div class="match-team">B</div>
+                  <div class="match-vs">VS</div>
+                  <div class="match-team">C</div>
+                </div>
+                <div class="match-item">
+                  <div class="match-team">A</div>
+                  <div class="match-vs">VS</div>
+                  <div class="match-team">F</div>
+                </div>
+                <div class="match-item">
+                  <div class="match-team">D</div>
+                  <div class="match-vs">VS</div>
+                  <div class="match-team">E</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         
         <div class="matches-container">
-          <!-- Day 1 -->
-          <div class="day-schedule">
-            <div class="day-header">
-              <div class="day-title">Day 1</div>
-              <div class="day-date">Monday, 02-12-2025</div>
-            </div>
-            <div class="matches-list">
-              <div class="match-item">
-                <div class="match-team">A</div>
-                <div class="match-vs">VS</div>
-                <div class="match-team">B</div>
-              </div>
-              <div class="match-item">
-                <div class="match-team">C</div>
-                <div class="match-vs">VS</div>
-                <div class="match-team">D</div>
-              </div>
-              <div class="match-item">
-                <div class="match-team">E</div>
-                <div class="match-vs">VS</div>
-                <div class="match-team">F</div>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Day 2 -->
-          <div class="day-schedule">
-            <div class="day-header">
-              <div class="day-title">Day 2</div>
-              <div class="day-date">Tuesday, 03-12-2025</div>
-            </div>
-            <div class="matches-list">
-              <div class="match-item">
-                <div class="match-team">B</div>
-                <div class="match-vs">VS</div>
-                <div class="match-team">C</div>
-              </div>
-              <div class="match-item">
-                <div class="match-team">A</div>
-                <div class="match-vs">VS</div>
-                <div class="match-team">F</div>
-              </div>
-              <div class="match-item">
-                <div class="match-team">D</div>
-                <div class="match-vs">VS</div>
-                <div class="match-team">E</div>
-              </div>
-            </div>
-          </div>
-          
           <!-- Day 3 -->
           <div class="day-schedule">
             <div class="day-header">
@@ -1202,7 +1236,7 @@
             </div>
             <div class="sponsor-card">
               <h3 class="sponsor-name">కీ. శే. R.సుధాకర్ గారి జ్ఞాపకార్థం — R. శ్రీనివాస్ గారు, భూపాలపల్లి</h3>
-              <p class="sponsor-desc">Rs. 5016/-</p>
+              <p class="sponsor-desc">నివేదన: 5016/-</p>
             </div>
             <div class="sponsor-card">
               <h3 class="sponsor-name">C. V. రవి గారు</h3>
@@ -1292,7 +1326,7 @@
               <h3 class="sponsor-name">V. ఉదయకృష్ణ మోహన్ గారు, మణుగూరు</h3>
               <p class="sponsor-desc">Rs. 2000/-</p>
             </div>
-            <div class="sponsor-card">
+            <div class="sponsor-card sponsor-placeholder">
               <h3 class="sponsor-name">M. నాగరాజు గారు</h3>
               <p class="sponsor-desc">ఉత్తమ క్రీడాస్ఫూర్థి కలిగిన జట్టు  — Fair Play Award</p>
             </div>
