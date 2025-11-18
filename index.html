@@ -6,31 +6,10 @@
   <title>Surabhi Premier League - 2025</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    /* Logo in top-right corner - Always visible */
-    .page-logo {
-      position: fixed !important;
-      top: clamp(10px, 2vh, 20px) !important;
-      right: clamp(10px, 2vw, 20px) !important;
-      width: clamp(60px, 8vw, 120px) !important;
-      height: auto !important;
-      z-index: 9999 !important;
-      opacity: 0.9 !important;
-      transition: opacity 0.3s;
-      display: block !important;
-      visibility: visible !important;
-      pointer-events: auto !important;
-    }
-    
-    .page-logo:hover {
-      opacity: 1 !important;
-    }
-    
-    @media (max-width: 768px) {
-      .page-logo {
-        width: clamp(50px, 10vw, 80px) !important;
-        top: clamp(8px, 1.5vh, 15px) !important;
-        right: clamp(8px, 2vw, 15px) !important;
-      }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
     
     body {
@@ -38,358 +17,699 @@
       color: #e2e8f0;
       font-family: system-ui, Arial, Helvetica, sans-serif;
       margin: 0;
-      padding: clamp(10px, 2vh, 20px);
+      padding: 0;
       min-height: 100vh;
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      box-sizing: border-box;
-    }
-    
-    .container {
-      max-width: 1400px;
-      width: 100%;
-      text-align: center;
-      height: 100vh;
-      max-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      box-sizing: border-box;
-      padding: clamp(10px, 2vh, 20px);
       overflow: hidden;
     }
     
-    .content-wrapper {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
-      gap: clamp(20px, 4vw, 40px);
-      width: 100%;
-      flex: 1;
-      min-height: 0;
-      overflow: hidden;
+    /* Logo in top-right corner */
+    .page-logo {
+      position: fixed;
+      top: clamp(10px, 2vh, 20px);
+      right: clamp(10px, 2vw, 20px);
+      width: clamp(60px, 8vw, 120px);
+      height: auto;
+      z-index: 9999;
+      opacity: 0.9;
+      transition: opacity 0.3s;
     }
     
-    .flyer-section {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-width: 0;
-      min-height: 0;
-      max-height: 100%;
-      max-width: 100%;
-      overflow: hidden;
-      height: 100%;
+    .page-logo:hover {
+      opacity: 1;
     }
     
-    .buttons-section {
+    /* Sidebar Menu */
+    .sidebar {
+      width: clamp(200px, 20vw, 280px);
+      background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+      border-right: 2px solid #334155;
+      padding: clamp(20px, 3vh, 40px) clamp(15px, 2vw, 25px);
       display: flex;
       flex-direction: column;
-      gap: 20px;
-      align-items: center;
-      justify-content: center;
+      gap: clamp(15px, 2vh, 25px);
+      overflow-y: auto;
+      z-index: 100;
       flex-shrink: 0;
     }
     
-    h1 {
-      font-size: clamp(20px, 4vw, 48px);
-      margin-bottom: clamp(10px, 2vh, 30px);
+    .sidebar-title {
+      font-size: clamp(18px, 2.5vw, 24px);
       color: #60a5fa;
       font-weight: 700;
-      flex-shrink: 0;
+      margin-bottom: clamp(10px, 2vh, 20px);
+      text-align: center;
+      padding-bottom: clamp(10px, 2vh, 20px);
+      border-bottom: 2px solid #334155;
+    }
+    
+    .menu-item {
+      padding: clamp(12px, 2vh, 18px) clamp(15px, 2vw, 25px);
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border: 2px solid #334155;
+      border-radius: 12px;
+      color: #94a3b8;
+      font-size: clamp(14px, 2vw, 18px);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+    
+    .menu-item:hover {
+      background: linear-gradient(135deg, #1e40af 0%, #1e293b 100%);
+      border-color: #60a5fa;
+      color: #60a5fa;
+      transform: translateX(5px);
+    }
+    
+    .menu-item.active {
+      background: linear-gradient(135deg, #1e40af 0%, #1e293b 100%);
+      border-color: #60a5fa;
+      color: #60a5fa;
+      box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
+    }
+    
+    /* Main Content Area */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .content-area {
+      flex: 1;
+      padding: clamp(20px, 3vh, 40px);
+      overflow-y: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    /* Flyer View */
+    .flyer-view {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     
     .flyer-container {
-      background: #111827;
+      max-width: 90%;
+      max-height: 90%;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
       border: 2px solid #334155;
       border-radius: 16px;
-      padding: clamp(10px, 2vw, 30px);
-      margin: 0 auto;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
-      box-sizing: border-box;
+      padding: clamp(20px, 3vw, 40px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
-      width: 100%;
-      height: 100%;
-      max-width: 100%;
-      max-height: 100%;
-      position: relative;
     }
     
     .flyer-image {
       max-width: 100%;
-      max-height: 100%;
+      max-height: 80vh;
       width: auto;
       height: auto;
       border-radius: 12px;
-      display: block;
-      margin: 0 auto;
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
       object-fit: contain;
-      object-position: center;
     }
     
-    .live-link, .register-link {
-      display: inline-block;
-      padding: clamp(12px, 2vh, 16px) clamp(24px, 4vw, 32px);
-      color: white;
-      text-decoration: none;
-      border-radius: 12px;
-      font-size: clamp(14px, 3vw, 18px);
-      font-weight: 600;
-      transition: all 0.3s;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
-      flex-shrink: 0;
+    /* Teams View */
+    .teams-view {
       width: 100%;
-      max-width: 250px;
+      display: none;
+    }
+    
+    .teams-view.active {
+      display: block;
+    }
+    
+    .teams-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: clamp(20px, 3vw, 30px);
+      padding: clamp(20px, 3vh, 40px);
+    }
+    
+    .captain-card {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border: 2px solid #334155;
+      border-radius: 16px;
+      padding: clamp(20px, 3vw, 30px);
       text-align: center;
-      box-sizing: border-box;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     }
     
-    .live-link {
-      background: #10b981;
+    .captain-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 24px rgba(96, 165, 250, 0.3);
+      border-color: #60a5fa;
     }
     
-    .live-link:hover {
-      background: #059669;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.3);
+    .captain-photo {
+      width: 100%;
+      max-width: 200px;
+      height: auto;
+      border-radius: 12px;
+      margin: 0 auto clamp(15px, 2vh, 20px);
+      border: 2px solid #334155;
+      object-fit: cover;
+      aspect-ratio: 1;
     }
     
-    .register-link {
-      background: #3b82f6;
+    .captain-name {
+      font-size: clamp(18px, 3vw, 24px);
+      font-weight: 700;
+      color: #60a5fa;
+      margin-bottom: clamp(8px, 1vh, 12px);
     }
     
-    .register-link:hover {
-      background: #2563eb;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.3);
-    }
-    
-    .register-link.disabled {
-      background: #475569;
+    .team-count {
+      font-size: clamp(14px, 2vw, 16px);
       color: #94a3b8;
-      cursor: not-allowed;
-      pointer-events: none;
-      opacity: 0.6;
+      margin-bottom: clamp(4px, 0.5vh, 8px);
     }
     
-    .register-link.disabled:hover {
-      background: #475569;
-      transform: none;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
-    }
-    
-    .registration-message {
-      margin-top: 12px;
-      padding: 12px 16px;
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 8px;
-      color: #fbbf24;
-      font-size: clamp(12px, 2vw, 14px);
+    .team-name {
+      font-size: clamp(16px, 2.5vw, 20px);
+      color: #60a5fa;
       font-weight: 600;
-      text-align: center;
+      font-style: italic;
     }
     
-    .bidding-info {
-      margin-top: 8px;
-      padding: 12px 16px;
-      background: #1e293b;
-      border: 1px solid #334155;
+    /* Team Detail View */
+    .team-detail-view {
+      width: 100%;
+      display: none;
+    }
+    
+    .team-detail-view.active {
+      display: block;
+    }
+    
+    .team-header {
+      text-align: center;
+      padding: clamp(20px, 3vh, 40px);
+      border-bottom: 2px solid #334155;
+      margin-bottom: clamp(20px, 3vh, 40px);
+    }
+    
+    .back-button {
+      display: inline-block;
+      padding: clamp(10px, 1.5vh, 15px) clamp(20px, 3vw, 30px);
+      background: linear-gradient(135deg, #1e40af 0%, #1e293b 100%);
+      border: 2px solid #60a5fa;
       border-radius: 8px;
-      color: #e2e8f0;
-      font-size: clamp(11px, 1.8vw, 13px);
+      color: #60a5fa;
+      font-size: clamp(14px, 2vw, 18px);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: clamp(15px, 2vh, 25px);
+    }
+    
+    .back-button:hover {
+      background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
+      transform: translateX(-5px);
+    }
+    
+    .team-detail-title {
+      font-size: clamp(24px, 4vw, 36px);
+      color: #60a5fa;
+      font-weight: 700;
+      margin-bottom: clamp(10px, 2vh, 20px);
+    }
+    
+    .players-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: clamp(20px, 3vw, 30px);
+      padding: clamp(20px, 3vh, 40px);
+    }
+    
+    .player-card {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border: 2px solid #334155;
+      border-radius: 12px;
+      padding: clamp(15px, 2vw, 20px);
       text-align: center;
-      line-height: 1.5;
+      transition: all 0.3s ease;
     }
     
-    .info {
-      margin-top: clamp(8px, 1.5vh, 20px);
+    .player-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(96, 165, 250, 0.2);
+      border-color: #60a5fa;
+    }
+    
+    .player-photo {
+      width: 100%;
+      max-width: 150px;
+      height: auto;
+      border-radius: 8px;
+      margin: 0 auto clamp(10px, 1.5vh, 15px);
+      border: 2px solid #334155;
+      object-fit: cover;
+      aspect-ratio: 1;
+    }
+    
+    .player-name {
+      font-size: clamp(14px, 2vw, 18px);
+      font-weight: 600;
+      color: #e2e8f0;
+      word-wrap: break-word;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: clamp(40px, 5vh, 60px);
       color: #94a3b8;
-      font-size: clamp(12px, 2.5vw, 16px);
-      flex-shrink: 0;
+      font-size: clamp(16px, 2.5vw, 20px);
     }
     
-    @media (max-width: 1024px) {
-      .content-wrapper {
-        flex-direction: column;
-        gap: clamp(15px, 3vh, 30px);
-      }
-      
-      .buttons-section {
-        width: 100%;
-        max-width: 400px;
-        flex-direction: row;
-        gap: 15px;
-      }
-      
-      .live-link, .register-link {
-        width: auto;
-        flex: 1;
-        max-width: none;
-      }
+    .error {
+      text-align: center;
+      padding: clamp(40px, 5vh, 60px);
+      color: #ef4444;
+      font-size: clamp(16px, 2.5vw, 20px);
     }
     
+    /* Schedule and Points Table Views */
+    .schedule-view,
+    .points-view {
+      width: 100%;
+      display: none;
+      padding: clamp(20px, 3vh, 40px);
+    }
+    
+    .schedule-view.active,
+    .points-view.active {
+      display: block;
+    }
+    
+    .section-title {
+      font-size: clamp(24px, 4vw, 36px);
+      color: #60a5fa;
+      font-weight: 700;
+      margin-bottom: clamp(20px, 3vh, 30px);
+      text-align: center;
+    }
+    
+    .coming-soon {
+      text-align: center;
+      padding: clamp(40px, 5vh, 60px);
+      color: #94a3b8;
+      font-size: clamp(18px, 3vw, 24px);
+    }
+    
+    /* Mobile Responsive */
     @media (max-width: 768px) {
       body {
-        padding: clamp(5px, 1vh, 10px);
-      }
-      
-      .container {
-        padding: clamp(5px, 1vh, 10px);
-        height: 100vh;
-        max-height: 100vh;
-      }
-      
-      .flyer-container {
-        padding: clamp(8px, 1.5vw, 20px);
-      }
-      
-      .flyer-image {
-        border-radius: 8px;
-      }
-      
-      h1 {
-        font-size: clamp(18px, 5vw, 24px);
-        margin-bottom: clamp(8px, 2vh, 15px);
-      }
-      
-      .buttons-section {
         flex-direction: column;
+      }
+      
+      .sidebar {
         width: 100%;
-        gap: 12px;
+        max-height: 200px;
+        border-right: none;
+        border-bottom: 2px solid #334155;
+        flex-direction: row;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: clamp(10px, 2vh, 15px);
       }
       
-      .buttons-section > div {
-        width: 100%;
-        max-width: 100%;
+      .sidebar-title {
+        display: none;
       }
       
-      .live-link, .register-link {
-        width: 100%;
-        max-width: 100%;
-        padding: 12px 20px;
-        font-size: 16px;
+      .menu-item {
+        white-space: nowrap;
+        min-width: 120px;
+        padding: clamp(10px, 1.5vh, 15px) clamp(15px, 3vw, 20px);
       }
       
-      .registration-message, .bidding-info {
-        font-size: 12px;
-        padding: 10px 12px;
+      .content-area {
+        padding: clamp(15px, 2vh, 25px);
       }
       
-      .info {
-        font-size: 12px;
-        margin-top: clamp(5px, 1vh, 10px);
-      }
-    }
-    
-    @media (max-width: 480px) {
-      body {
-        padding: 5px;
+      .teams-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: clamp(15px, 2vw, 20px);
+        padding: clamp(15px, 2vh, 25px);
       }
       
-      .container {
-        padding: 5px;
-        height: 100vh;
-        max-height: 100vh;
+      .players-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: clamp(15px, 2vw, 20px);
+        padding: clamp(15px, 2vh, 25px);
       }
       
-      .flyer-container {
-        padding: 6px;
-      }
-      
-      .flyer-image {
-        border-radius: 6px;
-      }
-      
-      h1 {
-        font-size: clamp(16px, 6vw, 20px);
-        margin-bottom: clamp(5px, 1.5vh, 10px);
-      }
-      
-      .live-link, .register-link {
-        padding: 10px 16px;
-        font-size: 14px;
-      }
-    }
-    
-    @media (min-width: 1025px) {
-      .content-wrapper {
-        align-items: flex-start;
-      }
-      
-      .flyer-section {
-        flex: 1.2;
-      }
-      
-      .buttons-section {
-        flex: 0.3;
-        min-width: 220px;
-      }
-      
-      .live-link, .register-link {
-        max-width: 220px;
-        font-size: clamp(14px, 2.5vw, 18px);
-        padding: clamp(12px, 1.8vh, 15px) clamp(20px, 3vw, 28px);
-      }
-      
-      .buttons-section > div {
-        max-width: 220px;
-      }
-      
-      .registration-message, .bidding-info {
-        font-size: clamp(11px, 1.5vw, 13px);
-      }
-    }
-    
-    @media (orientation: landscape) and (max-height: 600px) {
-      h1 {
-        font-size: clamp(16px, 3vw, 24px);
-        margin-bottom: 5px;
-      }
-      
-      .info {
-        margin-top: 5px;
-        font-size: 12px;
+      .page-logo {
+        width: clamp(40px, 8vw, 60px);
+        top: clamp(5px, 1vh, 10px);
+        right: clamp(5px, 1vw, 10px);
       }
     }
   </style>
 </head>
 <body>
   <!-- Logo in top-right corner -->
-  <img src="Surabhi_Yuvasena_Logo.png" alt="Surabhi Yuvasena Logo" class="page-logo" onerror="console.error('Logo failed to load, but keeping it visible');">
-  <div class="container">
-    <h1>Surabhi Premier League - 2025</h1>
-    <div class="content-wrapper">
-      <div class="flyer-section">
+  <img src="Surabhi_Yuvasena_Logo.png" alt="Surabhi Yuvasena Logo" class="page-logo" onerror="console.error('Logo failed to load');">
+  
+  <!-- Sidebar Menu -->
+  <div class="sidebar">
+    <div class="sidebar-title">SPL 2025</div>
+    <div class="menu-item active" data-view="flyer">Home</div>
+    <div class="menu-item" data-view="teams">Teams</div>
+    <div class="menu-item" data-view="schedule">Schedule</div>
+    <div class="menu-item" data-view="points">Points Table</div>
+  </div>
+  
+  <!-- Main Content Area -->
+  <div class="main-content">
+    <div class="content-area">
+      <!-- Flyer View (Default) -->
+      <div class="flyer-view active" id="flyer-view">
         <div class="flyer-container">
-          <img src="flyer.png" alt="Surabhi Premier League 2025 Flyer" class="flyer-image" />
+          <img src="flyer.png" alt="Surabhi Premier League 2025 Flyer" class="flyer-image" onerror="this.style.display='none'; this.parentElement.innerHTML='&lt;div class=&quot;error&quot;&gt;Flyer image not found&lt;/div&gt;';">
         </div>
       </div>
-      <div class="buttons-section">
-        <a href="/live-standalone" class="live-link">🔴 Live Auction</a>
-        <div style="width: 100%; max-width: 250px;">
-          <a href="#" class="register-link disabled" onclick="return false;">📝 Register</a>
-          <div class="registration-message">Registrations Closed</div>
-          <div class="bidding-info">
-            Actual bidding starts at 8pm with captains<br/>
-            V. Raghava Sai, C.V. Bhanu, R. Charan,<br/>
-            S.A. Manohar, V. Sairam and V. Suryacharan
-          </div>
-        </div>
+      
+      <!-- Teams View -->
+      <div class="teams-view" id="teams-view">
+        <div class="loading" id="teams-loading">Loading teams...</div>
+        <div class="teams-grid" id="teams-grid" style="display: none;"></div>
+        <div class="error" id="teams-error" style="display: none;"></div>
       </div>
-    </div>
-    <div class="info">
-      <p>Organised by Surabhi Yuvasena, Surabhi Colony</p>
+      
+      <!-- Team Detail View -->
+      <div class="team-detail-view" id="team-detail-view">
+        <div class="team-header">
+          <button class="back-button" onclick="showTeamsView()">← Back to Teams</button>
+          <div class="team-detail-title" id="team-detail-title"></div>
+        </div>
+        <div class="loading" id="team-loading">Loading team...</div>
+        <div class="players-grid" id="players-grid" style="display: none;"></div>
+        <div class="error" id="team-error" style="display: none;"></div>
+      </div>
+      
+      <!-- Schedule View -->
+      <div class="schedule-view" id="schedule-view">
+        <h2 class="section-title">Schedule</h2>
+        <div class="coming-soon">Schedule will be updated soon...</div>
+      </div>
+      
+      <!-- Points Table View -->
+      <div class="points-view" id="points-view">
+        <h2 class="section-title">Points Table</h2>
+        <div class="coming-soon">Points table will be updated soon...</div>
+      </div>
     </div>
   </div>
+  
+  <script>
+    // ============================================
+    // CONFIGURATION
+    // ============================================
+    // Google Sheet URL
+    const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1xK_LYzZyycxwqbbAnF80Oson4N6pJH1v2-rPgJxjyr4/export?format=xlsx&gid=0';
+    
+    // Captain name and team mapping
+    const CAPTAIN_INFO = {
+      'Bhanu': { name: 'C.V. Bhanu', teamName: 'Risers 11' },
+      'Charan': { name: 'R. Charan', teamName: 'RBR Returns' },
+      'Manu': { name: 'S.A. Manohar', teamName: 'Velocity Vipers' },
+      'Sairam': { name: 'V. Sairam', teamName: 'BULLS (TEAM-A)' },
+      'Surya': { name: 'V. Surya Charan', teamName: 'BULLS (TEAM-B)' },
+      'Raghava Sai': { name: 'V. Raghava Sai', teamName: 'Dare Devils' }
+    };
+    
+    // Fallback image
+    const FALLBACK_IMAGE = 'Surabhi_Yuvasena_Logo.png';
+    
+    // ============================================
+    // Application Code
+    // ============================================
+    
+    let teamsData = {};
+    let currentView = 'flyer';
+    
+    // Helper function to get local photo URL (photos are in current folder)
+    function getPhotoUrl(serialNo) {
+      if (!serialNo) return FALLBACK_IMAGE;
+      const serial = String(serialNo).trim();
+      if (!serial || isNaN(parseInt(serial))) return FALLBACK_IMAGE;
+      
+      // Use local path: just the filename in current folder
+      return `${serial}.jpg`;
+    }
+    
+    // Menu navigation
+    document.querySelectorAll('.menu-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const view = item.getAttribute('data-view');
+        if (view === 'teams' && Object.keys(teamsData).length === 0) {
+          loadTeamsData();
+        }
+        showView(view);
+      });
+    });
+    
+    function showView(view) {
+      currentView = view;
+      
+      // Update menu active state
+      document.querySelectorAll('.menu-item').forEach(item => {
+        item.classList.toggle('active', item.getAttribute('data-view') === view);
+      });
+      
+      // Hide all views
+      document.getElementById('flyer-view').classList.remove('active');
+      document.getElementById('teams-view').classList.remove('active');
+      document.getElementById('team-detail-view').classList.remove('active');
+      document.getElementById('schedule-view').classList.remove('active');
+      document.getElementById('points-view').classList.remove('active');
+      
+      // Show selected view
+      if (view === 'flyer') {
+        document.getElementById('flyer-view').classList.add('active');
+      } else if (view === 'teams') {
+        document.getElementById('teams-view').classList.add('active');
+      } else if (view === 'schedule') {
+        document.getElementById('schedule-view').classList.add('active');
+      } else if (view === 'points') {
+        document.getElementById('points-view').classList.add('active');
+      }
+    }
+    
+    function showTeamsView() {
+      showView('teams');
+    }
+    
+    // Load teams data from Google Sheet
+    async function loadTeamsData() {
+      const loadingEl = document.getElementById('teams-loading');
+      const gridEl = document.getElementById('teams-grid');
+      const errorEl = document.getElementById('teams-error');
+      
+      loadingEl.style.display = 'block';
+      gridEl.style.display = 'none';
+      errorEl.style.display = 'none';
+      
+      try {
+        // Fetch the sheet as XLSX
+        const response = await fetch(SHEET_URL);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch sheet: ${response.status}`);
+        }
+        
+        const blob = await response.blob();
+        const arrayBuffer = await blob.arrayBuffer();
+        
+        // Parse XLSX using SheetJS (xlsx library)
+        if (typeof XLSX === 'undefined') {
+          // Load xlsx library if not already loaded
+          const script = document.createElement('script');
+          script.src = 'https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js';
+          document.head.appendChild(script);
+          await new Promise((resolve, reject) => {
+            script.onload = resolve;
+            script.onerror = reject;
+            setTimeout(reject, 10000);
+          });
+        }
+        
+        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const rows = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+        
+        // Process rows
+        teamsData = {};
+        const captainSerialNos = {}; // Store captain serial numbers
+        
+        rows.forEach(row => {
+          // Try multiple column name variations
+          let serialNo = row['S. No.'] || row['S No.'] || row['Serial No'] || row['Serial No.'] || row['S.No.'] || '';
+          const playerName = row['NAME OF THE PLAYER'] || row['Name'] || row['NAME'] || '';
+          const captain = row['captain'] || row['Captain'] || row['CAPTAIN'] || '';
+          const mobile = row['MOBILE NUMBER'] || row['Mobile Number'] || row['MOBILE'] || row['Mobile'] || '';
+          
+          // Skip rows without captain or player name
+          if (!captain || !playerName) return;
+          
+          // Filter out invalid serial numbers (like "Full hands")
+          serialNo = String(serialNo).trim();
+          if (!serialNo || isNaN(parseInt(serialNo))) {
+            return;
+          }
+          
+          // Normalize captain name
+          const captainKey = captain.trim();
+          
+          if (!teamsData[captainKey]) {
+            teamsData[captainKey] = [];
+          }
+          
+          // Check if this player is the captain (usually captain name matches player name or has (C) marker)
+          const isCaptain = playerName.toLowerCase().includes(captainKey.toLowerCase()) || 
+                           playerName.includes('(C)') || 
+                           playerName.toLowerCase().includes('captain');
+          
+          if (isCaptain) {
+            captainSerialNos[captainKey] = serialNo;
+          }
+          
+          teamsData[captainKey].push({
+            serialNo: serialNo,
+            name: playerName.trim(),
+            mobile: mobile.trim(),
+            isCaptain: isCaptain
+          });
+        });
+        
+        // Store captain serial numbers for later use
+        window.captainSerialNos = captainSerialNos;
+        
+        // Render teams
+        renderTeams();
+        
+        loadingEl.style.display = 'none';
+        gridEl.style.display = 'grid';
+        
+      } catch (error) {
+        console.error('Error loading teams:', error);
+        loadingEl.style.display = 'none';
+        errorEl.textContent = `Error loading teams: ${error.message}`;
+        errorEl.style.display = 'block';
+      }
+    }
+    
+    function renderTeams() {
+      const gridEl = document.getElementById('teams-grid');
+      gridEl.innerHTML = '';
+      
+      Object.keys(teamsData).forEach(captainKey => {
+        const captainInfo = CAPTAIN_INFO[captainKey] || { name: captainKey, teamName: '' };
+        const captainDisplayName = captainInfo.name;
+        const teamName = captainInfo.teamName;
+        const players = teamsData[captainKey];
+        const playerCount = players.length;
+        
+        // Find captain's serial number
+        const captainPlayer = players.find(p => p.isCaptain) || players[0];
+        const captainSerialNo = window.captainSerialNos && window.captainSerialNos[captainKey] 
+          ? window.captainSerialNos[captainKey] 
+          : captainPlayer.serialNo;
+        
+        const card = document.createElement('div');
+        card.className = 'captain-card';
+        card.onclick = () => showTeamDetail(captainKey);
+        
+        // Use local path for captain photo
+        const photoSrc = getPhotoUrl(captainSerialNo);
+        card.innerHTML = `
+          <img src="${photoSrc}" alt="${captainDisplayName}" class="captain-photo" onerror="this.src='${FALLBACK_IMAGE}';">
+          <div class="captain-name">${captainDisplayName}</div>
+          ${teamName ? `<div class="team-name">${teamName}</div>` : ''}
+          <div class="team-count">${playerCount} Players</div>
+        `;
+        
+        gridEl.appendChild(card);
+      });
+    }
+    
+    function showTeamDetail(captainKey) {
+      const captainInfo = CAPTAIN_INFO[captainKey] || { name: captainKey, teamName: '' };
+      const captainDisplayName = captainInfo.name;
+      const teamName = captainInfo.teamName;
+      const players = teamsData[captainKey] || [];
+      
+      const titleText = teamName 
+        ? `${captainDisplayName} - ${teamName}`
+        : `${captainDisplayName}'s Team`;
+      document.getElementById('team-detail-title').textContent = titleText;
+      
+      const loadingEl = document.getElementById('team-loading');
+      const gridEl = document.getElementById('players-grid');
+      const errorEl = document.getElementById('team-error');
+      
+      loadingEl.style.display = 'block';
+      gridEl.style.display = 'none';
+      errorEl.style.display = 'none';
+      
+      setTimeout(() => {
+        gridEl.innerHTML = '';
+        
+        // Sort players: captain first, then others
+        const sortedPlayers = [...players].sort((a, b) => {
+          if (a.isCaptain) return -1;
+          if (b.isCaptain) return 1;
+          return parseInt(a.serialNo) - parseInt(b.serialNo);
+        });
+        
+        sortedPlayers.forEach(player => {
+          const card = document.createElement('div');
+          card.className = 'player-card';
+          
+          // Use local path for player photo (photos are in current folder)
+          const photoSrc = getPhotoUrl(player.serialNo);
+          const displayName = player.isCaptain ? `${player.name} (C)` : player.name;
+          
+          card.innerHTML = `
+            <img src="${photoSrc}" alt="${player.name}" class="player-photo" onerror="this.src='${FALLBACK_IMAGE}';">
+            <div class="player-name">${displayName}</div>
+          `;
+          
+          gridEl.appendChild(card);
+        });
+        
+        loadingEl.style.display = 'none';
+        gridEl.style.display = 'grid';
+      }, 300);
+      
+      // Hide teams view and show team detail view
+      document.getElementById('teams-view').classList.remove('active');
+      document.getElementById('team-detail-view').classList.add('active');
+    }
+    
+    // Initialize: Load xlsx library if needed
+    window.addEventListener('DOMContentLoaded', () => {
+      // Check if xlsx is already loaded
+      if (typeof XLSX === 'undefined') {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js';
+        document.head.appendChild(script);
+      }
+    });
+  </script>
 </body>
 </html>
-
