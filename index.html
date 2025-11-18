@@ -441,28 +441,45 @@
       font-weight: 500;
     }
     
-    .draw-info {
-      text-align: center;
-      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
-      border: 2px solid #60a5fa;
-      border-radius: 12px;
-      padding: clamp(15px, 2vh, 20px) clamp(20px, 3vw, 30px);
-      margin: 0 auto clamp(30px, 4vh, 50px);
-      max-width: 600px;
-      box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
+    /* Scrolling marquee for draw info */
+    .draw-info-marquee {
+      width: 100%;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.3) 0%, rgba(15, 23, 42, 0.3) 100%);
+      border-top: 2px solid #334155;
+      border-bottom: 2px solid #334155;
+      padding: clamp(12px, 2vh, 18px) 0;
+      margin: clamp(20px, 3vh, 30px) 0;
+      position: relative;
     }
     
-    .draw-info-text {
+    .marquee-wrapper {
+      display: flex;
+      width: fit-content;
+      animation: scroll-left 25s linear infinite;
+    }
+    
+    .marquee-content {
+      display: inline-block;
+      font-size: clamp(16px, 2.5vw, 22px);
       color: #60a5fa;
-      font-size: clamp(16px, 2.5vw, 20px);
       font-weight: 600;
-      line-height: 1.6;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
     
-    .draw-info-date {
-      color: #94a3b8;
-      font-size: clamp(14px, 2vw, 18px);
-      margin-top: clamp(8px, 1vh, 12px);
+    @keyframes scroll-left {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+    
+    /* Pause animation on hover */
+    .draw-info-marquee:hover .marquee-wrapper {
+      animation-play-state: paused;
     }
     
     .teams-circle-container {
@@ -905,9 +922,15 @@
         <h2 class="section-title">Tournament Schedule</h2>
         <div class="tournament-dates">02-12-2025 to 04-12-2025</div>
         
-        <div class="draw-info">
-          <div class="draw-info-text">Teams draw will be updated on</div>
-          <div class="draw-info-date">23-12-2025 at 6pm</div>
+        <div class="draw-info-marquee">
+          <div class="marquee-wrapper">
+            <div class="marquee-content">
+              Teams draw will be updated on 23-12-2025 at 6pm &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </div>
+            <div class="marquee-content" aria-hidden="true">
+              Teams draw will be updated on 23-12-2025 at 6pm &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </div>
+          </div>
         </div>
         
         <div class="teams-circle-container">
