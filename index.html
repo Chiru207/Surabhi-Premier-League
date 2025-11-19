@@ -232,8 +232,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: clamp(6px, 1vw, 10px);
-      flex-wrap: wrap;
+      width: 100%;
+      max-width: 100%;
     }
     
     .visitor-counter-label {
@@ -254,10 +254,9 @@
     
     /* Elfsight Visitor Counter Styling */
     .elfsight-app-06154c46-20a8-4abd-9ebc-9c595731832b {
-      display: inline-block !important;
-      min-width: 40px;
+      display: block !important;
+      width: 100% !important;
       min-height: 20px;
-      max-width: 150px;
       transform: scale(0.6);
       transform-origin: center;
     }
@@ -267,7 +266,6 @@
       background: transparent !important;
       width: 100% !important;
       height: auto !important;
-      max-width: 150px !important;
       transform: scale(0.6);
       transform-origin: top left;
     }
@@ -1461,7 +1459,6 @@
         <div class="flyer-container">
           <img src="flyer.png" alt="Surabhi Premier League 2025 Flyer" class="flyer-image" onerror="this.style.display='none'; this.parentElement.innerHTML='&lt;div class=&quot;error&quot;&gt;Flyer image not found&lt;/div&gt;';">
           <div class="visitor-counter">
-            <span class="visitor-counter-label">Total Visitors:</span>
             <!-- Elfsight Visitor Counter -->
             <div class="elfsight-app-06154c46-20a8-4abd-9ebc-9c595731832b" data-elfsight-app-lazy></div>
           </div>
