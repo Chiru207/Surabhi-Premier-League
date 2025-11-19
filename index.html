@@ -253,6 +253,23 @@
       text-shadow: 0 2px 8px rgba(96, 165, 250, 0.3);
     }
     
+    #visitor-count-wrapper {
+      display: inline-block;
+    }
+    
+    /* Style freevisitorcounters.com elements without moving them */
+    iframe[src*="freevisitorcounters"],
+    div[id*="freevisitorcounters"],
+    span[id*="freevisitorcounters"] {
+      font-size: clamp(24px, 5vw, 36px) !important;
+      color: #60a5fa !important;
+      font-weight: 700 !important;
+      font-family: 'Arial', sans-serif !important;
+      text-shadow: 0 2px 8px rgba(96, 165, 250, 0.3) !important;
+      background: transparent !important;
+      border: none !important;
+    }
+    
     /* Teams View */
     .teams-view {
       width: 100%;
@@ -1428,7 +1445,8 @@
           <img src="flyer.png" alt="Surabhi Premier League 2025 Flyer" class="flyer-image" onerror="this.style.display='none'; this.parentElement.innerHTML='&lt;div class=&quot;error&quot;&gt;Flyer image not found&lt;/div&gt;';">
           <div class="visitor-counter">
             <span class="visitor-counter-label">Total Visitors:</span>
-            <span class="visitor-counter-number" id="visitor-count">0</span>
+            <!-- freevisitorcounters.com will inject their counter here -->
+            <div id="visitor-count-wrapper"></div>
           </div>
         </div>
       </div>
@@ -2455,100 +2473,12 @@
       initializeVisitorCounter();
     });
     
-    // Visitor Counter Functionality - Extract from freevisitorcounters.com
+    // Visitor Counter Functionality - Let freevisitorcounters.com display naturally
+    // Don't manipulate their DOM - just let their scripts run
     function initializeVisitorCounter() {
-      const visitorCountEl = document.getElementById('visitor-count');
-      if (!visitorCountEl) return;
-      
-      visitorCountEl.textContent = '0';
-      
-      // Don't hide freevisitorcounters.com elements - let them display naturally
-      // Just extract the count value from their display
-      
-      // Wait for freevisitorcounters.com scripts to load and inject the counter
-      let attempts = 0;
-      const maxAttempts = 30; // 15 seconds total
-      
-      const extractCount = setInterval(() => {
-        attempts++;
-        
-        // Look for the counter value in the page
-        // freevisitorcounters.com typically displays the number somewhere on the page
-        const allElements = document.querySelectorAll('*');
-        for (let elem of allElements) {
-          // Skip our own counter element and its children
-          if (elem === visitorCountEl || visitorCountEl.contains(elem)) continue;
-          
-          // Skip script and style elements
-          if (elem.tagName === 'SCRIPT' || elem.tagName === 'STYLE') continue;
-          
-          const text = (elem.textContent || elem.innerText || '').trim();
-          
-          // Look for numbers that could be visitor counts
-          // Check for numbers with commas (formatted) or without
-          const numberMatch = text.match(/^[\d,]+$/);
-          if (numberMatch) {
-            const numStr = numberMatch[0].replace(/,/g, '');
-            const num = parseInt(numStr);
-            
-            // Valid visitor count range
-            if (num > 0 && num < 10000000) {
-              // Check if this element is near our counter or in the flyer area
-              try {
-                const rect = elem.getBoundingClientRect();
-                const counterRect = visitorCountEl.getBoundingClientRect();
-                const flyerRect = document.querySelector('.flyer-container')?.getBoundingClientRect();
-                
-                if (rect.width > 0 && rect.height > 0) {
-                  // Check if it's in the flyer container area
-                  const inFlyerArea = flyerRect ? 
-                    (rect.top >= flyerRect.top && rect.bottom <= flyerRect.bottom &&
-                     rect.left >= flyerRect.left && rect.right <= flyerRect.right) : false;
-                  
-                  // Or near our counter element
-                  const nearCounter = Math.abs(rect.top - counterRect.top) < 400 && 
-                                     Math.abs(rect.left - counterRect.left) < 600;
-                  
-                  if (inFlyerArea || nearCounter) {
-                    visitorCountEl.textContent = num.toLocaleString();
-                    clearInterval(extractCount);
-                    return;
-                  }
-                }
-              } catch (e) {
-                // Ignore errors
-              }
-            }
-          }
-        }
-        
-        // Also check the entire body text for numbers
-        if (attempts === 15) {
-          const bodyText = document.body.innerText || document.body.textContent || '';
-          // Look for formatted numbers with commas
-          const formattedNumbers = bodyText.match(/\b[\d,]{1,10}\b/g);
-          if (formattedNumbers) {
-            for (let numStr of formattedNumbers) {
-              const num = parseInt(numStr.replace(/,/g, ''));
-              if (num > 0 && num < 10000000) {
-                // Check if this number appears in the flyer area
-                const flyerContainer = document.querySelector('.flyer-container');
-                if (flyerContainer && flyerContainer.textContent.includes(numStr)) {
-                  visitorCountEl.textContent = num.toLocaleString();
-                  clearInterval(extractCount);
-                  return;
-                }
-              }
-            }
-          }
-        }
-        
-        if (attempts >= maxAttempts) {
-          clearInterval(extractCount);
-          // If still not found, the counter might be in an iframe we can't access
-          // Keep showing 0 or the last found value
-        }
-      }, 500);
+      // Do nothing - let freevisitorcounters.com scripts handle everything
+      // Their counter will appear automatically where they inject it
+      // We just style it with CSS
     }
     
     function animateCounter(element, targetCount) {
