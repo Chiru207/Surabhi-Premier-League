@@ -6,7 +6,7 @@
   <title>Surabhi Premier League - 2025</title>
   <link rel="stylesheet" href="style.css">
   <!-- Elfsight Visitor Counter -->
-  <script src="https://elfsightcdn.com/platform.js" async></script>
+  <script src="https://elfsightcdn.com/platform.js"></script>
   <style>
     * {
       margin: 0;
@@ -223,7 +223,7 @@
     /* Visitor Counter */
     .visitor-counter {
       text-align: center;
-      padding: clamp(12px, 2vh, 18px) clamp(20px, 4vw, 30px);
+      padding: clamp(8px, 1.5vh, 12px) clamp(15px, 3vw, 20px);
       background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
       border: 2px solid #334155;
       border-radius: 12px;
@@ -232,12 +232,12 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: clamp(8px, 1.5vw, 12px);
+      gap: clamp(6px, 1vw, 10px);
       flex-wrap: wrap;
     }
     
     .visitor-counter-label {
-      font-size: clamp(14px, 2.5vw, 18px);
+      font-size: clamp(12px, 2vw, 16px);
       color: #94a3b8;
       font-weight: 500;
       text-transform: uppercase;
@@ -254,15 +254,37 @@
     
     /* Elfsight Visitor Counter Styling */
     .elfsight-app-06154c46-20a8-4abd-9ebc-9c595731832b {
-      display: inline-block;
+      display: inline-block !important;
+      min-width: 40px;
+      min-height: 20px;
+      max-width: 150px;
+      transform: scale(0.6);
+      transform-origin: center;
     }
     
-    .elfsight-app-06154c46-20a8-4abd-9ebc-9c595731832b iframe,
-    .elfsight-app-06154c46-20a8-4abd-9ebc-9c595731832b div {
-      font-size: clamp(24px, 5vw, 36px) !important;
+    .elfsight-app-06154c46-20a8-4abd-9ebc-9c595731832b iframe {
+      border: none !important;
+      background: transparent !important;
+      width: 100% !important;
+      height: auto !important;
+      max-width: 150px !important;
+      transform: scale(0.6);
+      transform-origin: top left;
+    }
+    
+    /* Ensure Elfsight counter content is visible and smaller */
+    .elfsight-app-06154c46-20a8-4abd-9ebc-9c595731832b * {
       color: #60a5fa !important;
+      font-size: clamp(14px, 2.5vw, 20px) !important;
       font-weight: 700 !important;
       font-family: 'Arial', sans-serif !important;
+    }
+    
+    /* Scale down the entire widget container */
+    @media (max-width: 768px) {
+      .elfsight-app-06154c46-20a8-4abd-9ebc-9c595731832b {
+        transform: scale(0.5);
+      }
     }
     
     /* Teams View */
