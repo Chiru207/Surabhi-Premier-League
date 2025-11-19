@@ -420,6 +420,7 @@
       padding: clamp(20px, 3vh, 40px);
       max-width: 1200px;
       margin: 0 auto;
+      overflow-x: visible;
     }
     
     .schedule-view.active,
@@ -620,6 +621,8 @@
       align-items: flex-start;
       margin: clamp(30px, 4vh, 50px) 0;
       flex-wrap: wrap;
+      overflow-x: visible;
+      min-width: 0;
     }
     
     .teams-circle-container {
@@ -1036,6 +1039,8 @@
     @media (max-width: 768px) {
       body {
         flex-direction: column;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
       }
       
       .menu-toggle {
@@ -1047,6 +1052,22 @@
       
       .schedule-view {
         padding: clamp(15px, 2vh, 25px) clamp(10px, 2vw, 20px);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        max-width: 100%;
+        width: 100%;
+      }
+      
+      .main-content {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+      }
+      
+      .content-area {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
       }
       
       .section-title {
@@ -1073,6 +1094,37 @@
         align-items: center;
         gap: clamp(15px, 2vh, 25px);
         margin: clamp(20px, 3vh, 35px) 0;
+        overflow-x: visible;
+        width: 100%;
+      }
+      
+      .first-two-days-container {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        min-width: min-content;
+      }
+      
+      .matches-container {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        min-width: min-content;
+      }
+      
+      .day-schedule {
+        min-width: 280px;
+        width: max-content;
+      }
+      
+      .matches-list {
+        min-width: min-content;
+      }
+      
+      .match-item {
+        min-width: min-content;
+        width: 100%;
+        max-width: 100%;
       }
       
       .teams-circle-container {
@@ -1214,8 +1266,33 @@
     
     /* Small Mobile Devices */
     @media (max-width: 480px) {
+      body {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      
       .schedule-view {
         padding: clamp(10px, 1.5vh, 20px) clamp(8px, 1.5vw, 15px);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+      }
+      
+      .main-content {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+      }
+      
+      .content-area {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+      }
+      
+      .day-schedule {
+        min-width: 260px;
+        width: max-content;
       }
       
       .section-title {
