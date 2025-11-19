@@ -1045,9 +1045,40 @@
         left: clamp(5px, 1vw, 10px);
       }
       
+      .schedule-view {
+        padding: clamp(15px, 2vh, 25px) clamp(10px, 2vw, 20px);
+      }
+      
+      .section-title {
+        font-size: clamp(20px, 5vw, 28px);
+        margin-bottom: clamp(15px, 2vh, 25px);
+      }
+      
+      .tournament-dates {
+        font-size: clamp(14px, 3.5vw, 18px);
+        margin-bottom: clamp(15px, 2vh, 25px);
+      }
+      
+      .draw-info-marquee {
+        padding: clamp(10px, 1.5vh, 15px) 0;
+        margin: clamp(15px, 2vh, 25px) 0;
+      }
+      
+      .marquee-content {
+        font-size: clamp(14px, 3.5vw, 18px);
+      }
+      
       .schedule-layout-wrapper {
         flex-direction: column;
         align-items: center;
+        gap: clamp(15px, 2vh, 25px);
+        margin: clamp(20px, 3vh, 35px) 0;
+      }
+      
+      .teams-circle-container {
+        padding: clamp(15px, 2vh, 25px);
+        width: 100%;
+        max-width: 280px;
       }
       
       .teams-circle {
@@ -1055,8 +1086,86 @@
         height: clamp(180px, 50vw, 250px);
       }
       
+      .team-letter {
+        width: clamp(32px, 8vw, 48px);
+        height: clamp(32px, 8vw, 48px);
+        font-size: clamp(14px, 3.5vw, 20px);
+      }
+      
+      .match-arc-label {
+        font-size: clamp(8px, 2vw, 11px);
+        padding: clamp(2px, 0.3vw, 3px) clamp(3px, 0.8vw, 6px);
+      }
+      
       .first-two-days-container {
         width: 100%;
+        min-width: 0;
+        gap: clamp(15px, 2vh, 25px);
+      }
+      
+      .day-schedule {
+        padding: clamp(15px, 2vh, 20px);
+        margin-bottom: clamp(15px, 2vh, 25px);
+      }
+      
+      .day-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: clamp(8px, 1vh, 12px);
+        margin-bottom: clamp(12px, 1.5vh, 20px);
+        padding-bottom: clamp(8px, 1vh, 12px);
+      }
+      
+      .day-title {
+        font-size: clamp(18px, 4vw, 24px);
+      }
+      
+      .day-date {
+        font-size: clamp(14px, 3vw, 18px);
+      }
+      
+      .matches-list {
+        gap: clamp(10px, 1.5vh, 15px);
+      }
+      
+      .match-item {
+        padding: clamp(12px, 1.5vh, 18px);
+        gap: clamp(10px, 2vw, 20px);
+        flex-wrap: wrap;
+      }
+      
+      .match-team {
+        font-size: clamp(16px, 4vw, 20px);
+        padding: clamp(6px, 1vh, 10px) clamp(12px, 2.5vw, 20px);
+        min-width: clamp(50px, 12vw, 80px);
+      }
+      
+      .match-vs {
+        font-size: clamp(14px, 3.5vw, 18px);
+      }
+      
+      .match-label {
+        font-size: clamp(9px, 2.2vw, 11px);
+        padding: clamp(2px, 0.4vw, 4px) clamp(5px, 1.2vw, 8px);
+        top: clamp(6px, 0.8vh, 10px);
+        left: clamp(6px, 1.2vw, 10px);
+      }
+      
+      .match-label-final-label {
+        font-size: clamp(9px, 2.2vw, 11px);
+        padding: clamp(2px, 0.4vw, 4px) clamp(5px, 1.2vw, 8px);
+        top: clamp(-6px, -0.8vh, -8px);
+        right: clamp(8px, 1.5vw, 12px);
+      }
+      
+      .eliminator-badge {
+        font-size: clamp(11px, 2.5vw, 14px);
+        padding: clamp(5px, 0.8vh, 8px) clamp(10px, 2vw, 16px);
+        margin-left: clamp(8px, 1.5vw, 12px);
+      }
+      
+      .matches-container {
+        margin-top: clamp(30px, 4vh, 45px);
       }
       
       .sidebar {
@@ -1099,7 +1208,77 @@
       .page-logo {
         width: clamp(40px, 8vw, 60px);
         top: clamp(5px, 1vh, 10px);
-        right: clamp(5px, 1vw, 10px);
+        left: clamp(5px, 1vw, 10px);
+      }
+    }
+    
+    /* Small Mobile Devices */
+    @media (max-width: 480px) {
+      .schedule-view {
+        padding: clamp(10px, 1.5vh, 20px) clamp(8px, 1.5vw, 15px);
+      }
+      
+      .section-title {
+        font-size: clamp(18px, 6vw, 24px);
+        margin-bottom: clamp(12px, 1.5vh, 20px);
+      }
+      
+      .tournament-dates {
+        font-size: clamp(13px, 4vw, 16px);
+      }
+      
+      .teams-circle {
+        width: clamp(150px, 60vw, 200px);
+        height: clamp(150px, 60vw, 200px);
+      }
+      
+      .team-letter {
+        width: clamp(28px, 10vw, 40px);
+        height: clamp(28px, 10vw, 40px);
+        font-size: clamp(12px, 4vw, 18px);
+      }
+      
+      .match-arc-label {
+        font-size: clamp(7px, 2.5vw, 10px);
+        padding: 1px 4px;
+      }
+      
+      .day-schedule {
+        padding: clamp(12px, 1.5vh, 18px);
+      }
+      
+      .day-title {
+        font-size: clamp(16px, 5vw, 22px);
+      }
+      
+      .day-date {
+        font-size: clamp(13px, 3.5vw, 16px);
+      }
+      
+      .match-item {
+        padding: clamp(10px, 1.2vh, 15px);
+        gap: clamp(8px, 1.5vw, 15px);
+      }
+      
+      .match-team {
+        font-size: clamp(14px, 4.5vw, 18px);
+        padding: clamp(5px, 0.8vh, 8px) clamp(10px, 2vw, 16px);
+        min-width: clamp(45px, 15vw, 70px);
+      }
+      
+      .match-vs {
+        font-size: clamp(12px, 4vw, 16px);
+      }
+      
+      .match-label,
+      .match-label-final-label {
+        font-size: clamp(8px, 2.5vw, 10px);
+        padding: 2px 6px;
+      }
+      
+      .eliminator-badge {
+        font-size: clamp(10px, 3vw, 13px);
+        padding: clamp(4px, 0.6vh, 6px) clamp(8px, 1.5vw, 14px);
       }
     }
   </style>
