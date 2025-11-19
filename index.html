@@ -218,6 +218,38 @@
       object-fit: contain;
     }
     
+    /* Visitor Counter */
+    .visitor-counter {
+      text-align: center;
+      padding: clamp(12px, 2vh, 18px) clamp(20px, 4vw, 30px);
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
+      border: 2px solid #334155;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(8px, 1.5vw, 12px);
+      flex-wrap: wrap;
+    }
+    
+    .visitor-counter-label {
+      font-size: clamp(14px, 2.5vw, 18px);
+      color: #94a3b8;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .visitor-counter-number {
+      font-size: clamp(24px, 5vw, 36px);
+      color: #60a5fa;
+      font-weight: 700;
+      font-family: 'Arial', sans-serif;
+      text-shadow: 0 2px 8px rgba(96, 165, 250, 0.3);
+    }
+    
     /* Teams View */
     .teams-view {
       width: 100%;
@@ -1392,8 +1424,8 @@
         <div class="flyer-container">
           <img src="flyer.png" alt="Surabhi Premier League 2025 Flyer" class="flyer-image" onerror="this.style.display='none'; this.parentElement.innerHTML='&lt;div class=&quot;error&quot;&gt;Flyer image not found&lt;/div&gt;';">
           <div class="visitor-counter">
-            <div class="visitor-counter-label">Total Visitors</div>
-            <div class="visitor-counter-number" id="visitor-count">0</div>
+            <span class="visitor-counter-label">Total Visitors:</span>
+            <span class="visitor-counter-number" id="visitor-count">0</span>
           </div>
         </div>
       </div>
