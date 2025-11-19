@@ -694,6 +694,22 @@
       width: fit-content;
       display: inline-block;
     }
+    .match-label-final-label {
+      position: absolute;
+      top: -8px;
+      right: 10px;
+      background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+      color: #ffffff;
+      font-size: clamp(11px, 1.8vw, 14px);
+      font-weight: 700;
+      padding: clamp(3px, 0.5vw, 5px) clamp(6px, 1vw, 10px);
+      border-radius: 8px;
+      border: 1px solid #fbbf24;
+      box-shadow: 0 2px 6px rgba(251, 191, 36, 0.3);
+      z-index: 1;
+      width: fit-content;
+      display: inline-block;
+    }
     
     .first-two-days-container {
       flex: 1;
@@ -846,8 +862,8 @@
       position: absolute;
       top: -8px;
       right: 10px;
-      background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
-      color: #ffffff;
+      background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+      color: #0f172a;
       font-size: clamp(10px, 1.5vw, 12px);
       font-weight: 700;
       padding: 4px 10px;
@@ -1317,7 +1333,7 @@
                       <div class="match-team">3rd Place</div>
                     </div>
                     <div class="match-item final-match">
-                      <span class="match-label final-label">FINAL</span>
+                      <span class="match-label-final-label">FINAL</span>
                       <div class="match-team">1st Place</div>
                       <div class="match-vs">VS</div>
                       <div class="match-team">Winner of Eliminator</div>
