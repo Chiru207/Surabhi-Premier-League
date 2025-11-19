@@ -1090,9 +1090,21 @@
         <h2 class="section-title">Tournament Schedule</h2>
         <div class="tournament-dates">02-12-2025 to 04-12-2025</div>
         
+        <style>
+          /* Move marquee faster and text in orange */
+          .draw-info-marquee .marquee-wrapper {
+            animation-duration: 10s !important; /* Faster speed */
+          }
+          .draw-info-marquee .marquee-content {
+            color: orange !important;
+          }
+        </style>
         <div class="draw-info-marquee">
           <div class="marquee-wrapper">
             <div class="marquee-content">
+              Teams draw will be updated on 23-12-2025 at 6pm &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </div>
+            <div class="marquee-content" aria-hidden="true">
               Teams draw will be updated on 23-12-2025 at 6pm &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             </div>
             <div class="marquee-content" aria-hidden="true">
@@ -1333,10 +1345,29 @@
           </div>
         </div>
       </div>
-      
+      <style>
+        .section-title {
+          /* keep all existing styling, just override color for "to be confirmed" */
+        }
+        .section-title .pending-note {
+          color: orange;
+        }
+      </style>
+      <script>
+        // highlight "(to be confirmed)" text in orange without moving it
+        document.addEventListener('DOMContentLoaded', function() {
+          var title = document.querySelector('#playing-conditions-view .section-title');
+          if (title) {
+            title.innerHTML = title.innerHTML.replace(
+              /\(to be confirmed\)/g,
+              '<span class="pending-note">(to be confirmed)</span>'
+            );
+          }
+        });
+      </script>
       <!-- Playing Conditions View -->
       <div class="playing-conditions-view" id="playing-conditions-view">
-        <h2 class="section-title">Playing Conditions</h2>
+        <h2 class="section-title">Playing Conditions (to be confirmed)</h2>
         <div class="conditions-container">
           <div class="conditions-table-container">
             <table class="conditions-table">
