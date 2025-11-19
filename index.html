@@ -2452,20 +2452,40 @@
       initializeVisitorCounter();
     });
     
-    // Visitor Counter Functionality
-    function initializeVisitorCounter() {
+    // Visitor Counter Functionality - Universal Counter using API
+    async function initializeVisitorCounter() {
       const visitorCountEl = document.getElementById('visitor-count');
       if (!visitorCountEl) return;
       
-      // Get current count from localStorage
-      let visitorCount = parseInt(localStorage.getItem('spl2025_visitor_count') || '0', 10);
-      
-      // Increment counter on every page visit
-      visitorCount++;
-      localStorage.setItem('spl2025_visitor_count', visitorCount.toString());
-      
-      // Display the count with animation
-      animateCounter(visitorCountEl, visitorCount);
+      try {
+        // Use countapi.xyz for universal visitor counting
+        // First, increment the counter
+        const incrementResponse = await fetch('https://api.countapi.xyz/hit/spl2025/visitors');
+        const incrementData = await incrementResponse.json();
+        
+        if (incrementData && incrementData.value !== undefined) {
+          // Display the updated count with animation
+          animateCounter(visitorCountEl, incrementData.value);
+        } else {
+          // Fallback: try to get the current count
+          const getResponse = await fetch('https://api.countapi.xyz/get/spl2025/visitors');
+          const getData = await getResponse.json();
+          if (getData && getData.value !== undefined) {
+            animateCounter(visitorCountEl, getData.value);
+          } else {
+            visitorCountEl.textContent = '0';
+          }
+        }
+      } catch (error) {
+        console.error('Error updating visitor counter:', error);
+        // Fallback to localStorage if API fails
+        let visitorCount = parseInt(localStorage.getItem('spl2025_visitor_count') || '0', 10);
+        visitorCount++;
+        localStorage.setItem('spl2025_visitor_count', visitorCount.toString());
+        animateCounter(visitorCountEl, visitorCount);
+        // Show a note that this is local count
+        visitorCountEl.textContent = visitorCount.toLocaleString() + ' (local)';
+      }
     }
     
     function animateCounter(element, targetCount) {
