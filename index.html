@@ -674,6 +674,8 @@
       box-shadow: 0 2px 8px rgba(251, 191, 36, 0.4);
       z-index: 2;
       white-space: nowrap;
+      width: fit-content;
+      display: inline-block;
     }
     
     .match-label {
@@ -689,6 +691,8 @@
       border: 1px solid #fbbf24;
       box-shadow: 0 2px 6px rgba(251, 191, 36, 0.3);
       z-index: 1;
+      width: fit-content;
+      display: inline-block;
     }
     
     .first-two-days-container {
@@ -1166,29 +1170,13 @@
         <div class="schedule-layout-wrapper">
           <div class="teams-circle-container">
             <div class="teams-circle">
-              <!-- SVG for match arcs -->
-              <svg class="match-arc" viewBox="0 0 100 100" preserveAspectRatio="none">
-                <!-- M1: A (top, 50,0) to B (top right, 90,15) -->
-                <path d="M 50 0 Q 70 5 90 15" />
-                <!-- M2: C (bottom right, 90,85) to D (bottom, 50,100) -->
-                <path d="M 90 85 Q 70 95 50 100" />
-                <!-- M3: E (bottom left, 10,85) to F (top left, 10,15) -->
-                <path d="M 10 85 Q 10 50 10 15" />
-                <!-- M4: B (top right, 90,15) to C (bottom right, 90,85) -->
-                <path d="M 90 15 Q 95 50 90 85" />
-                <!-- M5: A (top, 50,0) to F (top left, 10,15) -->
-                <path d="M 50 0 Q 30 5 10 15" />
-                <!-- M6: D (bottom, 50,100) to E (bottom left, 10,85) -->
-                <path d="M 50 100 Q 30 95 10 85" />
-              </svg>
-              
-              <!-- Match labels on arcs -->
-              <div class="match-arc-label" style="top: 8%; left: 60%;">M1</div>
-              <div class="match-arc-label" style="bottom: 8%; right: 60%;">M2</div>
-              <div class="match-arc-label" style="bottom: 8%; left: 20%;">M3</div>
-              <div class="match-arc-label" style="top: 50%; right: 5%;">M4</div>
-              <div class="match-arc-label" style="top: 8%; left: 20%;">M5</div>
-              <div class="match-arc-label" style="bottom: 5%; left: 50%; transform: translateX(-50%);">M6</div>
+              <!-- Match labels on arcs (positioned between teams) -->
+              <div class="match-arc-label" style="top: 5%; left: 65%;">M1</div>
+              <div class="match-arc-label" style="bottom: 5%; right: 65%;">M2</div>
+              <div class="match-arc-label" style="bottom: 5%; left: 15%;">M3</div>
+              <div class="match-arc-label" style="top: 50%; right: 2%; transform: translateY(-50%);">M4</div>
+              <div class="match-arc-label" style="top: 5%; left: 15%;">M5</div>
+              <div class="match-arc-label" style="bottom: 2%; left: 50%; transform: translateX(-50%);">M6</div>
               
               <div class="team-letter">A</div>
               <div class="team-letter">B</div>
