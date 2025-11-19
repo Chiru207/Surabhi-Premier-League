@@ -643,6 +643,53 @@
       box-shadow: 0 8px 32px rgba(96, 165, 250, 0.2);
     }
     
+    .match-arc {
+      position: absolute;
+      pointer-events: none;
+      z-index: 1;
+    }
+    
+    .match-arc svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+    
+    .match-arc path {
+      stroke: #fbbf24;
+      stroke-width: 2;
+      fill: none;
+      stroke-dasharray: 5, 5;
+      opacity: 0.8;
+    }
+    
+    .match-arc-label {
+      position: absolute;
+      background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+      color: #0f172a;
+      font-size: clamp(10px, 1.5vw, 14px);
+      font-weight: 700;
+      padding: clamp(2px, 0.5vw, 4px) clamp(4px, 1vw, 8px);
+      border-radius: 8px;
+      border: 1px solid #fbbf24;
+      box-shadow: 0 2px 8px rgba(251, 191, 36, 0.4);
+      z-index: 2;
+      white-space: nowrap;
+    }
+    
+    .match-label {
+      display: inline-block;
+      background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+      color: #0f172a;
+      font-size: clamp(11px, 1.8vw, 14px);
+      font-weight: 700;
+      padding: clamp(3px, 0.5vw, 5px) clamp(6px, 1vw, 10px);
+      border-radius: 8px;
+      border: 1px solid #fbbf24;
+      margin-right: clamp(8px, 1.5vw, 12px);
+      box-shadow: 0 2px 6px rgba(251, 191, 36, 0.3);
+    }
+    
     .first-two-days-container {
       flex: 1;
       min-width: 300px;
@@ -666,6 +713,7 @@
       font-weight: 700;
       box-shadow: 0 4px 12px rgba(96, 165, 250, 0.4);
       transition: all 0.3s ease;
+      z-index: 3;
     }
     
     .team-letter:hover {
@@ -1069,6 +1117,7 @@
       
       <!-- Teams View -->
       <div class="teams-view" id="teams-view">
+        <h2 class="section-title">TEAMS</h2>
         <div class="loading" id="teams-loading">Loading teams...</div>
         <div class="teams-grid" id="teams-grid" style="display: none;"></div>
         <div class="error" id="teams-error" style="display: none;"></div>
@@ -1116,6 +1165,30 @@
         <div class="schedule-layout-wrapper">
           <div class="teams-circle-container">
             <div class="teams-circle">
+              <!-- SVG for match arcs -->
+              <svg class="match-arc" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <!-- M1: A (top, 50,0) to B (top right, 90,15) -->
+                <path d="M 50 0 Q 70 5 90 15" />
+                <!-- M2: C (bottom right, 90,85) to D (bottom, 50,100) -->
+                <path d="M 90 85 Q 70 95 50 100" />
+                <!-- M3: E (bottom left, 10,85) to F (top left, 10,15) -->
+                <path d="M 10 85 Q 10 50 10 15" />
+                <!-- M4: B (top right, 90,15) to C (bottom right, 90,85) -->
+                <path d="M 90 15 Q 95 50 90 85" />
+                <!-- M5: A (top, 50,0) to F (top left, 10,15) -->
+                <path d="M 50 0 Q 30 5 10 15" />
+                <!-- M6: D (bottom, 50,100) to E (bottom left, 10,85) -->
+                <path d="M 50 100 Q 30 95 10 85" />
+              </svg>
+              
+              <!-- Match labels on arcs -->
+              <div class="match-arc-label" style="top: 8%; left: 60%;">M1</div>
+              <div class="match-arc-label" style="bottom: 8%; right: 60%;">M2</div>
+              <div class="match-arc-label" style="bottom: 8%; left: 20%;">M3</div>
+              <div class="match-arc-label" style="top: 50%; right: 5%;">M4</div>
+              <div class="match-arc-label" style="top: 8%; left: 20%;">M5</div>
+              <div class="match-arc-label" style="bottom: 5%; left: 50%; transform: translateX(-50%);">M6</div>
+              
               <div class="team-letter">A</div>
               <div class="team-letter">B</div>
               <div class="team-letter">C</div>
@@ -1134,16 +1207,19 @@
               </div>
               <div class="matches-list">
                 <div class="match-item">
+                  <span class="match-label">M1</span>
                   <div class="match-team">A</div>
                   <div class="match-vs">VS</div>
                   <div class="match-team">B</div>
                 </div>
                 <div class="match-item">
+                  <span class="match-label">M2</span>
                   <div class="match-team">C</div>
                   <div class="match-vs">VS</div>
                   <div class="match-team">D</div>
                 </div>
                 <div class="match-item">
+                  <span class="match-label">M3</span>
                   <div class="match-team">E</div>
                   <div class="match-vs">VS</div>
                   <div class="match-team">F</div>
@@ -1159,16 +1235,19 @@
               </div>
               <div class="matches-list">
                 <div class="match-item">
+                  <span class="match-label">M4</span>
                   <div class="match-team">B</div>
                   <div class="match-vs">VS</div>
                   <div class="match-team">C</div>
                 </div>
                 <div class="match-item">
+                  <span class="match-label">M5</span>
                   <div class="match-team">A</div>
                   <div class="match-vs">VS</div>
                   <div class="match-team">F</div>
                 </div>
                 <div class="match-item">
+                  <span class="match-label">M6</span>
                   <div class="match-team">D</div>
                   <div class="match-vs">VS</div>
                   <div class="match-team">E</div>
@@ -1227,7 +1306,7 @@
       
       <!-- Sponsors View -->
       <div class="sponsors-view" id="sponsors-view">
-        <h2 class="section-title">Sponsors / స్పాన్సర్లు — SPL-2025</h2>
+        <h2 class="section-title">Sponsors</h2>
         <div class="sponsors-container">
           <div class="sponsors-grid">
             <div class="sponsor-card">
@@ -1346,9 +1425,6 @@
         </div>
       </div>
       <style>
-        .section-title {
-          /* keep all existing styling, just override color for "to be confirmed" */
-        }
         .section-title .pending-note {
           color: orange;
         }
@@ -1389,7 +1465,7 @@
                 <tr>
                   <td><strong>Final</strong></td>
                   <td>20</td>
-                  <td>5 for each</td>
+                  <td>4 for each</td>
                   <td>6 overs</td>
                 </tr>
               </tbody>
