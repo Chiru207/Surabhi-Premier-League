@@ -734,14 +734,14 @@
     }
     
     .team-letter:nth-child(2) { /* B - Top Right */
-      top: 15%;
-      right: 10%;
+      top: 25%;
+      right: 5%;
       transform: translate(50%, -50%);
     }
     
     .team-letter:nth-child(3) { /* C - Bottom Right */
-      bottom: 15%;
-      right: 10%;
+      bottom: 25%;
+      right: 5%;
       transform: translate(50%, 50%);
     }
     
@@ -752,14 +752,14 @@
     }
     
     .team-letter:nth-child(5) { /* E - Bottom Left */
-      bottom: 15%;
-      left: 10%;
+      bottom: 25%;
+      left: 5%;
       transform: translate(-50%, 50%);
     }
     
     .team-letter:nth-child(6) { /* F - Top Left */
-      top: 15%;
-      left: 10%;
+      top: 25%;
+      left: 5%;
       transform: translate(-50%, -50%);
     }
     
@@ -875,7 +875,7 @@
     
     .eliminator-badge {
       display: inline-block;
-      background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+      /*background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);*/
       color: #ffffff;
       padding: clamp(6px, 1vh, 10px) clamp(12px, 2vw, 20px);
       border-radius: 20px;
@@ -1181,12 +1181,12 @@
               <div class="team-letter">F</div>
               
               <!-- Match labels on arcs (positioned between teams) -->
-              <div class="match-arc-label" style="top: 5%; left: 65%;">M1</div>
-              <div class="match-arc-label" style="bottom: 5%; right: 65%;">M2</div>
-              <div class="match-arc-label" style="bottom: 5%; left: 15%;">M3</div>
-              <div class="match-arc-label" style="top: 50%; right: 2%; transform: translateY(-50%);">M4</div>
-              <div class="match-arc-label" style="top: 5%; left: 15%;">M5</div>
-              <div class="match-arc-label" style="bottom: 2%; left: 50%; transform: translateX(-50%);">M6</div>
+              <div class="match-arc-label" style="top: 1%; left: 70%;">M1</div>
+              <div class="match-arc-label" style="bottom: 0%; left: 70%;">M2</div>
+              <div class="match-arc-label" style="bottom: 0%; left: 18%;">M6</div>
+              <div class="match-arc-label" style="top: 50%; right: -6%; transform: translateY(-50%);">M4</div>
+              <div class="match-arc-label" style="top: 1%; left: 18%;">M5</div>
+              <div class="match-arc-label" style="top: 50%; left: -6%; transform: translateY(-50%);">M3</div>
             </div>
           </div>
           
@@ -1194,7 +1194,7 @@
             <!-- Day 1 -->
             <div class="day-schedule">
               <div class="day-header">
-                <div class="day-title">Day 1</div>
+                <div class="day-title">Day 1 <span class="eliminator-badge">GROUP MATCHES</span></div>
                 <div class="day-date">Tuesday, 02-12-2025</div>
               </div>
               <div class="matches-list">
@@ -1222,7 +1222,7 @@
             <!-- Day 2 -->
             <div class="day-schedule">
               <div class="day-header">
-                <div class="day-title">Day 2</div>
+                <div class="day-title">Day 2 <span class="eliminator-badge">GROUP MATCHES</span></div>
                 <div class="day-date">Wednesday, 03-12-2025</div>
               </div>
               <div class="matches-list">
