@@ -1170,104 +1170,160 @@
           </div>
         </div>
         
+        <style>
+          /* Layout for main vertical split */
+          .schedule-main-columns {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(30px, 6vw, 60px);
+            width: 100%;
+          }
+          /* Row: Align Circle and Day 1 horizontally */
+          .circle-day1-row {
+            display: flex;
+            flex-direction: row;
+            align-items: stretch;
+            gap: clamp(30px, 6vw, 60px);
+            width: 100%;
+          }
+          .teams-circle-container {
+            display: flex;
+            align-items: center;
+            min-height: 340px;
+            justify-content: center;
+            flex: 1 1 0;
+          }
+          .first-two-days-container {
+            display: flex;
+            align-items: stretch;
+            flex: 1 1 0;
+            min-width: 340px;
+          }
+          .day-schedule {
+            width: 100%;
+            /* retain existing styling for schedule card look */
+          }
+          /* Row: Day 2 and Day 3 horizontally, same height */
+          .day2-3-row {
+            display: flex;
+            flex-direction: row;
+            gap: clamp(30px, 6vw, 60px);
+            width: 100%;
+            margin-top: clamp(20px, 3vh, 30px);
+          }
+          .day2-3-equal {
+            flex: 1 1 0;
+            display: flex;
+            flex-direction: column;
+            min-width: 280px;
+            min-height: 300px;
+          }
+        </style>
         <div class="schedule-layout-wrapper">
-          <div class="teams-circle-container">
-            <div class="teams-circle">
-              <div class="team-letter">A</div>
-              <div class="team-letter">B</div>
-              <div class="team-letter">C</div>
-              <div class="team-letter">D</div>
-              <div class="team-letter">E</div>
-              <div class="team-letter">F</div>
-              
-              <!-- Match labels on arcs (positioned between teams) -->
-              <div class="match-arc-label" style="top: 1%; left: 70%;">M1</div>
-              <div class="match-arc-label" style="bottom: 0%; left: 70%;">M2</div>
-              <div class="match-arc-label" style="bottom: 0%; left: 18%;">M6</div>
-              <div class="match-arc-label" style="top: 50%; right: -6%; transform: translateY(-50%);">M4</div>
-              <div class="match-arc-label" style="top: 1%; left: 18%;">M5</div>
-              <div class="match-arc-label" style="top: 50%; left: -6%; transform: translateY(-50%);">M3</div>
-            </div>
-          </div>
-          
-          <div class="first-two-days-container">
-            <!-- Day 1 -->
-            <div class="day-schedule">
-              <div class="day-header">
-                <div class="day-title">Day 1 <span class="eliminator-badge">GROUP MATCHES</span></div>
-                <div class="day-date">Tuesday, 02-12-2025</div>
-              </div>
-              <div class="matches-list">
-                <div class="match-item">
-                  <span class="match-label">M1</span>
-                  <div class="match-team">A</div>
-                  <div class="match-vs">VS</div>
-                  <div class="match-team">B</div>
-                </div>
-                <div class="match-item">
-                  <span class="match-label">M2</span>
-                  <div class="match-team">C</div>
-                  <div class="match-vs">VS</div>
-                  <div class="match-team">D</div>
-                </div>
-                <div class="match-item">
-                  <span class="match-label">M3</span>
-                  <div class="match-team">E</div>
-                  <div class="match-vs">VS</div>
-                  <div class="match-team">F</div>
+          <div class="schedule-main-columns">
+            <!-- Row 1: Diagram and Day 1 horizontally -->
+            <div class="circle-day1-row">
+              <!-- Diagram -->
+              <div class="teams-circle-container">
+                <div class="teams-circle" style="align-self: center;">
+                  <div class="team-letter">A</div>
+                  <div class="team-letter">B</div>
+                  <div class="team-letter">C</div>
+                  <div class="team-letter">D</div>
+                  <div class="team-letter">E</div>
+                  <div class="team-letter">F</div>
+                  <!-- Match labels on arcs (positioned between teams) -->
+                  <div class="match-arc-label" style="top: 1%; left: 70%;">M1</div>
+                  <div class="match-arc-label" style="bottom: 0%; left: 70%;">M2</div>
+                  <div class="match-arc-label" style="bottom: 0%; left: 18%;">M6</div>
+                  <div class="match-arc-label" style="top: 50%; right: -6%; transform: translateY(-50%);">M4</div>
+                  <div class="match-arc-label" style="top: 1%; left: 18%;">M5</div>
+                  <div class="match-arc-label" style="top: 50%; left: -6%; transform: translateY(-50%);">M3</div>
                 </div>
               </div>
-            </div>
-            
-            <!-- Day 2 -->
-            <div class="day-schedule">
-              <div class="day-header">
-                <div class="day-title">Day 2 <span class="eliminator-badge">GROUP MATCHES</span></div>
-                <div class="day-date">Wednesday, 03-12-2025</div>
-              </div>
-              <div class="matches-list">
-                <div class="match-item">
-                  <span class="match-label">M4</span>
-                  <div class="match-team">B</div>
-                  <div class="match-vs">VS</div>
-                  <div class="match-team">C</div>
-                </div>
-                <div class="match-item">
-                  <span class="match-label">M5</span>
-                  <div class="match-team">A</div>
-                  <div class="match-vs">VS</div>
-                  <div class="match-team">F</div>
-                </div>
-                <div class="match-item">
-                  <span class="match-label">M6</span>
-                  <div class="match-team">D</div>
-                  <div class="match-vs">VS</div>
-                  <div class="match-team">E</div>
+              <!-- Day 1 to the right of diagram -->
+              <div class="first-two-days-container">
+                <div class="day-schedule">
+                  <div class="day-header">
+                    <div class="day-title">Day 1 <span class="eliminator-badge">GROUP MATCHES</span></div>
+                    <div class="day-date">Tuesday, 02-12-2025</div>
+                  </div>
+                  <div class="matches-list">
+                    <div class="match-item">
+                      <span class="match-label">M1</span>
+                      <div class="match-team">A</div>
+                      <div class="match-vs">VS</div>
+                      <div class="match-team">B</div>
+                    </div>
+                    <div class="match-item">
+                      <span class="match-label">M2</span>
+                      <div class="match-team">C</div>
+                      <div class="match-vs">VS</div>
+                      <div class="match-team">D</div>
+                    </div>
+                    <div class="match-item">
+                      <span class="match-label">M3</span>
+                      <div class="match-team">E</div>
+                      <div class="match-vs">VS</div>
+                      <div class="match-team">F</div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-        
-        <div class="matches-container">
-          <!-- Day 3 -->
-          <div class="day-schedule">
-            <div class="day-header">
-              <div class="day-title">Day 3 <span class="eliminator-badge">ELIMINATOR & FINAL</span></div>
-              <div class="day-date">Thursday, 04-12-2025</div>
-            </div>
-            <div class="matches-list">
-              <div class="match-item">
-                <span class="match-label">Eliminator</span>
-                <div class="match-team">2nd Place</div>
-                <div class="match-vs">VS</div>
-                <div class="match-team">3rd Place</div>
+            <!-- Row 2: Day 2 and Day 3 horizontally and equal height -->
+            <div class="day2-3-row">
+              <div class="day2-3-equal">
+                <!-- Day 2 -->
+                <div class="day-schedule" style="height: 100%; display: flex; flex-direction: column;">
+                  <div class="day-header">
+                    <div class="day-title">Day 2 <span class="eliminator-badge">GROUP MATCHES</span></div>
+                    <div class="day-date">Wednesday, 03-12-2025</div>
+                  </div>
+                  <div class="matches-list" style="flex:1;">
+                    <div class="match-item">
+                      <span class="match-label">M4</span>
+                      <div class="match-team">B</div>
+                      <div class="match-vs">VS</div>
+                      <div class="match-team">C</div>
+                    </div>
+                    <div class="match-item">
+                      <span class="match-label">M5</span>
+                      <div class="match-team">A</div>
+                      <div class="match-vs">VS</div>
+                      <div class="match-team">F</div>
+                    </div>
+                    <div class="match-item">
+                      <span class="match-label">M6</span>
+                      <div class="match-team">D</div>
+                      <div class="match-vs">VS</div>
+                      <div class="match-team">E</div>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div class="match-item final-match">
-                <span class="match-label final-label">FINAL</span>
-                <div class="match-team">1st Place</div>
-                <div class="match-vs">VS</div>
-                <div class="match-team">Winner of Eliminator</div>
+              <div class="day2-3-equal">
+                <!-- Day 3 -->
+                <div class="day-schedule" style="height: 100%; display: flex; flex-direction: column;">
+                  <div class="day-header">
+                    <div class="day-title">Day 3 <span class="eliminator-badge">ELIMINATOR & FINAL</span></div>
+                    <div class="day-date">Thursday, 04-12-2025</div>
+                  </div>
+                  <div class="matches-list" style="flex:1;">
+                    <div class="match-item">
+                      <span class="match-label">Eliminator</span>
+                      <div class="match-team">2nd Place</div>
+                      <div class="match-vs">VS</div>
+                      <div class="match-team">3rd Place</div>
+                    </div>
+                    <div class="match-item final-match">
+                      <span class="match-label final-label">FINAL</span>
+                      <div class="match-team">1st Place</div>
+                      <div class="match-vs">VS</div>
+                      <div class="match-team">Winner of Eliminator</div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -1568,10 +1624,10 @@
     document.querySelectorAll('.menu-item').forEach(item => {
       item.addEventListener('click', () => {
         const view = item.getAttribute('data-view');
+        showView(view);
         if (view === 'teams' && Object.keys(teamsData).length === 0) {
           loadTeamsData();
         }
-        showView(view);
       });
     });
     
