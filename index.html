@@ -659,7 +659,6 @@
       stroke: #fbbf24;
       stroke-width: 2;
       fill: none;
-      stroke-dasharray: 5, 5;
       opacity: 0.8;
     }
     
@@ -678,7 +677,9 @@
     }
     
     .match-label {
-      display: inline-block;
+      position: absolute;
+      top: clamp(8px, 1vh, 12px);
+      left: clamp(8px, 1.5vw, 12px);
       background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
       color: #0f172a;
       font-size: clamp(11px, 1.8vw, 14px);
@@ -686,8 +687,8 @@
       padding: clamp(3px, 0.5vw, 5px) clamp(6px, 1vw, 10px);
       border-radius: 8px;
       border: 1px solid #fbbf24;
-      margin-right: clamp(8px, 1.5vw, 12px);
       box-shadow: 0 2px 6px rgba(251, 191, 36, 0.3);
+      z-index: 1;
     }
     
     .first-two-days-container {
@@ -1266,16 +1267,16 @@
             </div>
             <div class="matches-list">
               <div class="match-item">
+                <span class="match-label">Eliminator</span>
                 <div class="match-team">2nd Place</div>
                 <div class="match-vs">VS</div>
                 <div class="match-team">3rd Place</div>
-                <div class="match-label">Eliminator</div>
               </div>
               <div class="match-item final-match">
+                <span class="match-label final-label">FINAL</span>
                 <div class="match-team">1st Place</div>
                 <div class="match-vs">VS</div>
                 <div class="match-team">Winner of Eliminator</div>
-                <div class="match-label final-label">FINAL</div>
               </div>
             </div>
           </div>
