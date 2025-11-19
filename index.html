@@ -203,8 +203,10 @@
       padding: clamp(20px, 3vw, 40px);
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
+      gap: clamp(20px, 3vh, 30px);
     }
     
     .flyer-image {
@@ -1389,6 +1391,10 @@
       <div class="flyer-view active" id="flyer-view">
         <div class="flyer-container">
           <img src="flyer.png" alt="Surabhi Premier League 2025 Flyer" class="flyer-image" onerror="this.style.display='none'; this.parentElement.innerHTML='&lt;div class=&quot;error&quot;&gt;Flyer image not found&lt;/div&gt;';">
+          <div class="visitor-counter">
+            <div class="visitor-counter-label">Total Visitors</div>
+            <div class="visitor-counter-number" id="visitor-count">0</div>
+          </div>
         </div>
       </div>
       
@@ -2409,7 +2415,43 @@
       
       // Initialize points table
       initializePointsTable();
+      
+      // Initialize visitor counter
+      initializeVisitorCounter();
     });
+    
+    // Visitor Counter Functionality
+    function initializeVisitorCounter() {
+      const visitorCountEl = document.getElementById('visitor-count');
+      if (!visitorCountEl) return;
+      
+      // Get current count from localStorage
+      let visitorCount = parseInt(localStorage.getItem('spl2025_visitor_count') || '0', 10);
+      
+      // Increment counter on every page visit
+      visitorCount++;
+      localStorage.setItem('spl2025_visitor_count', visitorCount.toString());
+      
+      // Display the count with animation
+      animateCounter(visitorCountEl, visitorCount);
+    }
+    
+    function animateCounter(element, targetCount) {
+      const duration = 1000; // 1 second
+      const startCount = 0;
+      const increment = targetCount / (duration / 16); // 60fps
+      let currentCount = startCount;
+      
+      const timer = setInterval(() => {
+        currentCount += increment;
+        if (currentCount >= targetCount) {
+          element.textContent = targetCount.toLocaleString();
+          clearInterval(timer);
+        } else {
+          element.textContent = Math.floor(currentCount).toLocaleString();
+        }
+      }, 16);
+    }
     
     // Also initialize when points view is shown
     document.addEventListener('DOMContentLoaded', () => {
