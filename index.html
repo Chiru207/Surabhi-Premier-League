@@ -733,8 +733,8 @@
     }
     .match-label-final-label {
       position: absolute;
-      top: -8px;
-      right: 10px;
+      top: clamp(8px, 1vh, 12px);
+      left: clamp(8px, 1.5vw, 12px);
       background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
       color: #ffffff;
       font-size: clamp(11px, 1.8vw, 14px);
@@ -743,7 +743,7 @@
       border-radius: 8px;
       border: 1px solid #fbbf24;
       box-shadow: 0 2px 6px rgba(251, 191, 36, 0.3);
-      z-index: 1;
+      z-index: 2;
       width: fit-content;
       display: inline-block;
     }
@@ -914,6 +914,26 @@
       font-size: clamp(16px, 2.5vw, 20px);
       color: #94a3b8;
       font-weight: 600;
+    }
+    
+    .match-time {
+      position: absolute;
+      top: clamp(8px, 1vh, 12px);
+      right: clamp(8px, 1.5vw, 12px);
+      background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+      color: #ffffff;
+      font-size: clamp(11px, 1.8vw, 14px);
+      font-weight: 700;
+      padding: clamp(4px, 0.6vh, 6px) clamp(8px, 1.5vw, 12px);
+      border-radius: 6px;
+      z-index: 2;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+    }
+    
+    .match-item.final-match .match-time {
+      background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+      color: #0f172a;
+      box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3);
     }
     
     .match-label {
@@ -1367,8 +1387,8 @@
       .match-label-final-label {
         font-size: clamp(9px, 2.2vw, 11px);
         padding: clamp(2px, 0.4vw, 4px) clamp(5px, 1.2vw, 8px);
-        top: clamp(-6px, -0.8vh, -8px);
-        right: clamp(8px, 1.5vw, 12px);
+        top: clamp(6px, 0.8vh, 10px);
+        left: clamp(6px, 1.2vw, 10px);
       }
       
       .eliminator-badge {
@@ -1512,6 +1532,11 @@
       .match-label-final-label {
         font-size: clamp(8px, 2.5vw, 10px);
         padding: 2px 6px;
+      }
+      
+      .match-label-final-label {
+        top: clamp(5px, 0.6vh, 8px);
+        left: clamp(5px, 1vw, 8px);
       }
       
       .eliminator-badge {
@@ -1726,6 +1751,7 @@
               <div class="matches-list">
                 <div class="match-item">
                   <span class="match-label">M1</span>
+                  <span class="match-time">8:00 AM</span>
                   <div class="match-team" data-team="Velocity Vipers">
                     <img src="" alt="Velocity Vipers" class="match-team-logo" onerror="this.style.display='none';">
                     <span class="match-team-name">Velocity Vipers</span>
@@ -1738,6 +1764,7 @@
                 </div>
                 <div class="match-item">
                   <span class="match-label">M2</span>
+                  <span class="match-time">11:00 AM</span>
                   <div class="match-team" data-team="Risers 11">
                     <img src="" alt="Risers 11" class="match-team-logo" onerror="this.style.display='none';">
                     <span class="match-team-name">Risers 11</span>
@@ -1750,6 +1777,7 @@
                 </div>
                 <div class="match-item">
                   <span class="match-label">M3</span>
+                  <span class="match-time">2:00 PM</span>
                   <div class="match-team" data-team="RBR Returns">
                     <img src="" alt="RBR Returns" class="match-team-logo" onerror="this.style.display='none';">
                     <span class="match-team-name">RBR Returns</span>
@@ -1771,6 +1799,7 @@
               <div class="matches-list">
                 <div class="match-item">
                   <span class="match-label">M4</span>
+                  <span class="match-time">8:00 AM</span>
                   <div class="match-team" data-team="BULLS (TEAM-A)">
                     <img src="" alt="BULLS (TEAM-A)" class="match-team-logo" onerror="this.style.display='none';">
                     <span class="match-team-name">BULLS (TEAM-A)</span>
@@ -1783,6 +1812,7 @@
                 </div>
                 <div class="match-item">
                   <span class="match-label">M5</span>
+                  <span class="match-time">11:00 AM</span>
                   <div class="match-team" data-team="Velocity Vipers">
                     <img src="" alt="Velocity Vipers" class="match-team-logo" onerror="this.style.display='none';">
                     <span class="match-team-name">Velocity Vipers</span>
@@ -1795,6 +1825,7 @@
                 </div>
                 <div class="match-item">
                   <span class="match-label">M6</span>
+                  <span class="match-time">2:00 PM</span>
                   <div class="match-team" data-team="Daredevils">
                     <img src="" alt="Daredevils" class="match-team-logo" onerror="this.style.display='none';">
                     <span class="match-team-name">Daredevils</span>
@@ -1816,12 +1847,14 @@
               <div class="matches-list">
                 <div class="match-item">
                   <span class="match-label">Eliminator</span>
+                  <span class="match-time">8:00 AM</span>
                   <div class="match-team">2nd Place</div>
                   <div class="match-vs">VS</div>
                   <div class="match-team">3rd Place</div>
                 </div>
                 <div class="match-item final-match">
                   <span class="match-label-final-label">FINAL</span>
+                  <span class="match-time">12:00 Noon</span>
                   <div class="match-team">1st Place</div>
                   <div class="match-vs">VS</div>
                   <div class="match-team">Winner of Eliminator</div>
