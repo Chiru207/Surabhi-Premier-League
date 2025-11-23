@@ -1582,33 +1582,140 @@
           .schedule-main-columns {
             display: flex;
             flex-direction: column;
-            gap: clamp(30px, 6vw, 60px);
+            gap: clamp(20px, 4vh, 40px);
             width: 100%;
           }
           /* Circle and Legend side by side */
           .circle-legend-container {
             display: flex;
             flex-direction: row;
-            gap: clamp(30px, 6vw, 60px);
+            gap: clamp(20px, 4vw, 40px);
             width: 100%;
-            margin-top: clamp(40px, 6vh, 60px);
+            margin-top: clamp(30px, 5vh, 50px);
             align-items: flex-start;
           }
           .teams-circle-container {
             display: flex;
             align-items: center;
-            min-height: 340px;
+            min-height: 300px;
             justify-content: center;
             flex: 1 1 0;
-            min-width: 300px;
+            min-width: 250px;
           }
           .team-assignment-legend {
             flex: 1 1 0;
-            min-width: 300px;
+            min-width: 250px;
             margin-top: 0;
           }
+          
+          /* Mobile optimizations */
+          @media (max-width: 768px) {
+            .schedule-main-columns {
+              gap: clamp(15px, 3vh, 25px);
+            }
+            
+            .circle-legend-container {
+              flex-direction: column;
+              gap: clamp(20px, 3vh, 30px);
+              margin-top: clamp(20px, 4vh, 35px);
+            }
+            
+            .teams-circle-container {
+              width: 100%;
+              min-width: auto;
+              min-height: 250px;
+            }
+            
+            .team-assignment-legend {
+              width: 100%;
+              min-width: auto;
+            }
+            
+            .day-schedule {
+              width: 100%;
+              padding: clamp(12px, 2vh, 18px);
+              margin-bottom: clamp(15px, 2.5vh, 20px);
+            }
+            
+            .match-item {
+              padding: clamp(10px, 1.5vh, 14px);
+              gap: clamp(8px, 2vw, 12px);
+              flex-wrap: nowrap;
+              overflow-x: auto;
+              -webkit-overflow-scrolling: touch;
+            }
+            
+            .match-team {
+              min-width: clamp(60px, 18vw, 100px);
+              padding: clamp(6px, 1vh, 8px) clamp(8px, 2vw, 12px);
+              font-size: clamp(12px, 3vw, 16px);
+            }
+            
+            .match-team-name {
+              font-size: clamp(10px, 2.5vw, 14px);
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+            
+            .match-team-logo {
+              width: clamp(20px, 4vw, 30px);
+              height: clamp(20px, 4vw, 30px);
+              flex-shrink: 0;
+            }
+            
+            .match-vs {
+              font-size: clamp(12px, 2.5vw, 16px);
+              padding: 0 clamp(4px, 1vw, 8px);
+            }
+            
+            .match-label {
+              font-size: clamp(10px, 2vw, 12px);
+              padding: clamp(3px, 0.5vh, 5px) clamp(6px, 1.5vw, 10px);
+            }
+            
+            .day-title {
+              font-size: clamp(16px, 4vw, 20px);
+            }
+            
+            .day-date {
+              font-size: clamp(12px, 3vw, 16px);
+            }
+            
+            .eliminator-badge {
+              font-size: clamp(9px, 2vw, 11px);
+              padding: clamp(4px, 0.5vh, 6px) clamp(8px, 1.5vw, 12px);
+            }
+          }
+          
+          @media (max-width: 480px) {
+            .match-item {
+              flex-direction: column;
+              align-items: stretch;
+            }
+            
+            .match-team {
+              width: 100%;
+              min-width: auto;
+              justify-content: flex-start;
+            }
+            
+            .match-vs {
+              align-self: center;
+              margin: clamp(5px, 1vh, 8px) 0;
+            }
+            
+            .teams-circle-container {
+              min-height: 200px;
+            }
+            
+            .legend-grid {
+              grid-template-columns: 1fr;
+              gap: clamp(8px, 1.5vh, 12px);
+            }
+          }
         </style>
-        <div class="schedule-layout-wrapper">
+        <div class="schedule-layout-wrapper" style="width: 100%; overflow-x: visible;">
           <div class="schedule-main-columns">
             <!-- Row 1: Day 1 -->
             <div class="day-schedule">
