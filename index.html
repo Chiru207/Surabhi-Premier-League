@@ -905,6 +905,9 @@
     .match-team-name {
       font-size: clamp(14px, 2.2vw, 18px);
       line-height: 1.2;
+      color: #ffffff;
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     }
     
     .match-vs {
@@ -2002,37 +2005,73 @@
       'Velocity Vipers': 'Velocity_Vipers.JPG',
       'BULLS (TEAM-A)': 'Bulls_A.jpg',
       'BULLS (TEAM-B)': 'Bulls_B.jpg',
-      'Dare Devils': 'Dare_devils.jpg'
+      'Dare Devils': 'Dare_devils.jpg',
+      'Daredevils': 'Dare_devils.jpg',
+      'Bulls [Team A]': 'Bulls_A.jpg',
+      'Bulls [Team B]': 'Bulls_B.jpg',
+      'BULLS (TEAM-A)': 'Bulls_A.jpg',
+      'BULLS (TEAM-B)': 'Bulls_B.jpg'
     };
     
     // Helper function to get logo filename from team name
     function getLogoUrl(teamName) {
       if (!teamName) return '';
       
+      // Normalize team name for matching
+      const normalizedName = teamName.trim();
+      
       // Check direct mapping first
-      if (LOGO_FILE_MAP[teamName]) {
-        return LOGO_FILE_MAP[teamName];
+      if (LOGO_FILE_MAP[normalizedName]) {
+        return LOGO_FILE_MAP[normalizedName];
       }
       
-      // Handle BULLS teams
-      if (teamName.includes('BULLS') || teamName.includes('TEAM-A')) {
+      // Handle BULLS teams with various formats
+      if (teamName.includes('Bulls') && (teamName.includes('Team A') || teamName.includes('TEAM-A'))) {
         return 'Bulls_A.jpg';
       }
-      if (teamName.includes('TEAM-B')) {
+      if (teamName.includes('Bulls') && (teamName.includes('Team B') || teamName.includes('TEAM-B'))) {
         return 'Bulls_B.jpg';
       }
       
-      // Try to find by partial match
+      // Try case-insensitive partial matching
+      const nameLower = normalizedName.toLowerCase();
       for (const [key, filename] of Object.entries(LOGO_FILE_MAP)) {
-        const cleanKey = key.replace(/\([^)]*\)/g, '').trim();
-        const cleanTeamName = teamName.replace(/\([^)]*\)/g, '').trim();
-        if (teamName.includes(cleanKey) || cleanKey.includes(cleanTeamName)) {
+        const keyLower = key.toLowerCase();
+        const cleanKey = key.replace(/\([^)]*\)/g, '').replace(/\[.*?\]/g, '').trim().toLowerCase();
+        const cleanTeamName = normalizedName.replace(/\([^)]*\)/g, '').replace(/\[.*?\]/g, '').trim().toLowerCase();
+        
+        // Exact match after cleaning
+        if (cleanTeamName === cleanKey) {
+          return filename;
+        }
+        
+        // Partial match
+        if (nameLower.includes(keyLower) || keyLower.includes(nameLower)) {
+          return filename;
+        }
+        
+        // Match by key words
+        if (cleanTeamName.includes(cleanKey) || cleanKey.includes(cleanTeamName)) {
           return filename;
         }
       }
       
+      // Special handling for common variations
+      if (nameLower.includes('velocity') && nameLower.includes('vipers')) {
+        return 'Velocity_Vipers.JPG';
+      }
+      if (nameLower.includes('risers') && nameLower.includes('11')) {
+        return 'Risers_11_logo.jpg';
+      }
+      if (nameLower.includes('rbr') && nameLower.includes('returns')) {
+        return 'RBR_Returns_Logo.jpg';
+      }
+      if (nameLower.includes('daredevils') || nameLower.includes('dare devils')) {
+        return 'Dare_devils.jpg';
+      }
+      
       // Fallback: try common patterns
-      const cleanName = teamName.replace(/\([^)]*\)/g, '').trim();
+      const cleanName = normalizedName.replace(/\([^)]*\)/g, '').replace(/\[.*?\]/g, '').trim();
       const variations = [
         `${cleanName.replace(/\s+/g, '_')}_logo.jpg`,
         `${cleanName.replace(/\s+/g, '_')}.jpg`,
@@ -2578,8 +2617,15 @@
         const teamName = teamEl.getAttribute('data-team');
         const logoSrc = getLogoUrl(teamName);
         const logoImg = teamEl.querySelector('.match-team-logo');
-        if (logoImg && logoSrc) {
-          logoImg.src = logoSrc;
+        if (logoImg) {
+          if (logoSrc) {
+            logoImg.src = logoSrc;
+            logoImg.style.display = 'block';
+            console.log(`Setting logo for "${teamName}": ${logoSrc}`);
+          } else {
+            console.warn(`No logo found for team: "${teamName}"`);
+            logoImg.style.display = 'none';
+          }
         }
       });
     }
