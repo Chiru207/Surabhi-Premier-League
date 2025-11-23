@@ -1066,8 +1066,8 @@
     
     /* Team Assignment Legend */
     .team-assignment-legend {
-      margin-top: clamp(40px, 6vh, 60px);
-      padding: clamp(25px, 4vh, 40px);
+      margin-top: 0;
+      padding: clamp(15px, 2.5vh, 25px);
       background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.6) 100%);
       border: 2px solid #334155;
       border-radius: 16px;
@@ -1077,46 +1077,38 @@
       margin-right: auto;
     }
     
-    .legend-title {
-      font-size: clamp(20px, 3.5vw, 28px);
-      color: #60a5fa;
-      font-weight: 700;
-      text-align: center;
-      margin-bottom: clamp(20px, 3vh, 30px);
-    }
-    
     .legend-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: clamp(15px, 2.5vh, 20px);
+      grid-template-columns: repeat(2, 1fr);
+      gap: clamp(10px, 1.5vh, 15px);
     }
     
     .legend-item {
       display: flex;
       align-items: center;
-      gap: clamp(15px, 3vw, 25px);
-      padding: clamp(12px, 2vh, 18px);
+      gap: clamp(8px, 1.5vw, 12px);
+      padding: clamp(8px, 1.2vh, 12px);
       background: linear-gradient(135deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%);
       border: 1px solid #334155;
-      border-radius: 12px;
+      border-radius: 8px;
       transition: all 0.3s ease;
     }
     
     .legend-item:hover {
       border-color: #60a5fa;
-      transform: translateX(5px);
-      box-shadow: 0 4px 12px rgba(96, 165, 250, 0.2);
+      transform: translateX(3px);
+      box-shadow: 0 2px 8px rgba(96, 165, 250, 0.2);
     }
     
     .legend-letter {
-      font-size: clamp(24px, 4vw, 32px);
+      font-size: clamp(16px, 2.5vw, 20px);
       font-weight: 700;
       color: #60a5fa;
       background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
       border: 2px solid #60a5fa;
       border-radius: 50%;
-      width: clamp(50px, 8vw, 60px);
-      height: clamp(50px, 8vw, 60px);
+      width: clamp(32px, 5vw, 40px);
+      height: clamp(32px, 5vw, 40px);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1124,7 +1116,7 @@
     }
     
     .legend-team {
-      font-size: clamp(14px, 2.5vw, 18px);
+      font-size: clamp(11px, 1.8vw, 14px);
       color: #e2e8f0;
       font-weight: 500;
       flex: 1;
@@ -1136,9 +1128,19 @@
       }
       
       .legend-item {
-        flex-direction: column;
-        text-align: center;
-        gap: clamp(10px, 2vh, 15px);
+        flex-direction: row;
+        text-align: left;
+        gap: clamp(8px, 1.5vw, 12px);
+      }
+      
+      .legend-letter {
+        width: clamp(28px, 4vw, 35px);
+        height: clamp(28px, 4vw, 35px);
+        font-size: clamp(14px, 2.2vw, 18px);
+      }
+      
+      .legend-team {
+        font-size: clamp(10px, 1.6vw, 13px);
       }
       
       .match-team {
@@ -1622,9 +1624,9 @@
                     <span class="match-team-name">Velocity Vipers</span>
                   </div>
                   <div class="match-vs">VS</div>
-                  <div class="match-team" data-team="Bulls [Team A]">
-                    <img src="" alt="Bulls [Team A]" class="match-team-logo" onerror="this.style.display='none';">
-                    <span class="match-team-name">Bulls [Team A]</span>
+                  <div class="match-team" data-team="BULLS (TEAM-A)">
+                    <img src="" alt="BULLS (TEAM-A)" class="match-team-logo" onerror="this.style.display='none';">
+                    <span class="match-team-name">BULLS (TEAM-A)</span>
                   </div>
                 </div>
                 <div class="match-item">
@@ -1646,9 +1648,9 @@
                     <span class="match-team-name">RBR Returns</span>
                   </div>
                   <div class="match-vs">VS</div>
-                  <div class="match-team" data-team="Bulls [Team B]">
-                    <img src="" alt="Bulls [Team B]" class="match-team-logo" onerror="this.style.display='none';">
-                    <span class="match-team-name">Bulls [Team B]</span>
+                  <div class="match-team" data-team="BULLS (TEAM-B)">
+                    <img src="" alt="BULLS (TEAM-B)" class="match-team-logo" onerror="this.style.display='none';">
+                    <span class="match-team-name">BULLS (TEAM-B)</span>
                   </div>
                 </div>
               </div>
@@ -1662,9 +1664,9 @@
               <div class="matches-list">
                 <div class="match-item">
                   <span class="match-label">M4</span>
-                  <div class="match-team" data-team="Bulls [Team A]">
-                    <img src="" alt="Bulls [Team A]" class="match-team-logo" onerror="this.style.display='none';">
-                    <span class="match-team-name">Bulls [Team A]</span>
+                  <div class="match-team" data-team="BULLS (TEAM-A)">
+                    <img src="" alt="BULLS (TEAM-A)" class="match-team-logo" onerror="this.style.display='none';">
+                    <span class="match-team-name">BULLS (TEAM-A)</span>
                   </div>
                   <div class="match-vs">VS</div>
                   <div class="match-team" data-team="Risers 11">
@@ -1679,9 +1681,9 @@
                     <span class="match-team-name">Velocity Vipers</span>
                   </div>
                   <div class="match-vs">VS</div>
-                  <div class="match-team" data-team="Bulls [Team B]">
-                    <img src="" alt="Bulls [Team B]" class="match-team-logo" onerror="this.style.display='none';">
-                    <span class="match-team-name">Bulls [Team B]</span>
+                  <div class="match-team" data-team="BULLS (TEAM-B)">
+                    <img src="" alt="BULLS (TEAM-B)" class="match-team-logo" onerror="this.style.display='none';">
+                    <span class="match-team-name">BULLS (TEAM-B)</span>
                   </div>
                 </div>
                 <div class="match-item">
@@ -1745,7 +1747,6 @@
           
           <!-- Team Assignment Legend -->
           <div class="team-assignment-legend">
-            <h3 class="legend-title">Team Assignment</h3>
             <div class="legend-grid">
               <div class="legend-item">
                 <span class="legend-letter">A</span>
@@ -1753,7 +1754,7 @@
               </div>
               <div class="legend-item">
                 <span class="legend-letter">B</span>
-                <span class="legend-team">Bulls [Team A] (V. Sairam)</span>
+                <span class="legend-team">BULLS (TEAM-A) (V. Sairam)</span>
               </div>
               <div class="legend-item">
                 <span class="legend-letter">C</span>
@@ -1769,7 +1770,7 @@
               </div>
               <div class="legend-item">
                 <span class="legend-letter">F</span>
-                <span class="legend-team">Bulls [Team B] (V. Suryacharan)</span>
+                <span class="legend-team">BULLS (TEAM-B) (V. Suryacharan)</span>
               </div>
             </div>
           </div>
@@ -1985,7 +1986,7 @@
       'Manu': { name: 'S.A. Manohar', teamName: 'Velocity Vipers', serialNo: '16' },
       'Sairam': { name: 'V. Sairam', teamName: 'BULLS (TEAM-A)', serialNo: '62' },
       'Surya': { name: 'V. Surya Charan', teamName: 'BULLS (TEAM-B)', serialNo: '66' },
-      'Raghava': { name: 'V. Raghava Sai', teamName: 'Dare Devils', serialNo: '29' }
+      'Raghava': { name: 'V. Raghava Sai', teamName: 'Daredevils', serialNo: '29' }
     };
     
     // Reverse mapping: serial number to captain key
@@ -2005,7 +2006,6 @@
       'Velocity Vipers': 'Velocity_Vipers.JPG',
       'BULLS (TEAM-A)': 'Bulls_A.jpg',
       'BULLS (TEAM-B)': 'Bulls_B.jpg',
-      'Dare Devils': 'Dare_devils.jpg',
       'Daredevils': 'Dare_devils.jpg',
       'Bulls [Team A]': 'Bulls_A.jpg',
       'Bulls [Team B]': 'Bulls_B.jpg',
