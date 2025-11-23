@@ -1663,11 +1663,12 @@
             }
             
             .match-item {
-              padding: clamp(10px, 1.5vh, 14px);
+              padding: clamp(28px, 3.5vh, 38px) clamp(10px, 1.5vh, 14px) clamp(10px, 1.5vh, 14px);
               gap: clamp(8px, 2vw, 12px);
               flex-wrap: nowrap;
               overflow-x: auto;
               -webkit-overflow-scrolling: touch;
+              position: relative;
             }
             
             .match-team {
@@ -1697,6 +1698,18 @@
             .match-label {
               font-size: clamp(10px, 2vw, 12px);
               padding: clamp(3px, 0.5vh, 5px) clamp(6px, 1.5vw, 10px);
+              top: clamp(5px, 0.8vh, 8px);
+              left: clamp(5px, 1vw, 8px);
+            }
+            
+            .match-label-final-label {
+              top: clamp(5px, 0.8vh, 8px);
+              left: clamp(5px, 1vw, 8px);
+            }
+            
+            .match-time {
+              top: clamp(5px, 0.8vh, 8px);
+              right: clamp(5px, 1vw, 8px);
             }
             
             .day-title {
@@ -1717,6 +1730,7 @@
             .match-item {
               flex-direction: column;
               align-items: stretch;
+              padding-top: clamp(30px, 4vh, 40px);
             }
             
             .match-team {
@@ -1728,6 +1742,19 @@
             .match-vs {
               align-self: center;
               margin: clamp(5px, 1vh, 8px) 0;
+            }
+            
+            .match-label,
+            .match-label-final-label {
+              top: clamp(4px, 0.6vh, 6px);
+              left: clamp(4px, 0.8vw, 6px);
+              font-size: clamp(9px, 2.2vw, 11px);
+            }
+            
+            .match-time {
+              top: clamp(4px, 0.6vh, 6px);
+              right: clamp(4px, 0.8vw, 6px);
+              font-size: clamp(8px, 2vw, 10px);
             }
             
             .teams-circle-container {
