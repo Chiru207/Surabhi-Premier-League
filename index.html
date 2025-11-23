@@ -888,6 +888,23 @@
       min-width: clamp(80px, 15vw, 150px);
       text-align: center;
       line-height: 1.3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(8px, 1.5vw, 12px);
+      flex-direction: column;
+    }
+    
+    .match-team-logo {
+      width: clamp(30px, 5vw, 45px);
+      height: clamp(30px, 5vw, 45px);
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+    
+    .match-team-name {
+      font-size: clamp(14px, 2.2vw, 18px);
+      line-height: 1.2;
     }
     
     .match-vs {
@@ -1125,6 +1142,15 @@
         font-size: clamp(14px, 3.5vw, 18px);
         min-width: clamp(70px, 20vw, 120px);
         padding: clamp(6px, 1vh, 10px) clamp(10px, 2.5vw, 18px);
+      }
+      
+      .match-team-logo {
+        width: clamp(25px, 4vw, 35px);
+        height: clamp(25px, 4vw, 35px);
+      }
+      
+      .match-team-name {
+        font-size: clamp(12px, 3vw, 16px);
       }
       
       .points-table-container,
@@ -1568,31 +1594,6 @@
             gap: clamp(30px, 6vw, 60px);
             width: 100%;
           }
-          /* Row: Align Circle and Day 1 horizontally */
-          .circle-day1-row {
-            display: flex;
-            flex-direction: row;
-            align-items: stretch;
-            gap: clamp(30px, 6vw, 60px);
-            width: 100%;
-          }
-          .teams-circle-container {
-            display: flex;
-            align-items: center;
-            min-height: 340px;
-            justify-content: center;
-            flex: 1 1 0;
-          }
-          .first-two-days-container {
-            display: flex;
-            align-items: stretch;
-            flex: 1 1 0;
-            min-width: 340px;
-          }
-          .day-schedule {
-            width: 100%;
-            /* retain existing styling for schedule card look */
-          }
           /* Row: Day 2 and Day 3 horizontally, same height */
           .day2-3-row {
             display: flex;
@@ -1608,55 +1609,58 @@
             min-width: 280px;
             min-height: 300px;
           }
+          .teams-circle-container {
+            display: flex;
+            align-items: center;
+            min-height: 340px;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: clamp(20px, 3vh, 30px);
+          }
         </style>
         <div class="schedule-layout-wrapper">
           <div class="schedule-main-columns">
-            <!-- Row 1: Diagram and Day 1 horizontally -->
-            <div class="circle-day1-row">
-              <!-- Diagram -->
-              <div class="teams-circle-container">
-                <div class="teams-circle" style="align-self: center;">
-                  <div class="team-letter">A</div>
-                  <div class="team-letter">B</div>
-                  <div class="team-letter">C</div>
-                  <div class="team-letter">D</div>
-                  <div class="team-letter">E</div>
-                  <div class="team-letter">F</div>
-                  <!-- Match labels on arcs (positioned between teams) -->
-                  <div class="match-arc-label" style="top: 1%; left: 70%;">M1</div>
-                  <div class="match-arc-label" style="bottom: 0%; left: 70%;">M2</div>
-                  <div class="match-arc-label" style="bottom: 0%; left: 18%;">M6</div>
-                  <div class="match-arc-label" style="top: 50%; right: -6%; transform: translateY(-50%);">M4</div>
-                  <div class="match-arc-label" style="top: 1%; left: 18%;">M5</div>
-                  <div class="match-arc-label" style="top: 50%; left: -6%; transform: translateY(-50%);">M3</div>
-                </div>
+            <!-- Row 1: Day 1 -->
+            <div class="day-schedule">
+              <div class="day-header">
+                <div class="day-title">Day 1 <span class="eliminator-badge">GROUP MATCHES</span></div>
+                <div class="day-date">Tuesday, 02-12-2025</div>
               </div>
-              <!-- Day 1 to the right of diagram -->
-              <div class="first-two-days-container">
-                <div class="day-schedule">
-                  <div class="day-header">
-                    <div class="day-title">Day 1 <span class="eliminator-badge">GROUP MATCHES</span></div>
-                    <div class="day-date">Tuesday, 02-12-2025</div>
+              <div class="matches-list">
+                <div class="match-item">
+                  <span class="match-label">M1</span>
+                  <div class="match-team" data-team="Velocity Vipers">
+                    <img src="" alt="Velocity Vipers" class="match-team-logo" onerror="this.style.display='none';">
+                    <span class="match-team-name">Velocity Vipers</span>
                   </div>
-                  <div class="matches-list">
-                    <div class="match-item">
-                      <span class="match-label">M1</span>
-                      <div class="match-team">Velocity Vipers</div>
-                      <div class="match-vs">VS</div>
-                      <div class="match-team">Bulls [Team A]</div>
-                    </div>
-                    <div class="match-item">
-                      <span class="match-label">M2</span>
-                      <div class="match-team">Risers 11</div>
-                      <div class="match-vs">VS</div>
-                      <div class="match-team">Daredevils</div>
-                    </div>
-                    <div class="match-item">
-                      <span class="match-label">M3</span>
-                      <div class="match-team">RBR Returns</div>
-                      <div class="match-vs">VS</div>
-                      <div class="match-team">Bulls [Team B]</div>
-                    </div>
+                  <div class="match-vs">VS</div>
+                  <div class="match-team" data-team="Bulls [Team A]">
+                    <img src="" alt="Bulls [Team A]" class="match-team-logo" onerror="this.style.display='none';">
+                    <span class="match-team-name">Bulls [Team A]</span>
+                  </div>
+                </div>
+                <div class="match-item">
+                  <span class="match-label">M2</span>
+                  <div class="match-team" data-team="Risers 11">
+                    <img src="" alt="Risers 11" class="match-team-logo" onerror="this.style.display='none';">
+                    <span class="match-team-name">Risers 11</span>
+                  </div>
+                  <div class="match-vs">VS</div>
+                  <div class="match-team" data-team="Daredevils">
+                    <img src="" alt="Daredevils" class="match-team-logo" onerror="this.style.display='none';">
+                    <span class="match-team-name">Daredevils</span>
+                  </div>
+                </div>
+                <div class="match-item">
+                  <span class="match-label">M3</span>
+                  <div class="match-team" data-team="RBR Returns">
+                    <img src="" alt="RBR Returns" class="match-team-logo" onerror="this.style.display='none';">
+                    <span class="match-team-name">RBR Returns</span>
+                  </div>
+                  <div class="match-vs">VS</div>
+                  <div class="match-team" data-team="Bulls [Team B]">
+                    <img src="" alt="Bulls [Team B]" class="match-team-logo" onerror="this.style.display='none';">
+                    <span class="match-team-name">Bulls [Team B]</span>
                   </div>
                 </div>
               </div>
@@ -1673,21 +1677,39 @@
                   <div class="matches-list" style="flex:1;">
                     <div class="match-item">
                       <span class="match-label">M4</span>
-                      <div class="match-team">Bulls [Team A]</div>
+                      <div class="match-team" data-team="Bulls [Team A]">
+                        <img src="" alt="Bulls [Team A]" class="match-team-logo" onerror="this.style.display='none';">
+                        <span class="match-team-name">Bulls [Team A]</span>
+                      </div>
                       <div class="match-vs">VS</div>
-                      <div class="match-team">Risers 11</div>
+                      <div class="match-team" data-team="Risers 11">
+                        <img src="" alt="Risers 11" class="match-team-logo" onerror="this.style.display='none';">
+                        <span class="match-team-name">Risers 11</span>
+                      </div>
                     </div>
                     <div class="match-item">
                       <span class="match-label">M5</span>
-                      <div class="match-team">Velocity Vipers</div>
+                      <div class="match-team" data-team="Velocity Vipers">
+                        <img src="" alt="Velocity Vipers" class="match-team-logo" onerror="this.style.display='none';">
+                        <span class="match-team-name">Velocity Vipers</span>
+                      </div>
                       <div class="match-vs">VS</div>
-                      <div class="match-team">Bulls [Team B]</div>
+                      <div class="match-team" data-team="Bulls [Team B]">
+                        <img src="" alt="Bulls [Team B]" class="match-team-logo" onerror="this.style.display='none';">
+                        <span class="match-team-name">Bulls [Team B]</span>
+                      </div>
                     </div>
                     <div class="match-item">
                       <span class="match-label">M6</span>
-                      <div class="match-team">Daredevils</div>
+                      <div class="match-team" data-team="Daredevils">
+                        <img src="" alt="Daredevils" class="match-team-logo" onerror="this.style.display='none';">
+                        <span class="match-team-name">Daredevils</span>
+                      </div>
                       <div class="match-vs">VS</div>
-                      <div class="match-team">RBR Returns</div>
+                      <div class="match-team" data-team="RBR Returns">
+                        <img src="" alt="RBR Returns" class="match-team-logo" onerror="this.style.display='none';">
+                        <span class="match-team-name">RBR Returns</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1747,6 +1769,25 @@
               <span class="legend-letter">F</span>
               <span class="legend-team">Bulls [Team B] (V. Suryacharan)</span>
             </div>
+          </div>
+        </div>
+        
+        <!-- Circle Diagram at the end -->
+        <div class="teams-circle-container" style="margin-top: clamp(40px, 6vh, 60px);">
+          <div class="teams-circle" style="align-self: center;">
+            <div class="team-letter">A</div>
+            <div class="team-letter">B</div>
+            <div class="team-letter">C</div>
+            <div class="team-letter">D</div>
+            <div class="team-letter">E</div>
+            <div class="team-letter">F</div>
+            <!-- Match labels on arcs (positioned between teams) -->
+            <div class="match-arc-label" style="top: 1%; left: 70%;">M1</div>
+            <div class="match-arc-label" style="bottom: 0%; left: 70%;">M2</div>
+            <div class="match-arc-label" style="bottom: 0%; left: 18%;">M6</div>
+            <div class="match-arc-label" style="top: 50%; right: -6%; transform: translateY(-50%);">M4</div>
+            <div class="match-arc-label" style="top: 1%; left: 18%;">M5</div>
+            <div class="match-arc-label" style="top: 50%; left: -6%; transform: translateY(-50%);">M3</div>
           </div>
         </div>
       </div>
@@ -2088,6 +2129,8 @@
           teamsView.classList.add('active');
         } else if (view === 'schedule') {
           scheduleView.classList.add('active');
+          // Initialize logos when schedule view is shown
+          setTimeout(() => initializeScheduleLogos(), 100);
         } else if (view === 'points') {
           pointsView.classList.add('active');
         } else if (view === 'sponsors') {
@@ -2547,6 +2590,19 @@
       });
     }
     
+    // Initialize schedule logos
+    function initializeScheduleLogos() {
+      const matchTeams = document.querySelectorAll('.match-team[data-team]');
+      matchTeams.forEach(teamEl => {
+        const teamName = teamEl.getAttribute('data-team');
+        const logoSrc = getLogoUrl(teamName);
+        const logoImg = teamEl.querySelector('.match-team-logo');
+        if (logoImg && logoSrc) {
+          logoImg.src = logoSrc;
+        }
+      });
+    }
+    
     // Initialize: Load xlsx library if needed and setup points table
     window.addEventListener('DOMContentLoaded', () => {
       // Check if xlsx is already loaded
@@ -2559,6 +2615,8 @@
       // Initialize points table
       initializePointsTable();
       
+      // Initialize schedule logos
+      initializeScheduleLogos();
     });
     
     // Also initialize when points view is shown
