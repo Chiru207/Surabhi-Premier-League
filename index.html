@@ -516,10 +516,20 @@
       overflow-x: visible;
     }
     
+    .organizing-team-view {
+      width: 100%;
+      display: none;
+      padding: clamp(20px, 3vh, 40px);
+      max-width: 1200px;
+      margin: 0 auto;
+      overflow-x: visible;
+    }
+    
     .schedule-view.active,
     .points-view.active,
     .sponsors-view.active,
-    .playing-conditions-view.active {
+    .playing-conditions-view.active,
+    .organizing-team-view.active {
       display: block;
     }
     
@@ -710,6 +720,175 @@
     .rules-closing p strong {
       color: #60a5fa;
       font-size: clamp(16px, 2.5vw, 22px);
+    }
+    
+    /* Organizing Team View Styles */
+    .organizing-container {
+      width: 100%;
+      margin-top: clamp(20px, 3vh, 40px);
+      column-count: 3;
+      column-gap: clamp(20px, 3vw, 30px);
+      column-fill: balance;
+    }
+    
+    .organizing-section {
+      width: 100%;
+      display: inline-block;
+      padding: clamp(15px, 2.5vh, 25px);
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.6) 100%);
+      border: 2px solid #334155;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      margin-bottom: clamp(20px, 3vw, 30px);
+      break-inside: avoid;
+      page-break-inside: avoid;
+      -webkit-column-break-inside: avoid;
+      box-sizing: border-box;
+    }
+    
+    /* Force specific sections to start in specific columns */
+    .organizing-section.col-1:first-of-type {
+      break-before: auto;
+    }
+    
+    .organizing-section.col-2:first-of-type {
+      break-before: column;
+      -webkit-column-break-before: always;
+    }
+    
+    .organizing-section.col-3:first-of-type {
+      break-before: column;
+      -webkit-column-break-before: always;
+    }
+    
+    @media (min-width: 900px) {
+      .organizing-container {
+        column-count: 3;
+      }
+    }
+    
+    @media (min-width: 600px) and (max-width: 899px) {
+      .organizing-container {
+        column-count: 2;
+      }
+      
+      .organizing-section.col-2:first-of-type {
+        break-before: column;
+        -webkit-column-break-before: always;
+      }
+      
+      .organizing-section.col-3:first-of-type {
+        break-before: auto;
+      }
+    }
+    
+    @media (max-width: 599px) {
+      .organizing-container {
+        column-count: 1;
+      }
+      
+      .organizing-section.col-2:first-of-type,
+      .organizing-section.col-3:first-of-type {
+        break-before: auto;
+      }
+    }
+    
+    .organizing-section:hover {
+      border-color: #60a5fa;
+      box-shadow: 0 4px 12px rgba(96, 165, 250, 0.2);
+    }
+    
+    .organizing-section-title {
+      font-size: clamp(18px, 3vw, 24px);
+      color: #60a5fa;
+      font-weight: 700;
+      margin-bottom: clamp(15px, 2.5vh, 20px);
+      text-align: left;
+      border-bottom: 2px solid #334155;
+      padding-bottom: clamp(8px, 1.5vh, 12px);
+    }
+    
+    .organizing-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .organizing-list li {
+      font-size: clamp(15px, 2.3vw, 19px);
+      color: #e2e8f0;
+      line-height: 1.8;
+      margin-bottom: clamp(10px, 1.5vh, 15px);
+      padding-left: clamp(20px, 3vw, 30px);
+      position: relative;
+    }
+    
+    .organizing-list li::before {
+      content: "•";
+      color: #60a5fa;
+      font-weight: bold;
+      font-size: clamp(18px, 2.5vw, 22px);
+      position: absolute;
+      left: 0;
+    }
+    
+    .organizing-note {
+      font-size: clamp(14px, 2vw, 16px);
+      color: #94a3b8;
+      font-style: italic;
+      margin-top: clamp(10px, 1.5vh, 15px);
+      padding-left: clamp(20px, 3vw, 30px);
+    }
+    
+    .organizing-footer {
+      column-span: none;
+      margin-top: clamp(30px, 4vh, 40px);
+      padding: clamp(20px, 3vh, 30px);
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
+      border: 2px solid #60a5fa;
+      border-radius: 12px;
+      text-align: center;
+      display: inline-block;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    
+    @media (min-width: 900px) {
+      .organizing-footer {
+        width: 100%;
+      }
+    }
+    
+    @media (max-width: 899px) {
+      .organizing-footer {
+        width: 100%;
+      }
+    }
+    
+    @media (max-width: 599px) {
+      .organizing-footer {
+        width: 100%;
+      }
+    }
+    
+    .organizing-footer-text {
+      font-size: clamp(15px, 2.3vw, 19px);
+      color: #e2e8f0;
+      line-height: 1.8;
+      margin-bottom: clamp(15px, 2vh, 20px);
+    }
+    
+    .organizing-footer-note {
+      font-size: clamp(14px, 2vw, 17px);
+      color: #cbd5e1;
+      line-height: 1.6;
+      margin-top: clamp(15px, 2vh, 20px);
+      padding-top: clamp(15px, 2vh, 20px);
+      border-top: 1px solid #334155;
+    }
+    
+    .organizing-footer-note strong {
+      color: #60a5fa;
     }
     
     .conditions-table td strong {
@@ -1356,6 +1535,14 @@
         width: clamp(25px, 4vw, 40px);
         height: clamp(25px, 4vw, 40px);
       }
+      
+      .organizing-container {
+        column-gap: clamp(15px, 2.5vh, 25px);
+      }
+      
+      .organizing-section {
+        margin-bottom: clamp(15px, 2.5vh, 25px);
+      }
     }
     
     /* Mobile Responsive */
@@ -1711,6 +1898,7 @@
     <div class="menu-item" data-view="points">Points Table</div>
     <div class="menu-item" data-view="sponsors">Sponsors</div>
     <div class="menu-item" data-view="playing-conditions">Playing Conditions</div>
+    <div class="menu-item" data-view="organizing-team">Organizing Team</div>
   </div>
   
   <!-- Main Content Area -->
@@ -2252,6 +2440,22 @@
               <h3 class="sponsor-name">R. అజయ్ బాబు గారు</h3>
               <p class="sponsor-desc">Rs. 500 each for all MoMs - Rs. 1000 for Man of the Final</p>
             </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">మాధవ ఈవెంట్స్, కొత్తపేట</h3>
+              <p class="sponsor-desc">చైర్స్ & టేబుల్స్ మూడు రోజులకు</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">S.A. వేణుమాధవ గారు</h3>
+              <p class="sponsor-desc">ఒక రైస్ బ్యాగ్</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">శ్రీకాంత్ గారు</h3>
+              <p class="sponsor-desc">టెంట్ హౌస్ డబరాలు, గిన్నెలు</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">GGS వారు</h3>
+              <p class="sponsor-desc">ప్లేట్స్ & గ్లాసెస్</p>
+            </div>
           </div>
         </div>
       </div>
@@ -2319,6 +2523,154 @@
               <p>Thank you,</p>
               <p><strong>SPL-2025 Organisers,<br>Surabhi Yuvasena.</strong></p>
             </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Organizing Team View -->
+      <div class="organizing-team-view" id="organizing-team-view">
+        <h2 class="section-title">SPL - 2025 Organisers and their responsibilities</h2>
+        
+        <div class="organizing-container">
+          <!-- Column 1: Umpires, అతిథులకు ఆహ్వానాలు, బాల్స్, పబ్లిసిటీ, భోజన -->
+          <div class="organizing-section col-1">
+            <h3 class="organizing-section-title">Umpires</h3>
+            <ul class="organizing-list">
+              <li>S A వేణుమాధవ్ గారు</li>
+              <li>V ఉమా శంకర్ గారు</li>
+              <li>C V శ్రీనివాస్ గారు</li>
+              <li>R రాజేష్ గారు</li>
+              <li>R పూజిత్ సాయి గారు</li>
+              <li>R రోజానంద్ గారు</li>
+            </ul>
+          </div>
+          
+          <div class="organizing-section col-1">
+            <h3 class="organizing-section-title">అతిథులకు ఆహ్వానాలు</h3>
+            <ul class="organizing-list">
+              <li>R వెంకట్ రెడ్డి గారు</li>
+              <li>C V భాను గారు</li>
+              <li>V జితేందర్ గారు</li>
+              <li>R పూజిత్ సాయి గారు</li>
+              <li>R చంద్రమోహన్ గారు</li>
+              <li>R మహేష్ గారు</li>
+            </ul>
+          </div>
+          
+          <div class="organizing-section col-1">
+            <h3 class="organizing-section-title">బాల్స్</h3>
+            <ul class="organizing-list">
+              <li>R జయానంద్ గారు</li>
+            </ul>
+          </div>
+          
+          <div class="organizing-section col-1">
+            <h3 class="organizing-section-title">పబ్లిసిటీ, ప్రింట్ & ఎలక్ట్రానిక్ మీడియా</h3>
+            <ul class="organizing-list">
+              <li>R జయానంద్ గారు</li>
+              <li>R లక్ష్మణ్ గారు</li>
+            </ul>
+          </div>
+          
+          <div class="organizing-section col-1">
+            <h3 class="organizing-section-title">భోజన సదుపాయ విభాగము</h3>
+            <ul class="organizing-list">
+              <li>R పూజిత్ సాయి గారు</li>
+              <li>C V భాను గారు</li>
+              <li>R మహేష్ గారు</li>
+              <li>R లక్ష్మణ్ గారు</li>
+              <li>V ఉదయ్ గారు</li>
+              <li>R యోగేష్ గారు</li>
+              <li>V జితేందర్ రెడ్డి గారు</li>
+              <li>R శుభకర్ గారు (వంటల వద్ద)</li>
+            </ul>
+            <p class="organizing-note">అవసరాన్ని బట్టి ఇతరులు కూడా సహాయ సహకారాలు అందించగలరు.</p>
+          </div>
+          
+          <!-- Column 2: Scorers, Sound System, క్రికెట్ కిట్, వాటర్ -->
+          <div class="organizing-section col-2">
+            <h3 class="organizing-section-title">Scorers</h3>
+            <ul class="organizing-list">
+              <li>V దుర్గాప్రసాద్ గారు</li>
+              <li>V శ్రీనివాసరావు గారు</li>
+              <li>V చిరంజీవి గారు</li>
+              <li>V సాయి శుభకర్ గారు</li>
+            </ul>
+          </div>
+          
+          <div class="organizing-section col-2">
+            <h3 class="organizing-section-title">Sound System</h3>
+            <ul class="organizing-list">
+              <li>R గిరీష్ భాను గారు</li>
+              <li>R హరీష్ భాను గారు</li>
+            </ul>
+          </div>
+          
+          <div class="organizing-section col-2">
+            <h3 class="organizing-section-title">క్రికెట్ కిట్ ఇంచార్జ్, మ్యాట్స్ & పట్టాలు</h3>
+            <ul class="organizing-list">
+              <li>V సూర్య గారు</li>
+              <li>R యోగేష్ గారు</li>
+              <li>R వెంకటేష్ గారు</li>
+              <li>V బన్నీ గారు</li>
+              <li>R గిరీష్ భాను గారు</li>
+            </ul>
+          </div>
+          
+          <div class="organizing-section col-2">
+            <h3 class="organizing-section-title">వాటర్ అండ్ ఐస్ ఇంచార్జ్</h3>
+            <ul class="organizing-list">
+              <li>R మహేష్ గారు</li>
+              <li>R పూర్ణేష్ భాను గారు</li>
+              <li>R యోగేష్ గారు</li>
+            </ul>
+          </div>
+          
+          <!-- Column 3: Ground Incharges, రవాణా, ప్రత్యక్ష వ్యాఖ్యాన, స్నాక్స్ -->
+          <div class="organizing-section col-3">
+            <h3 class="organizing-section-title">Ground Incharges</h3>
+            <ul class="organizing-list">
+              <li>V చిరంజీవి గారు</li>
+              <li>R జయానంద్ గారు</li>
+              <li>R చరణ్ గారు</li>
+              <li>R పూజిత్ సాయి గారు</li>
+              <li>R చంద్రమోహన్ గారు</li>
+              <li>C V భాను</li>
+            </ul>
+          </div>
+          
+          <div class="organizing-section col-3">
+            <h3 class="organizing-section-title">రవాణా విభాగము</h3>
+            <ul class="organizing-list">
+              <li>V జితేందర్ గారు</li>
+              <li>R శివ (భువనగిరి) గారు</li>
+              <li>R వెంకట్రావు (నాని)గారు</li>
+              <li>V ఉదయ్ గారు</li>
+              <li>T గోపికృష్ణ గారు</li>
+            </ul>
+          </div>
+          
+          <div class="organizing-section col-3">
+            <h3 class="organizing-section-title">ప్రత్యక్ష వ్యాఖ్యాన విభాగము</h3>
+            <ul class="organizing-list">
+              <li>S రమేష్ గారు</li>
+              <li>M నాగరాజు గారు</li>
+            </ul>
+          </div>
+          
+          <div class="organizing-section col-3">
+            <h3 class="organizing-section-title">స్నాక్స్ ఇంచార్జ్ అండ్ కూల్ డ్రింక్స్</h3>
+            <ul class="organizing-list">
+              <li>R చంద్రమోహన్ గారు</li>
+              <li>R లక్ష్మణ్ గారు</li>
+              <li>R యోగేష్ గారు</li>
+              <li>R పూర్ణేష్ గారు</li>
+            </ul>
+          </div>
+          
+          <div class="organizing-footer">
+            <p class="organizing-footer-text">ఎవరూ ఖాళీగా ఉండకుండా ఇతర విభాగాల వాళ్ళకి కూడా వారి వంతు సహాయ సహకారాలు అందించాలని కమిటీ తరపున కోరుకుంటున్నాము 🙏</p>
+            <p class="organizing-footer-note"><strong>గమనిక:</strong> ఆటగాళ్లు ఎవరైనా మ్యాచుల సమయంలో ఏదైనా మాట్లాడవలసివస్తే గ్రౌండ్ ఇన్ ఛార్జ్ లతో మాత్రమే మాట్లాడాలి.</p>
           </div>
         </div>
       </div>
@@ -2563,6 +2915,7 @@
       const pointsView = document.getElementById('points-view');
       const sponsorsView = document.getElementById('sponsors-view');
       const playingConditionsView = document.getElementById('playing-conditions-view');
+      const organizingTeamView = document.getElementById('organizing-team-view');
       
       // Hide all views
       flyerView.classList.remove('active');
@@ -2572,6 +2925,7 @@
       pointsView.classList.remove('active');
       sponsorsView.classList.remove('active');
       playingConditionsView.classList.remove('active');
+      organizingTeamView.classList.remove('active');
       
       // Show selected view and hide flyer on non-home pages
       if (view === 'flyer') {
@@ -2591,6 +2945,8 @@
           sponsorsView.classList.add('active');
         } else if (view === 'playing-conditions') {
           playingConditionsView.classList.add('active');
+        } else if (view === 'organizing-team') {
+          organizingTeamView.classList.add('active');
         }
       }
     }
@@ -3028,6 +3384,7 @@
         const pointsView = document.getElementById('points-view');
         const sponsorsView = document.getElementById('sponsors-view');
         const playingConditionsView = document.getElementById('playing-conditions-view');
+        const organizingTeamView = document.getElementById('organizing-team-view');
         
         // Hide all views
         flyerView.classList.remove('active');
@@ -3036,6 +3393,7 @@
         pointsView.classList.remove('active');
         sponsorsView.classList.remove('active');
         playingConditionsView.classList.remove('active');
+        organizingTeamView.classList.remove('active');
         
         // Update menu active state to "Teams"
         document.querySelectorAll('.menu-item').forEach(item => {
