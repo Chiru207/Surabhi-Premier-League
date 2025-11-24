@@ -117,8 +117,28 @@
       transform: translateX(0);
     }
     
+    /* Backdrop overlay for mobile sidebar */
+    .sidebar-backdrop {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 9997;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .sidebar-backdrop.active {
+      display: block;
+      opacity: 1;
+    }
+    
     /* Mobile: Toggle sidebar on menu toggle click */
     @media (max-width: 768px) {
+      /* Disable hover effects on mobile */
       .menu-toggle:hover ~ .sidebar,
       .menu-toggle:hover + .page-logo ~ .sidebar,
       .sidebar:hover {
@@ -127,6 +147,13 @@
       
       .sidebar.active {
         transform: translateX(0);
+        z-index: 9999;
+      }
+      
+      /* Ensure menu toggle is always clickable on mobile */
+      .menu-toggle {
+        pointer-events: auto;
+        z-index: 10001;
       }
     }
     
@@ -940,30 +967,17 @@
       position: absolute;
       bottom: clamp(8px, 1vh, 12px);
       right: clamp(8px, 1.5vw, 12px);
-      background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
-      color: #ffffff;
-      font-size: clamp(10px, 1.6vw, 13px);
-      font-weight: 600;
-      padding: clamp(4px, 0.6vh, 6px) clamp(8px, 1.5vw, 12px);
-      border-radius: 6px;
-      text-decoration: none;
+      color: #60a5fa;
+      font-size: clamp(11px, 1.8vw, 14px);
+      font-weight: 500;
+      text-decoration: underline;
       z-index: 3;
-      display: flex;
-      align-items: center;
-      gap: clamp(4px, 0.8vw, 6px);
       transition: all 0.3s ease;
-      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
     }
     
     .match-link:hover {
-      background: linear-gradient(135deg, #059669 0%, #10b981 100%);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.5);
-    }
-    
-    .match-link::after {
-      content: "→";
-      font-size: clamp(12px, 2vw, 16px);
+      color: #93c5fd;
+      text-decoration: underline;
     }
     
     .match-vs {
@@ -987,19 +1001,8 @@
     }
     
     /* Adjust match-time position when match-link is present */
-    .match-item .match-time {
-      right: clamp(8px, 1.5vw, 12px);
-    }
-    
     .match-item:has(.match-link) .match-time {
-      right: clamp(100px, 18vw, 140px);
-    }
-    
-    /* Fallback for browsers that don't support :has() */
-    @supports not selector(:has(*)) {
-      .match-item .match-time {
-        right: clamp(100px, 18vw, 140px);
-      }
+      right: clamp(140px, 25vw, 200px);
     }
     
     .match-item.final-match .match-time {
@@ -1629,6 +1632,9 @@
   <!-- Logo in top-right corner -->
   <img src="Surabhi_Yuvasena_Logo.png" alt="Surabhi Yuvasena Logo" class="page-logo" onerror="console.error('Logo failed to load');">
   
+  <!-- Sidebar Backdrop (mobile only) -->
+  <div class="sidebar-backdrop"></div>
+  
   <!-- Sidebar Menu -->
   <div class="sidebar">
     <div class="sidebar-title">SPL 2025</div>
@@ -1832,8 +1838,11 @@
             .match-link {
               bottom: clamp(4px, 0.6vh, 6px);
               right: clamp(4px, 0.8vw, 6px);
-              font-size: clamp(7px, 1.6vw, 9px);
-              padding: clamp(2px, 0.3vh, 3px) clamp(5px, 1vw, 7px);
+              font-size: clamp(9px, 1.8vw, 11px);
+            }
+            
+            .match-item:has(.match-link) .match-time {
+              right: clamp(120px, 22vw, 160px);
             }
             
             .teams-circle-container {
@@ -1858,7 +1867,7 @@
                 <div class="match-item">
                   <span class="match-label">M1</span>
                   <span class="match-time">8:00 AM</span>
-                  <a href="https://cricheroes.com/scorecard/20340611/surabhi-premier-league-2025/bulls-(team-a)-vs-velocity-vipers/upcoming" target="_blank" class="match-link">View Match</a>
+                  <a href="https://cricheroes.com/scorecard/20340611/surabhi-premier-league-2025/bulls-(team-a)-vs-velocity-vipers/upcoming" target="_blank" class="match-link">cricheros match page</a>
                   <div class="match-team" data-team="Velocity Vipers">
                     <img src="" alt="Velocity Vipers" class="match-team-logo" onerror="this.style.display='none';">
                     <span class="match-team-name" onclick="showTeamFromSchedule('Velocity Vipers')">Velocity Vipers</span>
@@ -1872,7 +1881,7 @@
                 <div class="match-item">
                   <span class="match-label">M2</span>
                   <span class="match-time">11:00 AM</span>
-                  <a href="https://cricheroes.com/scorecard/20340612/surabhi-premier-league-2025/risers-11-vs-dare-devils/upcoming" target="_blank" class="match-link">View Match</a>
+                  <a href="https://cricheroes.com/scorecard/20340612/surabhi-premier-league-2025/risers-11-vs-dare-devils/upcoming" target="_blank" class="match-link">cricheros match page</a>
                   <div class="match-team" data-team="Risers 11">
                     <img src="" alt="Risers 11" class="match-team-logo" onerror="this.style.display='none';">
                     <span class="match-team-name" onclick="showTeamFromSchedule('Risers 11')">Risers 11</span>
@@ -1886,7 +1895,7 @@
                 <div class="match-item">
                   <span class="match-label">M3</span>
                   <span class="match-time">2:00 PM</span>
-                  <a href="https://cricheroes.com/scorecard/20340613/surabhi-premier-league-2025/bulls-(team-b)-vs-rbr-returns/upcoming" target="_blank" class="match-link">View Match</a>
+                  <a href="https://cricheroes.com/scorecard/20340613/surabhi-premier-league-2025/bulls-(team-b)-vs-rbr-returns/upcoming" target="_blank" class="match-link">cricheros match page</a>
                   <div class="match-team" data-team="RBR Returns">
                     <img src="" alt="RBR Returns" class="match-team-logo" onerror="this.style.display='none';">
                     <span class="match-team-name" onclick="showTeamFromSchedule('RBR Returns')">RBR Returns</span>
@@ -1909,7 +1918,7 @@
                 <div class="match-item">
                   <span class="match-label">M4</span>
                   <span class="match-time">8:00 AM</span>
-                  <a href="https://cricheroes.com/scorecard/20340614/surabhi-premier-league-2025/bulls-(team-a)-vs-risers-11/upcoming" target="_blank" class="match-link">View Match</a>
+                  <a href="https://cricheroes.com/scorecard/20340614/surabhi-premier-league-2025/bulls-(team-a)-vs-risers-11/upcoming" target="_blank" class="match-link">cricheros match page</a>
                   <div class="match-team" data-team="BULLS (TEAM-A)">
                     <img src="" alt="BULLS (TEAM-A)" class="match-team-logo" onerror="this.style.display='none';">
                     <span class="match-team-name" onclick="showTeamFromSchedule('BULLS (TEAM-A)')">BULLS (TEAM-A)</span>
@@ -1923,7 +1932,7 @@
                 <div class="match-item">
                   <span class="match-label">M5</span>
                   <span class="match-time">11:00 AM</span>
-                  <a href="https://cricheroes.com/scorecard/20340617/surabhi-premier-league-2025/bulls-(team-b)-vs-velocity-vipers/upcoming" target="_blank" class="match-link">View Match</a>
+                  <a href="https://cricheroes.com/scorecard/20340617/surabhi-premier-league-2025/bulls-(team-b)-vs-velocity-vipers/upcoming" target="_blank" class="match-link">cricheros match page</a>
                   <div class="match-team" data-team="Velocity Vipers">
                     <img src="" alt="Velocity Vipers" class="match-team-logo" onerror="this.style.display='none';">
                     <span class="match-team-name" onclick="showTeamFromSchedule('Velocity Vipers')">Velocity Vipers</span>
@@ -1937,7 +1946,7 @@
                 <div class="match-item">
                   <span class="match-label">M6</span>
                   <span class="match-time">2:00 PM</span>
-                  <a href="https://cricheroes.com/scorecard/20340619/surabhi-premier-league-2025/dare-devils-vs-rbr-returns/upcoming" target="_blank" class="match-link">View Match</a>
+                  <a href="https://cricheroes.com/scorecard/20340619/surabhi-premier-league-2025/dare-devils-vs-rbr-returns/upcoming" target="_blank" class="match-link">cricheros match page</a>
                   <div class="match-team" data-team="Daredevils">
                     <img src="" alt="Daredevils" class="match-team-logo" onerror="this.style.display='none';">
                     <span class="match-team-name" onclick="showTeamFromSchedule('Daredevils')">Daredevils</span>
@@ -2377,15 +2386,76 @@
       });
     });
     
-    // Toggle sidebar on menu toggle click (mobile)
-    const menuToggle = document.querySelector('.menu-toggle');
-    if (menuToggle) {
-      menuToggle.addEventListener('click', () => {
-        const sidebar = document.querySelector('.sidebar');
-        if (sidebar) {
-          sidebar.classList.toggle('active');
+    // Toggle sidebar on menu toggle click (mobile and desktop)
+    function setupMenuToggle() {
+      const menuToggle = document.querySelector('.menu-toggle');
+      const sidebar = document.querySelector('.sidebar');
+      const sidebarBackdrop = document.querySelector('.sidebar-backdrop');
+      
+      if (!menuToggle || !sidebar) return;
+      
+      function toggleSidebar(e) {
+        if (e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        
+        const isActive = sidebar.classList.contains('active');
+        
+        if (isActive) {
+          sidebar.classList.remove('active');
+          if (sidebarBackdrop) {
+            sidebarBackdrop.classList.remove('active');
+          }
+        } else {
+          sidebar.classList.add('active');
+          if (sidebarBackdrop) {
+            sidebarBackdrop.classList.add('active');
+          }
+        }
+      }
+      
+      // Add both click and touchstart events for better mobile support
+      menuToggle.addEventListener('click', toggleSidebar);
+      menuToggle.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        toggleSidebar(e);
+      }, { passive: false });
+      
+      // Close sidebar when backdrop is clicked/touched
+      if (sidebarBackdrop) {
+        sidebarBackdrop.addEventListener('click', () => {
+          sidebar.classList.remove('active');
+          sidebarBackdrop.classList.remove('active');
+        });
+        sidebarBackdrop.addEventListener('touchstart', () => {
+          sidebar.classList.remove('active');
+          sidebarBackdrop.classList.remove('active');
+        });
+      }
+      
+      // Close sidebar when clicking outside on mobile
+      document.addEventListener('click', (e) => {
+        if (window.innerWidth <= 768) {
+          const isClickInsideSidebar = sidebar.contains(e.target);
+          const isClickOnToggle = menuToggle.contains(e.target);
+          const isClickOnBackdrop = sidebarBackdrop && sidebarBackdrop.contains(e.target);
+          
+          if (!isClickInsideSidebar && !isClickOnToggle && !isClickOnBackdrop && sidebar.classList.contains('active')) {
+            sidebar.classList.remove('active');
+            if (sidebarBackdrop) {
+              sidebarBackdrop.classList.remove('active');
+            }
+          }
         }
       });
+    }
+    
+    // Setup menu toggle when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupMenuToggle);
+    } else {
+      setupMenuToggle();
     }
     
     function showView(view) {
@@ -2861,6 +2931,28 @@
       }
       
       if (captainKey) {
+        // Hide all views including schedule
+        const flyerView = document.getElementById('flyer-view');
+        const teamsView = document.getElementById('teams-view');
+        const teamDetailView = document.getElementById('team-detail-view');
+        const scheduleView = document.getElementById('schedule-view');
+        const pointsView = document.getElementById('points-view');
+        const sponsorsView = document.getElementById('sponsors-view');
+        const playingConditionsView = document.getElementById('playing-conditions-view');
+        
+        // Hide all views
+        flyerView.classList.remove('active');
+        teamsView.classList.remove('active');
+        scheduleView.classList.remove('active');
+        pointsView.classList.remove('active');
+        sponsorsView.classList.remove('active');
+        playingConditionsView.classList.remove('active');
+        
+        // Update menu active state to "Teams"
+        document.querySelectorAll('.menu-item').forEach(item => {
+          item.classList.toggle('active', item.getAttribute('data-view') === 'teams');
+        });
+        
         // Ensure teams data is loaded
         if (Object.keys(teamsData).length === 0) {
           loadTeamsData().then(() => {
