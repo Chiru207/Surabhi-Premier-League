@@ -1405,6 +1405,11 @@
       font-weight: 600;
     }
     
+    .nrr-neutral {
+      color: #94a3b8;
+      font-weight: 600;
+    }
+    
     /* Team Assignment Legend */
     .team-assignment-legend {
       margin-top: 0;
@@ -2309,6 +2314,8 @@
                 <th>Won</th>
                 <th>Lost</th>
                 <th>Points</th>
+                <th>Runs Scored<br>(in total overs)</th>
+                <th>Runs Conceded<br>(in total overs)</th>
                 <th>NRR</th>
               </tr>
             </thead>
@@ -3418,8 +3425,246 @@
       }
     }
     
-    // Initialize points table
+    // Match results data structure
+    // Format: { matchId: { team1: 'Team Name', team2: 'Team Name', team1Runs: 150, team1Overs: 16.0, team2Runs: 140, team2Overs: 16.0, winner: 'Team Name' or null } }
+    // 
+    // Usage example:
+    // updateMatchResult({
+    //   matchId: 'M1',
+    //   team1: 'Velocity Vipers',
+    //   team2: 'BULLS (TEAM-A)',
+    //   team1Runs: 150,
+    //   team1Overs: 16.0,  // Can be 16.0 or "16.3" (16 overs 3 balls)
+    //   team2Runs: 140,
+    //   team2Overs: 16.0,
+    //   winner: 'Velocity Vipers'  // null for tie/no result
+    // });
+    let matchResults = {};
+    
+    // Convert overs from format like "16.3" (16 overs 3 balls) to decimal (16.5)
+    function convertOversToDecimal(overs) {
+      if (typeof overs === 'number') return overs;
+      if (typeof overs === 'string') {
+        const parts = overs.split('.');
+        if (parts.length === 2) {
+          const oversInt = parseInt(parts[0]) || 0;
+          const balls = parseInt(parts[1]) || 0;
+          // 6 balls = 1 over, so balls/6 gives decimal part
+          return oversInt + (balls / 6);
+        }
+        return parseFloat(overs) || 0;
+      }
+      return 0;
+    }
+    
+    // Calculate NRR and run statistics for a team
+    function calculateTeamStats(teamName, matchResults) {
+      let totalRunsScored = 0;
+      let totalOversFaced = 0;
+      let totalRunsConceded = 0;
+      let totalOversBowled = 0;
+      
+      Object.values(matchResults).forEach(match => {
+        if (match.team1 === teamName) {
+          totalRunsScored += match.team1Runs || 0;
+          totalOversFaced += convertOversToDecimal(match.team1Overs || 0);
+          totalRunsConceded += match.team2Runs || 0;
+          totalOversBowled += convertOversToDecimal(match.team2Overs || 0);
+        } else if (match.team2 === teamName) {
+          totalRunsScored += match.team2Runs || 0;
+          totalOversFaced += convertOversToDecimal(match.team2Overs || 0);
+          totalRunsConceded += match.team1Runs || 0;
+          totalOversBowled += convertOversToDecimal(match.team1Overs || 0);
+        }
+      });
+      
+      // Calculate NRR: (Runs scored per over) - (Runs conceded per over)
+      const runsScoredPerOver = totalOversFaced > 0 ? totalRunsScored / totalOversFaced : 0;
+      const runsConcededPerOver = totalOversBowled > 0 ? totalRunsConceded / totalOversBowled : 0;
+      const nrr = runsScoredPerOver - runsConcededPerOver;
+      
+      return {
+        nrr: nrr,
+        runsScored: totalRunsScored,
+        oversFaced: totalOversFaced,
+        runsConceded: totalRunsConceded,
+        oversBowled: totalOversBowled
+      };
+    }
+    
+    // Calculate NRR for a team (backward compatibility)
+    function calculateNRR(teamName, matchResults) {
+      return calculateTeamStats(teamName, matchResults).nrr;
+    }
+    
+    // Update match result
+    // matchData: { matchId: string, team1: string, team2: string, team1Runs: number, team1Overs: number|string, team2Runs: number, team2Overs: number|string, winner: string|null }
+    function updateMatchResult(matchData) {
+      if (!matchData || !matchData.matchId) {
+        console.error('Invalid match data: matchId is required');
+        return;
+      }
+      
+      matchResults[matchData.matchId] = {
+        team1: matchData.team1,
+        team2: matchData.team2,
+        team1Runs: matchData.team1Runs || 0,
+        team1Overs: matchData.team1Overs || 0,
+        team2Runs: matchData.team2Runs || 0,
+        team2Overs: matchData.team2Overs || 0,
+        winner: matchData.winner || null
+      };
+      
+      // Update points table
+      updatePointsTable();
+    }
+    
+    // Update points table based on match results
+    function updatePointsTable() {
+      const tbody = document.getElementById('points-table-body');
+      if (!tbody) return;
+      
+      // Get all teams from CAPTAIN_INFO
+      const teams = Object.values(CAPTAIN_INFO);
+      
+      // Calculate stats for each team
+      const teamStats = {};
+      
+      teams.forEach(team => {
+        const teamName = team.teamName;
+        teamStats[teamName] = {
+          teamName: teamName,
+          matchesPlayed: 0,
+          won: 0,
+          lost: 0,
+          points: 0,
+          nrr: 0,
+          runsScored: 0,
+          oversFaced: 0,
+          runsConceded: 0,
+          oversBowled: 0
+        };
+      });
+      
+      // Process each match result
+      Object.values(matchResults).forEach(match => {
+        if (!match.team1 || !match.team2) return;
+        
+        const team1 = match.team1;
+        const team2 = match.team2;
+        
+        // Only count matches that have been played (have runs/overs data)
+        if (match.team1Runs !== undefined && match.team2Runs !== undefined) {
+          if (teamStats[team1]) {
+            teamStats[team1].matchesPlayed++;
+          }
+          if (teamStats[team2]) {
+            teamStats[team2].matchesPlayed++;
+          }
+          
+          // Determine winner
+          if (match.winner) {
+            if (match.winner === team1) {
+              if (teamStats[team1]) {
+                teamStats[team1].won++;
+                teamStats[team1].points += 2;
+              }
+              if (teamStats[team2]) {
+                teamStats[team2].lost++;
+              }
+            } else if (match.winner === team2) {
+              if (teamStats[team2]) {
+                teamStats[team2].won++;
+                teamStats[team2].points += 2;
+              }
+              if (teamStats[team1]) {
+                teamStats[team1].lost++;
+              }
+            }
+            // If winner is null or doesn't match either team, it's a tie/no result (1 point each)
+            else {
+              if (teamStats[team1]) {
+                teamStats[team1].points += 1;
+              }
+              if (teamStats[team2]) {
+                teamStats[team2].points += 1;
+              }
+            }
+          }
+        }
+      });
+      
+      // Calculate NRR and run statistics for each team
+      Object.keys(teamStats).forEach(teamName => {
+        const stats = calculateTeamStats(teamName, matchResults);
+        teamStats[teamName].nrr = stats.nrr;
+        teamStats[teamName].runsScored = stats.runsScored;
+        teamStats[teamName].oversFaced = stats.oversFaced;
+        teamStats[teamName].runsConceded = stats.runsConceded;
+        teamStats[teamName].oversBowled = stats.oversBowled;
+      });
+      
+      // Convert to array and sort: first by points (descending), then by NRR (descending)
+      const sortedTeams = Object.values(teamStats).sort((a, b) => {
+        if (b.points !== a.points) {
+          return b.points - a.points;
+        }
+        return b.nrr - a.nrr;
+      });
+      
+      // Update table
+      tbody.innerHTML = '';
+      
+      sortedTeams.forEach((stats, index) => {
+        const row = document.createElement('tr');
+        const logoSrc = getLogoUrl(stats.teamName);
+        
+        // Determine NRR class based on value
+        const nrrClass = stats.nrr > 0 ? 'nrr-positive' : stats.nrr < 0 ? 'nrr-negative' : 'nrr-neutral';
+        const nrrDisplay = stats.nrr.toFixed(3);
+        
+        // Format overs to show as decimal (e.g., 32.5) or whole number if no decimal part
+        const formatOvers = (overs) => {
+          if (overs === 0) return '0';
+          const rounded = Math.round(overs * 10) / 10; // Round to 1 decimal place
+          return rounded % 1 === 0 ? rounded.toString() : rounded.toFixed(1);
+        };
+        
+        const runsScoredDisplay = stats.runsScored > 0 || stats.oversFaced > 0 
+          ? `${stats.runsScored} (${formatOvers(stats.oversFaced)})` 
+          : '0 (0)';
+        const runsConcededDisplay = stats.runsConceded > 0 || stats.oversBowled > 0 
+          ? `${stats.runsConceded} (${formatOvers(stats.oversBowled)})` 
+          : '0 (0)';
+        
+        row.innerHTML = `
+          <td>
+            <div class="team-cell">
+              ${logoSrc ? `<img src="${logoSrc}" alt="${stats.teamName}" class="team-logo-small" onerror="console.error('Logo not found: ${logoSrc}'); this.style.display='none';" />` : ''}
+              <span class="team-name-cell">${stats.teamName}</span>
+            </div>
+          </td>
+          <td>${stats.matchesPlayed}</td>
+          <td>${stats.won}</td>
+          <td>${stats.lost}</td>
+          <td class="points-highlight">${stats.points}</td>
+          <td>${runsScoredDisplay}</td>
+          <td>${runsConcededDisplay}</td>
+          <td class="${nrrClass}">${nrrDisplay}</td>
+        `;
+        
+        tbody.appendChild(row);
+      });
+    }
+    
+    // Initialize points table (shows empty/zero stats)
     function initializePointsTable() {
+      // If there are match results, use updatePointsTable instead
+      if (Object.keys(matchResults).length > 0) {
+        updatePointsTable();
+        return;
+      }
+      
       const tbody = document.getElementById('points-table-body');
       if (!tbody) return;
       
@@ -3449,6 +3694,8 @@
           <td>0</td>
           <td>0</td>
           <td class="points-highlight">0</td>
+          <td>0 (0)</td>
+          <td>0 (0)</td>
           <td class="nrr-positive">0.000</td>
         `;
         
