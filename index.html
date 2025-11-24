@@ -403,7 +403,17 @@
       margin-bottom: clamp(20px, 3vh, 40px);
     }
     
-    .back-button {
+    .team-header-buttons {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: clamp(15px, 2vw, 25px);
+      flex-wrap: wrap;
+      margin-bottom: clamp(15px, 2vh, 25px);
+    }
+    
+    .back-button,
+    .schedule-button {
       display: inline-block;
       padding: clamp(10px, 1.5vh, 15px) clamp(20px, 3vw, 30px);
       background: linear-gradient(135deg, #1e40af 0%, #1e293b 100%);
@@ -414,12 +424,16 @@
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
-      margin-bottom: clamp(15px, 2vh, 25px);
     }
     
     .back-button:hover {
       background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
       transform: translateX(-5px);
+    }
+    
+    .schedule-button:hover {
+      background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
+      transform: translateX(5px);
     }
     
     .team-detail-title {
@@ -1667,7 +1681,10 @@
       <!-- Team Detail View -->
       <div class="team-detail-view" id="team-detail-view">
         <div class="team-header">
-          <button class="back-button" onclick="showTeamsView()">← Back to Teams</button>
+          <div class="team-header-buttons">
+            <button class="back-button" onclick="showTeamsView()">← Back to Teams</button>
+            <button class="schedule-button" onclick="showView('schedule')">Schedule →</button>
+          </div>
           <div class="team-detail-title" id="team-detail-title"></div>
         </div>
         <div class="loading" id="team-loading">Loading team...</div>
@@ -1743,23 +1760,27 @@
             .match-item {
               padding: clamp(28px, 3.5vh, 38px) clamp(10px, 1.5vh, 14px) clamp(10px, 1.5vh, 14px);
               gap: clamp(8px, 2vw, 12px);
-              flex-wrap: nowrap;
-              overflow-x: auto;
+              flex-wrap: wrap;
+              overflow-x: visible;
               -webkit-overflow-scrolling: touch;
               position: relative;
+              justify-content: center;
             }
             
             .match-team {
-              min-width: clamp(60px, 18vw, 100px);
+              min-width: auto;
+              width: fit-content;
+              max-width: calc(50% - clamp(4px, 1vw, 6px));
               padding: clamp(6px, 1vh, 8px) clamp(8px, 2vw, 12px);
               font-size: clamp(12px, 3vw, 16px);
+              flex-shrink: 0;
             }
             
             .match-team-name {
               font-size: clamp(10px, 2.5vw, 14px);
               white-space: nowrap;
-              overflow: hidden;
-              text-overflow: ellipsis;
+              overflow: visible;
+              text-overflow: clip;
             }
             
             .match-team-logo {
@@ -1812,8 +1833,9 @@
             }
             
             .match-team {
-              width: 100%;
+              width: fit-content;
               min-width: auto;
+              max-width: 100%;
               justify-content: flex-start;
             }
             
