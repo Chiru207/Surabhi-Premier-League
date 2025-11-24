@@ -274,21 +274,77 @@
       opacity: 0;
       visibility: hidden;
       transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
+      z-index: 1;
     }
     
     .flyer-slide.active {
       position: relative;
       opacity: 1;
       visibility: visible;
+      z-index: 2;
     }
     
-    /* Keep first slide as relative to maintain container height */
+    /* Keep first slide relative to maintain container height */
     .flyer-slide:first-child {
       position: relative;
     }
     
-    .flyer-slide:first-child.active {
-      position: relative;
+    /* Navigation arrows */
+    .slideshow-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(30, 41, 59, 0.8);
+      border: 2px solid #60a5fa;
+      border-radius: 50%;
+      width: clamp(40px, 6vw, 50px);
+      height: clamp(40px, 6vw, 50px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      transition: all 0.3s ease;
+      color: #60a5fa;
+      font-size: clamp(20px, 3vw, 24px);
+      font-weight: bold;
+      user-select: none;
+      line-height: 1;
+    }
+    
+    .slideshow-nav:hover {
+      background: rgba(30, 41, 59, 0.95);
+      border-color: #93c5fd;
+      color: #93c5fd;
+      transform: translateY(-50%) scale(1.1);
+    }
+    
+    .slideshow-nav.prev {
+      left: clamp(10px, 2vw, 20px);
+    }
+    
+    .slideshow-nav.next {
+      right: clamp(10px, 2vw, 20px);
+    }
+    
+    .slideshow-nav:active {
+      transform: translateY(-50%) scale(0.95);
+    }
+    
+    @media (max-width: 768px) {
+      .slideshow-nav {
+        width: clamp(35px, 8vw, 45px);
+        height: clamp(35px, 8vw, 45px);
+        font-size: clamp(18px, 4vw, 22px);
+      }
+      
+      .slideshow-nav.prev {
+        left: clamp(5px, 1.5vw, 15px);
+      }
+      
+      .slideshow-nav.next {
+        right: clamp(5px, 1.5vw, 15px);
+      }
     }
     
     /* Visitor Counter */
@@ -1945,6 +2001,8 @@
             <img src="m1.jpg" alt="Match 1" class="flyer-slide" id="slide-1">
             <img src="m2.jpg" alt="Match 2" class="flyer-slide" id="slide-2">
             <img src="m3.jpg" alt="Match 3" class="flyer-slide" id="slide-3">
+            <button class="slideshow-nav prev" id="slideshow-prev" aria-label="Previous image">‹</button>
+            <button class="slideshow-nav next" id="slideshow-next" aria-label="Next image">›</button>
           </div>
         </div>
       </div>
@@ -3739,14 +3797,20 @@
     // Initialize flyer slideshow
     let flyerSlideIndex = 0;
     let flyerSlideInterval = null;
+    let slideshowSlides = [];
     
     function initializeFlyerSlideshow() {
-      const slides = document.querySelectorAll('.flyer-slide');
-      if (slides.length === 0) return;
+      slideshowSlides = document.querySelectorAll('.flyer-slide');
+      if (slideshowSlides.length === 0) return;
       
       // Function to show a specific slide
       function showSlide(index) {
-        slides.forEach((slide, i) => {
+        if (index < 0) index = slideshowSlides.length - 1;
+        if (index >= slideshowSlides.length) index = 0;
+        
+        flyerSlideIndex = index;
+        
+        slideshowSlides.forEach((slide, i) => {
           slide.classList.remove('active');
           if (i === index) {
             slide.classList.add('active');
@@ -3756,8 +3820,12 @@
       
       // Function to go to next slide
       function nextSlide() {
-        flyerSlideIndex = (flyerSlideIndex + 1) % slides.length;
-        showSlide(flyerSlideIndex);
+        showSlide(flyerSlideIndex + 1);
+      }
+      
+      // Function to go to previous slide
+      function prevSlide() {
+        showSlide(flyerSlideIndex - 1);
       }
       
       // Start the slideshow only when flyer view is active
@@ -3776,8 +3844,52 @@
         }
       }
       
+      // Reset and restart slideshow (useful after manual navigation)
+      function resetSlideshow() {
+        stopSlideshow();
+        if (flyerView && flyerView.classList.contains('active')) {
+          startSlideshow();
+        }
+      }
+      
       // Initialize first slide
       showSlide(0);
+      
+      // Add navigation button event listeners
+      const prevButton = document.getElementById('slideshow-prev');
+      const nextButton = document.getElementById('slideshow-next');
+      
+      if (prevButton) {
+        prevButton.addEventListener('click', (e) => {
+          e.stopPropagation();
+          prevSlide();
+          resetSlideshow();
+        });
+      }
+      
+      if (nextButton) {
+        nextButton.addEventListener('click', (e) => {
+          e.stopPropagation();
+          nextSlide();
+          resetSlideshow();
+        });
+      }
+      
+      // Keyboard navigation (arrow keys)
+      document.addEventListener('keydown', (e) => {
+        const flyerView = document.getElementById('flyer-view');
+        if (flyerView && flyerView.classList.contains('active')) {
+          if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            prevSlide();
+            resetSlideshow();
+          } else if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            nextSlide();
+            resetSlideshow();
+          }
+        }
+      });
       
       // Start slideshow if flyer view is active
       const flyerView = document.getElementById('flyer-view');
