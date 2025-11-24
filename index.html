@@ -654,6 +654,64 @@
       border-right: none;
     }
     
+    /* Rules Container Styles */
+    .rules-container {
+      width: 100%;
+      max-width: 1000px;
+      margin: clamp(40px, 5vh, 60px) auto 0;
+      padding: clamp(20px, 3vh, 40px);
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.6) 100%);
+      border: 2px solid #334155;
+      border-radius: 12px;
+    }
+    
+    .rules-greeting {
+      margin-bottom: clamp(20px, 3vh, 30px);
+      text-align: center;
+    }
+    
+    .rules-greeting p {
+      font-size: clamp(16px, 2.5vw, 20px);
+      color: #e2e8f0;
+      line-height: 1.6;
+      margin-bottom: clamp(8px, 1vh, 12px);
+    }
+    
+    .rules-list {
+      margin: clamp(20px, 3vh, 30px) 0;
+      padding-left: clamp(20px, 4vw, 40px);
+      color: #e2e8f0;
+    }
+    
+    .rules-list li {
+      font-size: clamp(14px, 2.2vw, 18px);
+      line-height: 1.8;
+      margin-bottom: clamp(15px, 2.5vh, 25px);
+      color: #cbd5e1;
+      text-align: left;
+    }
+    
+    .rules-list li strong {
+      color: #60a5fa;
+    }
+    
+    .rules-closing {
+      margin-top: clamp(30px, 4vh, 40px);
+      text-align: center;
+    }
+    
+    .rules-closing p {
+      font-size: clamp(14px, 2.2vw, 18px);
+      color: #e2e8f0;
+      line-height: 1.6;
+      margin-bottom: clamp(8px, 1vh, 12px);
+    }
+    
+    .rules-closing p strong {
+      color: #60a5fa;
+      font-size: clamp(16px, 2.5vw, 22px);
+    }
+    
     .conditions-table td strong {
       color: #60a5fa;
       font-weight: 700;
@@ -2197,26 +2255,9 @@
           </div>
         </div>
       </div>
-      <style>
-        .section-title .pending-note {
-          color: orange;
-        }
-      </style>
-      <script>
-        // highlight "(to be confirmed)" text in orange without moving it
-        document.addEventListener('DOMContentLoaded', function() {
-          var title = document.querySelector('#playing-conditions-view .section-title');
-          if (title) {
-            title.innerHTML = title.innerHTML.replace(
-              /\(to be confirmed\)/g,
-              '<span class="pending-note">(to be confirmed)</span>'
-            );
-          }
-        });
-      </script>
       <!-- Playing Conditions View -->
       <div class="playing-conditions-view" id="playing-conditions-view">
-        <h2 class="section-title">Playing Conditions (to be confirmed)</h2>
+        <h2 class="section-title">Playing Conditions</h2>
         <div class="conditions-container">
           <div class="conditions-table-container">
             <table class="conditions-table">
@@ -2243,6 +2284,41 @@
                 </tr>
               </tbody>
             </table>
+          </div>
+          
+          <div class="rules-container">
+            <div class="rules-greeting">
+              <p><strong>Dear all Captains,</strong></p>
+              <p>Please follow these Rules and Conditions during SPL-2025.</p>
+            </div>
+            
+            <ol class="rules-list">
+              <li>ప్రతి match కి 15 నిమిషాల ముందు Toss వేయడం జరుగుతుంది. ఆ సమయానికి ఇద్దరు captains 12 players team తెలియజేయాలి. అందులో ఒకరికి కేవలం Batting లేదా Bowling మాత్రమే అనుమతించబడుతుంది.</li>
+              
+              <li>ప్రతి match మొదటి innings powerplay overs లోపు ఇరు teams యొక్క 12 players ground లో అందుబాటులో ఉండాలి. తరువాత వచ్చే players ని ఆ match కి అనుమతించడం జరగదు. ప్రతి ఆటగాడు సమయపాలనతో వ్యవహరించడం చాలా ముఖ్యం. ఈ విషయంలో కెప్టెన్లు చొరవ తీసుకుని హుందాగా వ్యవహరించాలి.</li>
+              
+              <li>Power play జరిగేటప్పుడు కేవలం ఇద్దరు fielders మాత్రమే outside 30-yard circle లో ఉండవచ్చును. మిగిలిన overs లో కనీసం నలుగురు fielders తప్పనిసరిగా inside 30-yard circle లో ఉండవలెను.<br>Bowler తో సంబంధం లేకుండా maximum 5 fielders ను మాత్రమే leg side లో అనుమతిస్తారు.</li>
+              
+              <li>LBW outs ఉండవు. Leg-byes ఉన్నాయి. Batsman action ని బట్టి leg-byes ఇవ్వాలా లేదా అనేది umpire నిర్ణయిస్తారు.</li>
+              
+              <li>No-ball తరువాత ball కు free-hit ఉంటుంది.</li>
+              
+              <li>By-Runner ని అనుమతించరు. ఆడలేని పక్షంలో retired hurt తీసుకొని మళ్ళీ wicket పడినప్పుడు batting కొనసాగించవచ్చును.</li>
+              
+              <li>Throw Bowling అనుమతించరు. Throw Bowling అవునా/కాదా అనేది umpires నిర్ణయిస్తారు.</li>
+              
+              <li>ఒక bowler 2 beamers వేసిన వెంటనే ఆ innings లో అతను bowling నుంచి తొలగించబడతాడు.</li>
+              
+              <li>ముఖ్యంగా ఆటగాళ్ళందరూ వారివారి కెప్టెన్ సందేశాలను అనుసరించి ఆడాలి.<br>ఎటువంటి విషయంలోనైనా కెప్టెన్లను మాత్రమే umpires మరియు organizers తో చర్చించడానికి అనుమతిస్తాము.</li>
+              
+              <li>ప్రతి Team, వారికి వచ్చిన ఆటగాళ్ళను మాత్రమే వారి Team లో ఆడించాలి. Substitute fielder గా కూడా బయటి వారిని అనుమతించము. Players అందరూ, organizers ఇచ్చిన Sports Dress తో మాత్రమే ఆడటానికి రావాలి. ప్రత్యేక కారణాలు ఉంటే తప్ప uniform మినహాయింపు ఉండదు. Players అందరికీ Shoes తప్పనిసరిగా ఉండాలి.</li>
+            </ol>
+            
+            <div class="rules-closing">
+              <p><strong>ALL THE BEST to all the teams.</strong></p>
+              <p>Thank you,</p>
+              <p><strong>SPL-2025 Organisers,<br>Surabhi Yuvasena.</strong></p>
+            </div>
           </div>
         </div>
       </div>
