@@ -262,6 +262,7 @@
       overflow: hidden;
     }
     
+    /* All slides are absolutely positioned and stacked in the same place */
     .flyer-slide {
       position: absolute;
       top: 0;
@@ -277,6 +278,7 @@
       z-index: 1;
     }
     
+    /* Active slide is relative to maintain container height */
     .flyer-slide.active {
       position: relative;
       opacity: 1;
@@ -284,7 +286,7 @@
       z-index: 2;
     }
     
-    /* Keep first slide relative to maintain container height */
+    /* First slide is relative initially to establish container height */
     .flyer-slide:first-child {
       position: relative;
     }
@@ -3814,6 +3816,18 @@
           slide.classList.remove('active');
           if (i === index) {
             slide.classList.add('active');
+            // Make active slide relative to maintain height, others absolute
+            if (i === 0) {
+              slide.style.position = 'relative';
+            } else {
+              slide.style.position = 'absolute';
+              // Make first slide absolute when not active
+              if (slideshowSlides[0] && !slideshowSlides[0].classList.contains('active')) {
+                slideshowSlides[0].style.position = 'absolute';
+              }
+            }
+          } else {
+            slide.style.position = 'absolute';
           }
         });
       }
