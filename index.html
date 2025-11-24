@@ -112,6 +112,24 @@
       transform: translateX(0);
     }
     
+    /* Mobile: Show sidebar when active class is present */
+    .sidebar.active {
+      transform: translateX(0);
+    }
+    
+    /* Mobile: Toggle sidebar on menu toggle click */
+    @media (max-width: 768px) {
+      .menu-toggle:hover ~ .sidebar,
+      .menu-toggle:hover + .page-logo ~ .sidebar,
+      .sidebar:hover {
+        transform: translateX(-100%);
+      }
+      
+      .sidebar.active {
+        transform: translateX(0);
+      }
+    }
+    
     .sidebar-title {
       font-size: clamp(18px, 2.5vw, 24px);
       color: #60a5fa;
@@ -908,6 +926,44 @@
       color: #ffffff;
       font-weight: 700;
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .match-team-name:hover {
+      color: #93c5fd;
+      text-shadow: 0 2px 8px rgba(147, 197, 253, 0.6);
+      transform: scale(1.05);
+    }
+    
+    .match-link {
+      position: absolute;
+      bottom: clamp(8px, 1vh, 12px);
+      right: clamp(8px, 1.5vw, 12px);
+      background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+      color: #ffffff;
+      font-size: clamp(10px, 1.6vw, 13px);
+      font-weight: 600;
+      padding: clamp(4px, 0.6vh, 6px) clamp(8px, 1.5vw, 12px);
+      border-radius: 6px;
+      text-decoration: none;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      gap: clamp(4px, 0.8vw, 6px);
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+    }
+    
+    .match-link:hover {
+      background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.5);
+    }
+    
+    .match-link::after {
+      content: "→";
+      font-size: clamp(12px, 2vw, 16px);
     }
     
     .match-vs {
@@ -928,6 +984,22 @@
       border-radius: 6px;
       z-index: 2;
       box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+    }
+    
+    /* Adjust match-time position when match-link is present */
+    .match-item .match-time {
+      right: clamp(8px, 1.5vw, 12px);
+    }
+    
+    .match-item:has(.match-link) .match-time {
+      right: clamp(100px, 18vw, 140px);
+    }
+    
+    /* Fallback for browsers that don't support :has() */
+    @supports not selector(:has(*)) {
+      .match-item .match-time {
+        right: clamp(100px, 18vw, 140px);
+      }
     }
     
     .match-item.final-match .match-time {
@@ -1753,8 +1825,15 @@
             
             .match-time {
               top: clamp(4px, 0.6vh, 6px);
-              right: clamp(4px, 0.8vw, 6px);
+              right: clamp(50px, 10vw, 75px);
               font-size: clamp(8px, 2vw, 10px);
+            }
+            
+            .match-link {
+              bottom: clamp(4px, 0.6vh, 6px);
+              right: clamp(4px, 0.8vw, 6px);
+              font-size: clamp(7px, 1.6vw, 9px);
+              padding: clamp(2px, 0.3vh, 3px) clamp(5px, 1vw, 7px);
             }
             
             .teams-circle-container {
@@ -1779,40 +1858,43 @@
                 <div class="match-item">
                   <span class="match-label">M1</span>
                   <span class="match-time">8:00 AM</span>
+                  <a href="https://cricheroes.com/scorecard/20340611/surabhi-premier-league-2025/bulls-(team-a)-vs-velocity-vipers/upcoming" target="_blank" class="match-link">View Match</a>
                   <div class="match-team" data-team="Velocity Vipers">
                     <img src="" alt="Velocity Vipers" class="match-team-logo" onerror="this.style.display='none';">
-                    <span class="match-team-name">Velocity Vipers</span>
+                    <span class="match-team-name" onclick="showTeamFromSchedule('Velocity Vipers')">Velocity Vipers</span>
                   </div>
                   <div class="match-vs">VS</div>
                   <div class="match-team" data-team="BULLS (TEAM-A)">
                     <img src="" alt="BULLS (TEAM-A)" class="match-team-logo" onerror="this.style.display='none';">
-                    <span class="match-team-name">BULLS (TEAM-A)</span>
+                    <span class="match-team-name" onclick="showTeamFromSchedule('BULLS (TEAM-A)')">BULLS (TEAM-A)</span>
                   </div>
                 </div>
                 <div class="match-item">
                   <span class="match-label">M2</span>
                   <span class="match-time">11:00 AM</span>
+                  <a href="https://cricheroes.com/scorecard/20340612/surabhi-premier-league-2025/risers-11-vs-dare-devils/upcoming" target="_blank" class="match-link">View Match</a>
                   <div class="match-team" data-team="Risers 11">
                     <img src="" alt="Risers 11" class="match-team-logo" onerror="this.style.display='none';">
-                    <span class="match-team-name">Risers 11</span>
+                    <span class="match-team-name" onclick="showTeamFromSchedule('Risers 11')">Risers 11</span>
                   </div>
                   <div class="match-vs">VS</div>
                   <div class="match-team" data-team="Daredevils">
                     <img src="" alt="Daredevils" class="match-team-logo" onerror="this.style.display='none';">
-                    <span class="match-team-name">Daredevils</span>
+                    <span class="match-team-name" onclick="showTeamFromSchedule('Daredevils')">Daredevils</span>
                   </div>
                 </div>
                 <div class="match-item">
                   <span class="match-label">M3</span>
                   <span class="match-time">2:00 PM</span>
+                  <a href="https://cricheroes.com/scorecard/20340613/surabhi-premier-league-2025/bulls-(team-b)-vs-rbr-returns/upcoming" target="_blank" class="match-link">View Match</a>
                   <div class="match-team" data-team="RBR Returns">
                     <img src="" alt="RBR Returns" class="match-team-logo" onerror="this.style.display='none';">
-                    <span class="match-team-name">RBR Returns</span>
+                    <span class="match-team-name" onclick="showTeamFromSchedule('RBR Returns')">RBR Returns</span>
                   </div>
                   <div class="match-vs">VS</div>
                   <div class="match-team" data-team="BULLS (TEAM-B)">
                     <img src="" alt="BULLS (TEAM-B)" class="match-team-logo" onerror="this.style.display='none';">
-                    <span class="match-team-name">BULLS (TEAM-B)</span>
+                    <span class="match-team-name" onclick="showTeamFromSchedule('BULLS (TEAM-B)')">BULLS (TEAM-B)</span>
                   </div>
                 </div>
               </div>
@@ -1827,40 +1909,43 @@
                 <div class="match-item">
                   <span class="match-label">M4</span>
                   <span class="match-time">8:00 AM</span>
+                  <a href="https://cricheroes.com/scorecard/20340614/surabhi-premier-league-2025/bulls-(team-a)-vs-risers-11/upcoming" target="_blank" class="match-link">View Match</a>
                   <div class="match-team" data-team="BULLS (TEAM-A)">
                     <img src="" alt="BULLS (TEAM-A)" class="match-team-logo" onerror="this.style.display='none';">
-                    <span class="match-team-name">BULLS (TEAM-A)</span>
+                    <span class="match-team-name" onclick="showTeamFromSchedule('BULLS (TEAM-A)')">BULLS (TEAM-A)</span>
                   </div>
                   <div class="match-vs">VS</div>
                   <div class="match-team" data-team="Risers 11">
                     <img src="" alt="Risers 11" class="match-team-logo" onerror="this.style.display='none';">
-                    <span class="match-team-name">Risers 11</span>
+                    <span class="match-team-name" onclick="showTeamFromSchedule('Risers 11')">Risers 11</span>
                   </div>
                 </div>
                 <div class="match-item">
                   <span class="match-label">M5</span>
                   <span class="match-time">11:00 AM</span>
+                  <a href="https://cricheroes.com/scorecard/20340617/surabhi-premier-league-2025/bulls-(team-b)-vs-velocity-vipers/upcoming" target="_blank" class="match-link">View Match</a>
                   <div class="match-team" data-team="Velocity Vipers">
                     <img src="" alt="Velocity Vipers" class="match-team-logo" onerror="this.style.display='none';">
-                    <span class="match-team-name">Velocity Vipers</span>
+                    <span class="match-team-name" onclick="showTeamFromSchedule('Velocity Vipers')">Velocity Vipers</span>
                   </div>
                   <div class="match-vs">VS</div>
                   <div class="match-team" data-team="BULLS (TEAM-B)">
                     <img src="" alt="BULLS (TEAM-B)" class="match-team-logo" onerror="this.style.display='none';">
-                    <span class="match-team-name">BULLS (TEAM-B)</span>
+                    <span class="match-team-name" onclick="showTeamFromSchedule('BULLS (TEAM-B)')">BULLS (TEAM-B)</span>
                   </div>
                 </div>
                 <div class="match-item">
                   <span class="match-label">M6</span>
                   <span class="match-time">2:00 PM</span>
+                  <a href="https://cricheroes.com/scorecard/20340619/surabhi-premier-league-2025/dare-devils-vs-rbr-returns/upcoming" target="_blank" class="match-link">View Match</a>
                   <div class="match-team" data-team="Daredevils">
                     <img src="" alt="Daredevils" class="match-team-logo" onerror="this.style.display='none';">
-                    <span class="match-team-name">Daredevils</span>
+                    <span class="match-team-name" onclick="showTeamFromSchedule('Daredevils')">Daredevils</span>
                   </div>
                   <div class="match-vs">VS</div>
                   <div class="match-team" data-team="RBR Returns">
                     <img src="" alt="RBR Returns" class="match-team-logo" onerror="this.style.display='none';">
-                    <span class="match-team-name">RBR Returns</span>
+                    <span class="match-team-name" onclick="showTeamFromSchedule('RBR Returns')">RBR Returns</span>
                   </div>
                 </div>
               </div>
@@ -2083,6 +2168,10 @@
               <h3 class="sponsor-name">M. నాగరాజు గారు</h3>
               <p class="sponsor-desc">ఉత్తమ క్రీడాస్ఫూర్థి కలిగిన జట్టు  — Fair Play Award</p>
             </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">R. అజయ్ బాబు గారు</h3>
+              <p class="sponsor-desc">Rs. 500 each for all Man of the Match and Rs. 1000 for Man of the Final</p>
+            </div>
           </div>
         </div>
       </div>
@@ -2277,8 +2366,27 @@
         if (view === 'teams' && Object.keys(teamsData).length === 0) {
           loadTeamsData();
         }
+        
+        // Close sidebar on mobile after menu item click
+        if (window.innerWidth <= 768) {
+          const sidebar = document.querySelector('.sidebar');
+          if (sidebar) {
+            sidebar.classList.remove('active');
+          }
+        }
       });
     });
+    
+    // Toggle sidebar on menu toggle click (mobile)
+    const menuToggle = document.querySelector('.menu-toggle');
+    if (menuToggle) {
+      menuToggle.addEventListener('click', () => {
+        const sidebar = document.querySelector('.sidebar');
+        if (sidebar) {
+          sidebar.classList.toggle('active');
+        }
+      });
+    }
     
     function showView(view) {
       currentView = view;
@@ -2739,6 +2847,38 @@
       document.getElementById('team-detail-view').classList.add('active');
     }
     
+    // Function to show team from schedule page
+    function showTeamFromSchedule(teamName) {
+      // Find captain key from team name
+      let captainKey = null;
+      
+      // Search through CAPTAIN_INFO to find matching team
+      for (const [key, info] of Object.entries(CAPTAIN_INFO)) {
+        if (info.teamName === teamName) {
+          captainKey = key;
+          break;
+        }
+      }
+      
+      if (captainKey) {
+        // Ensure teams data is loaded
+        if (Object.keys(teamsData).length === 0) {
+          loadTeamsData().then(() => {
+            showTeamDetail(captainKey);
+          });
+        } else {
+          showTeamDetail(captainKey);
+        }
+      } else {
+        console.warn(`Team not found: ${teamName}`);
+        // Try to show teams view and let user select
+        showView('teams');
+        if (Object.keys(teamsData).length === 0) {
+          loadTeamsData();
+        }
+      }
+    }
+    
     // Initialize points table
     function initializePointsTable() {
       const tbody = document.getElementById('points-table-body');
@@ -2831,3 +2971,4 @@
   </script>
 </body>
 </html>
+
