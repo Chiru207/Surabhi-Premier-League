@@ -272,81 +272,20 @@
       height: auto;
       border-radius: 12px;
       object-fit: contain;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
+      display: none;
       z-index: 1;
     }
     
     /* Active slide is relative to maintain container height */
     .flyer-slide.active {
       position: relative;
-      opacity: 1;
-      visibility: visible;
+      display: block;
       z-index: 2;
     }
     
     /* First slide is relative initially to establish container height */
     .flyer-slide:first-child {
       position: relative;
-    }
-    
-    /* Navigation arrows */
-    .slideshow-nav {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(30, 41, 59, 0.8);
-      border: 2px solid #60a5fa;
-      border-radius: 50%;
-      width: clamp(40px, 6vw, 50px);
-      height: clamp(40px, 6vw, 50px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      z-index: 10;
-      transition: all 0.3s ease;
-      color: #60a5fa;
-      font-size: clamp(20px, 3vw, 24px);
-      font-weight: bold;
-      user-select: none;
-      line-height: 1;
-    }
-    
-    .slideshow-nav:hover {
-      background: rgba(30, 41, 59, 0.95);
-      border-color: #93c5fd;
-      color: #93c5fd;
-      transform: translateY(-50%) scale(1.1);
-    }
-    
-    .slideshow-nav.prev {
-      left: clamp(10px, 2vw, 20px);
-    }
-    
-    .slideshow-nav.next {
-      right: clamp(10px, 2vw, 20px);
-    }
-    
-    .slideshow-nav:active {
-      transform: translateY(-50%) scale(0.95);
-    }
-    
-    @media (max-width: 768px) {
-      .slideshow-nav {
-        width: clamp(35px, 8vw, 45px);
-        height: clamp(35px, 8vw, 45px);
-        font-size: clamp(18px, 4vw, 22px);
-      }
-      
-      .slideshow-nav.prev {
-        left: clamp(5px, 1.5vw, 15px);
-      }
-      
-      .slideshow-nav.next {
-        right: clamp(5px, 1.5vw, 15px);
-      }
     }
     
     /* Visitor Counter */
@@ -2003,8 +1942,6 @@
             <img src="m1.jpg" alt="Match 1" class="flyer-slide" id="slide-1">
             <img src="m2.jpg" alt="Match 2" class="flyer-slide" id="slide-2">
             <img src="m3.jpg" alt="Match 3" class="flyer-slide" id="slide-3">
-            <button class="slideshow-nav prev" id="slideshow-prev" aria-label="Previous image">‹</button>
-            <button class="slideshow-nav next" id="slideshow-next" aria-label="Next image">›</button>
           </div>
         </div>
       </div>
@@ -2537,8 +2474,8 @@
               <p class="sponsor-desc">ఉత్తమ క్రీడాస్ఫూర్థి కలిగిన జట్టు  — Fair Play Award</p>
             </div>
             <div class="sponsor-card">
-              <h3 class="sponsor-name">R. అజయ్ బాబు గారు</h3>
-              <p class="sponsor-desc">Rs. 500 each for all MoMs - Rs. 1000 for Man of the Final</p>
+              <h3 class="sponsor-name">కీ.శే. శ్రీ రేకందార్ పుల్లారెడ్డి గారి జ్ఞాపకార్థం</h3>
+              <p class="sponsor-desc">వారి మనవడు R. అజయ్ బాబు గారు — Rs. 500 each for all MoMs & Rs. 1000 for Man of the Final</p>
             </div>
             <div class="sponsor-card">
               <h3 class="sponsor-name">మాధవ ఈవెంట్స్, కొత్తపేట</h3>
@@ -3799,34 +3736,28 @@
     // Initialize flyer slideshow
     let flyerSlideIndex = 0;
     let flyerSlideInterval = null;
-    let slideshowSlides = [];
+    let touchStartX = 0;
+    let touchEndX = 0;
     
     function initializeFlyerSlideshow() {
-      slideshowSlides = document.querySelectorAll('.flyer-slide');
-      if (slideshowSlides.length === 0) return;
+      const slides = document.querySelectorAll('.flyer-slide');
+      if (slides.length === 0) return;
       
       // Function to show a specific slide
       function showSlide(index) {
-        if (index < 0) index = slideshowSlides.length - 1;
-        if (index >= slideshowSlides.length) index = 0;
+        if (index < 0) index = slides.length - 1;
+        if (index >= slides.length) index = 0;
         
         flyerSlideIndex = index;
         
-        slideshowSlides.forEach((slide, i) => {
-          slide.classList.remove('active');
+        slides.forEach((slide, i) => {
           if (i === index) {
             slide.classList.add('active');
-            // Make active slide relative to maintain height, others absolute
-            if (i === 0) {
-              slide.style.position = 'relative';
-            } else {
-              slide.style.position = 'absolute';
-              // Make first slide absolute when not active
-              if (slideshowSlides[0] && !slideshowSlides[0].classList.contains('active')) {
-                slideshowSlides[0].style.position = 'absolute';
-              }
-            }
+            // Make active slide relative to maintain height
+            slide.style.position = 'relative';
           } else {
+            slide.classList.remove('active');
+            // Make inactive slides absolute
             slide.style.position = 'absolute';
           }
         });
@@ -3835,11 +3766,13 @@
       // Function to go to next slide
       function nextSlide() {
         showSlide(flyerSlideIndex + 1);
+        resetSlideshow();
       }
       
       // Function to go to previous slide
       function prevSlide() {
         showSlide(flyerSlideIndex - 1);
+        resetSlideshow();
       }
       
       // Start the slideshow only when flyer view is active
@@ -3847,7 +3780,9 @@
         if (flyerSlideInterval) {
           clearInterval(flyerSlideInterval);
         }
-        flyerSlideInterval = setInterval(nextSlide, 5000); // 5 seconds
+        flyerSlideInterval = setInterval(() => {
+          showSlide(flyerSlideIndex + 1);
+        }, 3000); // 3 seconds
       }
       
       // Stop the slideshow
@@ -3861,6 +3796,7 @@
       // Reset and restart slideshow (useful after manual navigation)
       function resetSlideshow() {
         stopSlideshow();
+        const flyerView = document.getElementById('flyer-view');
         if (flyerView && flyerView.classList.contains('active')) {
           startSlideshow();
         }
@@ -3869,41 +3805,57 @@
       // Initialize first slide
       showSlide(0);
       
-      // Add navigation button event listeners
-      const prevButton = document.getElementById('slideshow-prev');
-      const nextButton = document.getElementById('slideshow-next');
-      
-      if (prevButton) {
-        prevButton.addEventListener('click', (e) => {
-          e.stopPropagation();
-          prevSlide();
-          resetSlideshow();
-        });
-      }
-      
-      if (nextButton) {
-        nextButton.addEventListener('click', (e) => {
-          e.stopPropagation();
-          nextSlide();
-          resetSlideshow();
-        });
-      }
-      
       // Keyboard navigation (arrow keys)
-      document.addEventListener('keydown', (e) => {
+      function handleKeyDown(e) {
         const flyerView = document.getElementById('flyer-view');
         if (flyerView && flyerView.classList.contains('active')) {
           if (e.key === 'ArrowLeft') {
             e.preventDefault();
             prevSlide();
-            resetSlideshow();
           } else if (e.key === 'ArrowRight') {
             e.preventDefault();
             nextSlide();
-            resetSlideshow();
           }
         }
-      });
+      }
+      
+      // Touch gesture handlers
+      function handleTouchStart(e) {
+        touchStartX = e.changedTouches[0].screenX;
+      }
+      
+      function handleTouchEnd(e) {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+      }
+      
+      function handleSwipe() {
+        const flyerView = document.getElementById('flyer-view');
+        if (!flyerView || !flyerView.classList.contains('active')) return;
+        
+        const swipeThreshold = 50; // Minimum distance for a swipe
+        const diff = touchStartX - touchEndX;
+        
+        if (Math.abs(diff) > swipeThreshold) {
+          if (diff > 0) {
+            // Swipe left - go to next slide
+            nextSlide();
+          } else {
+            // Swipe right - go to previous slide
+            prevSlide();
+          }
+        }
+      }
+      
+      // Add keyboard event listener
+      document.addEventListener('keydown', handleKeyDown);
+      
+      // Add touch event listeners to slideshow container
+      const slideshow = document.getElementById('flyer-slideshow');
+      if (slideshow) {
+        slideshow.addEventListener('touchstart', handleTouchStart, { passive: true });
+        slideshow.addEventListener('touchend', handleTouchEnd, { passive: true });
+      }
       
       // Start slideshow if flyer view is active
       const flyerView = document.getElementById('flyer-view');
@@ -3922,17 +3874,6 @@
       
       if (flyerView) {
         observer.observe(flyerView, { attributes: true, attributeFilter: ['class'] });
-      }
-      
-      // Pause on hover (optional)
-      const slideshow = document.getElementById('flyer-slideshow');
-      if (slideshow) {
-        slideshow.addEventListener('mouseenter', stopSlideshow);
-        slideshow.addEventListener('mouseleave', () => {
-          if (flyerView && flyerView.classList.contains('active')) {
-            startSlideshow();
-          }
-        });
       }
     }
     
