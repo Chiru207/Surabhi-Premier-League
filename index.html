@@ -3957,42 +3957,92 @@
         }
       }
       
-      // Touch gesture handlers
+      // Touch gesture handlers and pause functionality
+      let touchHoldTimer = null;
+      let mouseDown = false;
+      
       function handleTouchStart(e) {
         touchStartX = e.changedTouches[0].screenX;
+        
+        // Pause slideshow on touch (touchscreens)
+        const flyerView = document.getElementById('flyer-view');
+        if (flyerView && flyerView.classList.contains('active')) {
+          stopSlideshow();
+        }
       }
       
       function handleTouchEnd(e) {
         touchEndX = e.changedTouches[0].screenX;
-        handleSwipe();
-      }
-      
-      function handleSwipe() {
+        
         const flyerView = document.getElementById('flyer-view');
         if (!flyerView || !flyerView.classList.contains('active')) return;
         
-        const swipeThreshold = 50; // Minimum distance for a swipe
-        const diff = touchStartX - touchEndX;
+        // Check if it was a swipe or just a touch/hold
+        const swipeThreshold = 50;
+        const diff = Math.abs(touchStartX - touchEndX);
         
-        if (Math.abs(diff) > swipeThreshold) {
-          if (diff > 0) {
+        if (diff > swipeThreshold) {
+          // It was a swipe - handle navigation
+          const swipeDiff = touchStartX - touchEndX;
+          if (swipeDiff > 0) {
             // Swipe left - go to next slide
             nextSlide();
           } else {
             // Swipe right - go to previous slide
             prevSlide();
           }
+        } else {
+          // It was just a touch/hold - resume slideshow
+          startSlideshow();
+        }
+        
+        // Clear any timers
+        if (touchHoldTimer) {
+          clearTimeout(touchHoldTimer);
+          touchHoldTimer = null;
         }
       }
       
       // Add keyboard event listener
       document.addEventListener('keydown', handleKeyDown);
       
-      // Add touch event listeners to slideshow container
+      // Add touch and mouse event listeners to slideshow container
       const slideshow = document.getElementById('flyer-slideshow');
       if (slideshow) {
+        // Touch events for swipe navigation and pause
         slideshow.addEventListener('touchstart', handleTouchStart, { passive: true });
         slideshow.addEventListener('touchend', handleTouchEnd, { passive: true });
+        
+        // Pause on mouse click and hold (desktop/laptop)
+        slideshow.addEventListener('mousedown', (e) => {
+          const flyerView = document.getElementById('flyer-view');
+          if (flyerView && flyerView.classList.contains('active')) {
+            mouseDown = true;
+            stopSlideshow();
+          }
+        });
+        
+        slideshow.addEventListener('mouseup', (e) => {
+          const flyerView = document.getElementById('flyer-view');
+          if (mouseDown) {
+            mouseDown = false;
+            // Resume slideshow when mouse is released
+            if (flyerView && flyerView.classList.contains('active')) {
+              startSlideshow();
+            }
+          }
+        });
+        
+        // Also handle mouse leave (in case user drags outside)
+        slideshow.addEventListener('mouseleave', (e) => {
+          if (mouseDown) {
+            mouseDown = false;
+            const flyerView = document.getElementById('flyer-view');
+            if (flyerView && flyerView.classList.contains('active')) {
+              startSlideshow();
+            }
+          }
+        });
       }
       
       // Start slideshow if flyer view is active
