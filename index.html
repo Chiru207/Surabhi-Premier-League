@@ -272,15 +272,89 @@
       height: auto;
       border-radius: 12px;
       object-fit: contain;
-      display: none;
+      display: block;
       z-index: 1;
+      opacity: 0;
+      visibility: hidden;
+      transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
     }
     
     /* Active slide is relative to maintain container height */
     .flyer-slide.active {
-      position: relative;
-      display: block;
+      position: relative !important;
       z-index: 2;
+      transform: translateX(0) !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      display: block !important;
+    }
+    
+    /* Slide coming from right (next slide) */
+    .flyer-slide.slide-in-right {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    
+    .flyer-slide.slide-in-right.active {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    
+    /* Slide going to left (previous slide leaving) */
+    .flyer-slide.slide-out-left {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    
+    /* Slide coming from left (previous slide) */
+    .flyer-slide.slide-in-left {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    
+    .flyer-slide.slide-in-left.active {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    
+    /* Slide going to right (next slide leaving) */
+    .flyer-slide.slide-out-right {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    
+    /* Slide in from right (going to next/right) */
+    .flyer-slide.slide-in-right {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    
+    .flyer-slide.slide-in-right.active {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    
+    /* Slide in from left (going to previous/left) */
+    .flyer-slide.slide-in-left {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    
+    .flyer-slide.slide-in-left.active {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    
+    /* Slide out to left (current slide leaving when going right) */
+    .flyer-slide.slide-out-left {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    
+    /* Slide out to right (current slide leaving when going left) */
+    .flyer-slide.slide-out-right {
+      transform: translateX(100%);
+      opacity: 0;
     }
     
     /* First slide is relative initially to establish container height */
@@ -3743,35 +3817,85 @@
       const slides = document.querySelectorAll('.flyer-slide');
       if (slides.length === 0) return;
       
-      // Function to show a specific slide
-      function showSlide(index) {
+      // Function to show a specific slide with animation direction
+      function showSlide(index, direction = 'right') {
         if (index < 0) index = slides.length - 1;
         if (index >= slides.length) index = 0;
         
+        const currentIndex = flyerSlideIndex;
         flyerSlideIndex = index;
         
-        slides.forEach((slide, i) => {
-          if (i === index) {
-            slide.classList.add('active');
-            // Make active slide relative to maintain height
-            slide.style.position = 'relative';
-          } else {
-            slide.classList.remove('active');
-            // Make inactive slides absolute
-            slide.style.position = 'absolute';
-          }
+        // Get current and next slides
+        const currentSlide = slides[currentIndex];
+        const nextSlide = slides[index];
+        
+        // Remove all animation classes first
+        slides.forEach(slide => {
+          slide.classList.remove('slide-in-right', 'slide-in-left', 'slide-out-left', 'slide-out-right');
         });
+        
+        if (currentSlide && nextSlide && currentIndex !== index) {
+          // Make next slide visible and positioned before animation
+          nextSlide.style.position = 'absolute';
+          nextSlide.style.display = 'block';
+          nextSlide.style.visibility = 'visible';
+          nextSlide.style.opacity = '0';
+          
+          // Use requestAnimationFrame to ensure browser processes display change before animation
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              if (direction === 'right') {
+                // Next slide: coming from right, current going to left
+                currentSlide.classList.add('slide-out-left');
+                nextSlide.classList.add('slide-in-right');
+                nextSlide.classList.add('active');
+                currentSlide.classList.remove('active');
+              } else {
+                // Previous slide: coming from left, current going to right
+                currentSlide.classList.add('slide-out-right');
+                nextSlide.classList.add('slide-in-left');
+                nextSlide.classList.add('active');
+                currentSlide.classList.remove('active');
+              }
+              
+              // Update positions
+              nextSlide.style.position = 'relative';
+              currentSlide.style.position = 'absolute';
+              
+              // Clean up after animation
+              setTimeout(() => {
+                currentSlide.classList.remove('slide-out-left', 'slide-out-right');
+                nextSlide.classList.remove('slide-in-right', 'slide-in-left');
+              }, 500);
+            });
+          });
+        } else {
+          // No animation needed (same slide or initial load)
+          slides.forEach((slide, i) => {
+            if (i === index) {
+              slide.classList.add('active');
+              slide.style.position = 'relative';
+              slide.style.display = 'block';
+              slide.style.visibility = 'visible';
+            } else {
+              slide.classList.remove('active');
+              slide.style.position = 'absolute';
+              slide.style.opacity = '0';
+              slide.style.visibility = 'hidden';
+            }
+          });
+        }
       }
       
-      // Function to go to next slide
+      // Function to go to next slide (slides come from right)
       function nextSlide() {
-        showSlide(flyerSlideIndex + 1);
+        showSlide(flyerSlideIndex + 1, 'right');
         resetSlideshow();
       }
       
-      // Function to go to previous slide
+      // Function to go to previous slide (slides come from left)
       function prevSlide() {
-        showSlide(flyerSlideIndex - 1);
+        showSlide(flyerSlideIndex - 1, 'left');
         resetSlideshow();
       }
       
@@ -3781,7 +3905,7 @@
           clearInterval(flyerSlideInterval);
         }
         flyerSlideInterval = setInterval(() => {
-          showSlide(flyerSlideIndex + 1);
+          showSlide(flyerSlideIndex + 1, 'right'); // Default slideshow slides from right
         }, 3000); // 3 seconds
       }
       
@@ -3802,8 +3926,22 @@
         }
       }
       
-      // Initialize first slide
-      showSlide(0);
+      // Initialize first slide (no animation on initial load)
+      const firstSlide = slides[0];
+      if (firstSlide) {
+        firstSlide.classList.add('active');
+        firstSlide.style.position = 'relative';
+        firstSlide.style.opacity = '1';
+        firstSlide.style.visibility = 'visible';
+        slides.forEach((slide, i) => {
+          if (i !== 0) {
+            slide.classList.remove('active');
+            slide.style.position = 'absolute';
+            slide.style.opacity = '0';
+            slide.style.visibility = 'hidden';
+          }
+        });
+      }
       
       // Keyboard navigation (arrow keys)
       function handleKeyDown(e) {
