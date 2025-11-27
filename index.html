@@ -4,6 +4,9 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"/>
   <title>Surabhi Premier League - 2025</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <style>
     * {
@@ -12,16 +15,26 @@
       box-sizing: border-box;
     }
     
+    /* Telugu font stack for proper Unicode rendering */
+    :root {
+      --telugu-font: 'Noto Sans Telugu', 'Nirmala UI', 'Gautami', 'Vani', 'Kartika', 'Lohit Telugu', 'Pothana2000', 'Noto Sans', system-ui, Arial, Helvetica, sans-serif;
+    }
+    
     body {
       background: #0f172a;
       color: #e2e8f0;
-      font-family: system-ui, Arial, Helvetica, sans-serif;
+      font-family: var(--telugu-font);
       margin: 0;
       padding: 0;
       min-height: 100vh;
       display: flex;
       overflow-y: auto;
       overflow-x: hidden;
+    }
+    
+    /* Ensure all text elements use Telugu font */
+    h1, h2, h3, h4, h5, h6, p, span, div, a, button, input, textarea, select, label, li, td, th {
+      font-family: var(--telugu-font);
     }
     
     /* Logo in top-right corner */
@@ -390,7 +403,7 @@
       font-size: clamp(24px, 5vw, 36px);
       color: #60a5fa;
       font-weight: 700;
-      font-family: 'Arial', sans-serif;
+      font-family: var(--telugu-font);
       text-shadow: 0 2px 8px rgba(96, 165, 250, 0.3);
     }
     
@@ -2501,7 +2514,7 @@
             </div>
             <div class="sponsor-card">
               <h3 class="sponsor-name">కీ.శే. శ్రీ వనారస కుమార్ బాబు గారి జ్ఞాపకార్థం</h3>
-              <p class="sponsor-desc">వారి సతీమణి V.కళ్యాణి గారు, రామ్ నగర్ Rs. 2000/- (డ్రై ఫ్రూట్స్)</p>
+              <p class="sponsor-desc">వారి సతీమణి V.కళ్యాణి గారు, రామ్ నగర్ Rs. 2000/-</p>
             </div>
             <div class="sponsor-card">
               <h3 class="sponsor-name">నార్మల్ మదర్ డైరీ, వనస్థలిపురం</h3>
