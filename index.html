@@ -3582,7 +3582,8 @@
         team1Runs: 129,
         team1Overs: 16.0,
         team2Runs: 115,
-        team2Overs: '15.1',  // 15 overs 1 ball
+        team2Overs: '15.1',  // 15 overs 1 ball - all out (last player not available), so count as 16.0 for NRR
+        team2AllOut: true,  // Flag to indicate all out
         winner: 'RBR Returns'
       }
     };
@@ -3626,8 +3627,8 @@
           totalRunsConceded += match.team2Runs || 0;
           const oversBowledForNRR = (match.team2AllOut === true) ? 16.0 : convertOversToDecimal(match.team2Overs || 0);
           totalOversBowled += oversBowledForNRR;
-          // For runs conceded, show actual overs (not 16.0 even if opponent was all out)
-          oversBowledList.push(match.team2Overs || 0);
+          // For runs conceded: if opponent was all out, show 16.0; otherwise show actual overs
+          oversBowledList.push((match.team2AllOut === true) ? 16.0 : (match.team2Overs || 0));
         } else if (match.team2 === teamName) {
           totalRunsScored += match.team2Runs || 0;
           // If all out, use 16.0 overs for NRR calculation, otherwise use actual overs
@@ -3639,8 +3640,8 @@
           totalRunsConceded += match.team1Runs || 0;
           const oversBowledForNRR = (match.team1AllOut === true) ? 16.0 : convertOversToDecimal(match.team1Overs || 0);
           totalOversBowled += oversBowledForNRR;
-          // For runs conceded, show actual overs (not 16.0 even if opponent was all out)
-          oversBowledList.push(match.team1Overs || 0);
+          // For runs conceded: if opponent was all out, show 16.0; otherwise show actual overs
+          oversBowledList.push((match.team1AllOut === true) ? 16.0 : (match.team1Overs || 0));
         }
       });
       
