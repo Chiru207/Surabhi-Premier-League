@@ -2248,7 +2248,7 @@
                 <div class="match-item">
                   <span class="match-label">M1</span>
                   <span class="match-time">8:00 AM</span>
-                  <a href="https://cricheroes.com/scorecard/20340611/surabhi-premier-league-2025/bulls-(team-a)-vs-velocity-vipers/upcoming" target="_blank" class="match-link">cricheros match page</a>
+                  <a href="https://cricheroes.com/scorecard/20484818/surabhi-premier-league-2025/bulls-(team-a)-vs-velocity-vipers/scorecard" target="_blank" class="match-link">cricheros match page</a>
                   <div class="match-team" data-team="Velocity Vipers">
                     <img src="" alt="Velocity Vipers" class="match-team-logo" onerror="this.style.display='none';">
                     <span class="match-team-name" onclick="showTeamFromSchedule('Velocity Vipers')">Velocity Vipers</span>
@@ -3556,7 +3556,36 @@
     //   team2Overs: 16.0,
     //   winner: 'Velocity Vipers'  // null for tie/no result
     // });
-    let matchResults = {};
+    let matchResults = {
+      'M1': {
+        team1: 'BULLS (TEAM-A)',
+        team2: 'Velocity Vipers',
+        team1Runs: 141,
+        team1Overs: 16.0,
+        team2Runs: 142,
+        team2Overs: '15.1',  // 15 overs 1 ball
+        winner: 'Velocity Vipers'
+      },
+      'M2': {
+        team1: 'Daredevils',
+        team2: 'Risers 11',
+        team1Runs: 55,
+        team1Overs: '9.5',  // 9 overs 5 balls - all out, so count as 16.0 for NRR
+        team1AllOut: true,  // Flag to indicate all out
+        team2Runs: 59,
+        team2Overs: '11.2',  // 11 overs 2 balls
+        winner: 'Risers 11'
+      },
+      'M3': {
+        team1: 'RBR Returns',
+        team2: 'BULLS (TEAM-B)',
+        team1Runs: 129,
+        team1Overs: 16.0,
+        team2Runs: 115,
+        team2Overs: '15.1',  // 15 overs 1 ball
+        winner: 'RBR Returns'
+      }
+    };
     
     // Convert overs from format like "16.3" (16 overs 3 balls) to decimal (16.5)
     function convertOversToDecimal(overs) {
@@ -3581,17 +3610,37 @@
       let totalRunsConceded = 0;
       let totalOversBowled = 0;
       
+      // Store overs format for display (use 16.0 if all out for runs scored column)
+      let oversFacedList = [];
+      let oversBowledList = [];
+      
       Object.values(matchResults).forEach(match => {
         if (match.team1 === teamName) {
           totalRunsScored += match.team1Runs || 0;
-          totalOversFaced += convertOversToDecimal(match.team1Overs || 0);
+          // If all out, use 16.0 overs for NRR calculation, otherwise use actual overs
+          const oversForNRR = (match.team1AllOut === true) ? 16.0 : convertOversToDecimal(match.team1Overs || 0);
+          totalOversFaced += oversForNRR;
+          // For display: if all out, show 16.0; otherwise show actual overs
+          oversFacedList.push((match.team1AllOut === true) ? 16.0 : (match.team1Overs || 0));
+          
           totalRunsConceded += match.team2Runs || 0;
-          totalOversBowled += convertOversToDecimal(match.team2Overs || 0);
+          const oversBowledForNRR = (match.team2AllOut === true) ? 16.0 : convertOversToDecimal(match.team2Overs || 0);
+          totalOversBowled += oversBowledForNRR;
+          // For runs conceded, show actual overs (not 16.0 even if opponent was all out)
+          oversBowledList.push(match.team2Overs || 0);
         } else if (match.team2 === teamName) {
           totalRunsScored += match.team2Runs || 0;
-          totalOversFaced += convertOversToDecimal(match.team2Overs || 0);
+          // If all out, use 16.0 overs for NRR calculation, otherwise use actual overs
+          const oversForNRR = (match.team2AllOut === true) ? 16.0 : convertOversToDecimal(match.team2Overs || 0);
+          totalOversFaced += oversForNRR;
+          // For display: if all out, show 16.0; otherwise show actual overs
+          oversFacedList.push((match.team2AllOut === true) ? 16.0 : (match.team2Overs || 0));
+          
           totalRunsConceded += match.team1Runs || 0;
-          totalOversBowled += convertOversToDecimal(match.team1Overs || 0);
+          const oversBowledForNRR = (match.team1AllOut === true) ? 16.0 : convertOversToDecimal(match.team1Overs || 0);
+          totalOversBowled += oversBowledForNRR;
+          // For runs conceded, show actual overs (not 16.0 even if opponent was all out)
+          oversBowledList.push(match.team1Overs || 0);
         }
       });
       
@@ -3603,9 +3652,11 @@
       return {
         nrr: nrr,
         runsScored: totalRunsScored,
-        oversFaced: totalOversFaced,
+        oversFaced: totalOversFaced, // Decimal for NRR calculation
+        oversFacedList: oversFacedList, // Original format for display
         runsConceded: totalRunsConceded,
-        oversBowled: totalOversBowled
+        oversBowled: totalOversBowled, // Decimal for NRR calculation
+        oversBowledList: oversBowledList // Original format for display
       };
     }
     
@@ -3716,9 +3767,11 @@
         const stats = calculateTeamStats(teamName, matchResults);
         teamStats[teamName].nrr = stats.nrr;
         teamStats[teamName].runsScored = stats.runsScored;
-        teamStats[teamName].oversFaced = stats.oversFaced;
+        teamStats[teamName].oversFaced = stats.oversFaced; // Decimal for NRR calculation
+        teamStats[teamName].oversFacedList = stats.oversFacedList; // Original format for display
         teamStats[teamName].runsConceded = stats.runsConceded;
-        teamStats[teamName].oversBowled = stats.oversBowled;
+        teamStats[teamName].oversBowled = stats.oversBowled; // Decimal for NRR calculation
+        teamStats[teamName].oversBowledList = stats.oversBowledList; // Original format for display
       });
       
       // Convert to array and sort: first by points (descending), then by NRR (descending)
@@ -3740,18 +3793,44 @@
         const nrrClass = stats.nrr > 0 ? 'nrr-positive' : stats.nrr < 0 ? 'nrr-negative' : 'nrr-neutral';
         const nrrDisplay = stats.nrr.toFixed(3);
         
-        // Format overs to show as decimal (e.g., 32.5) or whole number if no decimal part
-        const formatOvers = (overs) => {
-          if (overs === 0) return '0';
-          const rounded = Math.round(overs * 10) / 10; // Round to 1 decimal place
-          return rounded % 1 === 0 ? rounded.toString() : rounded.toFixed(1);
+        // Format overs to display in original format (e.g., "9.5", "15.1", "16.0")
+        const formatOversForDisplay = (oversList) => {
+          if (!oversList || oversList.length === 0) return '0';
+          
+          // Sum up the original overs format
+          let totalOvers = 0;
+          let totalBalls = 0;
+          
+          oversList.forEach(overs => {
+            if (typeof overs === 'string') {
+              const parts = overs.split('.');
+              if (parts.length === 2) {
+                totalOvers += parseInt(parts[0]) || 0;
+                totalBalls += parseInt(parts[1]) || 0;
+              } else {
+                totalOvers += parseFloat(overs) || 0;
+              }
+            } else if (typeof overs === 'number') {
+              totalOvers += overs;
+            }
+          });
+          
+          // Convert balls to overs (6 balls = 1 over)
+          totalOvers += Math.floor(totalBalls / 6);
+          const remainingBalls = totalBalls % 6;
+          
+          if (remainingBalls === 0) {
+            return totalOvers.toString();
+          } else {
+            return `${totalOvers}.${remainingBalls}`;
+          }
         };
         
-        const runsScoredDisplay = stats.runsScored > 0 || stats.oversFaced > 0 
-          ? `${stats.runsScored} (${formatOvers(stats.oversFaced)})` 
+        const runsScoredDisplay = stats.runsScored > 0 || (stats.oversFacedList && stats.oversFacedList.length > 0)
+          ? `${stats.runsScored} (${formatOversForDisplay(stats.oversFacedList)})` 
           : '0 (0)';
-        const runsConcededDisplay = stats.runsConceded > 0 || stats.oversBowled > 0 
-          ? `${stats.runsConceded} (${formatOvers(stats.oversBowled)})` 
+        const runsConcededDisplay = stats.runsConceded > 0 || (stats.oversBowledList && stats.oversBowledList.length > 0)
+          ? `${stats.runsConceded} (${formatOversForDisplay(stats.oversBowledList)})` 
           : '0 (0)';
         
         row.innerHTML = `
