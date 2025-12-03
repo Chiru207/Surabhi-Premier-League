@@ -2026,9 +2026,7 @@
         <div class="flyer-container">
           <div class="flyer-slideshow" id="flyer-slideshow">
             <img src="flyer.png" alt="Surabhi Premier League 2025 Flyer" class="flyer-slide active" id="slide-0">
-            <img src="m4.jpg" alt="Match 4" class="flyer-slide" id="slide-1">
-            <img src="m5.jpg" alt="Match 5" class="flyer-slide" id="slide-2">
-            <img src="m6.jpg" alt="Match 6" class="flyer-slide" id="slide-3">
+            <img src="eliminator.jpg" alt="Eliminator" class="flyer-slide" id="slide-1">
           </div>
         </div>
       </div>
@@ -2350,6 +2348,7 @@
                 <div class="match-item">
                   <span class="match-label">Eliminator</span>
                   <span class="match-time">8:00 AM</span>
+                  <a href="https://cricheroes.com/scorecard/20508133/surabhi-premier-league-2025/risers-11-vs-velocity-vipers/upcoming" target="_blank" class="match-link">cricheros match page</a>
                   <div class="match-team">2nd Place</div>
                   <div class="match-vs">VS</div>
                   <div class="match-team">3rd Place</div>
@@ -3063,6 +3062,67 @@
           scheduleView.classList.add('active');
           // Initialize logos when schedule view is shown
           setTimeout(() => initializeScheduleLogos(), 100);
+          // Update eliminator schedule based on current standings
+          if (Object.keys(matchResults).length > 0) {
+            // Recalculate sorted teams and update eliminator schedule
+            const teams = Object.values(CAPTAIN_INFO);
+            const teamStats = {};
+            
+            teams.forEach(team => {
+              teamStats[team.teamName] = {
+                teamName: team.teamName,
+                matchesPlayed: 0,
+                won: 0,
+                lost: 0,
+                points: 0,
+                nrr: 0
+              };
+            });
+            
+            // Process match results to get sorted teams
+            Object.values(matchResults).forEach(match => {
+              if (!match.team1 || !match.team2) return;
+              const team1 = match.team1;
+              const team2 = match.team2;
+              
+              if (match.team1Runs !== undefined && match.team2Runs !== undefined) {
+                if (teamStats[team1]) teamStats[team1].matchesPlayed++;
+                if (teamStats[team2]) teamStats[team2].matchesPlayed++;
+                
+                if (match.winner) {
+                  if (match.winner === team1) {
+                    if (teamStats[team1]) {
+                      teamStats[team1].won++;
+                      teamStats[team1].points += 2;
+                    }
+                    if (teamStats[team2]) teamStats[team2].lost++;
+                  } else if (match.winner === team2) {
+                    if (teamStats[team2]) {
+                      teamStats[team2].won++;
+                      teamStats[team2].points += 2;
+                    }
+                    if (teamStats[team1]) teamStats[team1].lost++;
+                  }
+                }
+              }
+            });
+            
+            // Calculate NRR for sorting
+            Object.keys(teamStats).forEach(teamName => {
+              const stats = calculateTeamStats(teamName, matchResults);
+              teamStats[teamName].nrr = stats.nrr;
+            });
+            
+            // Sort teams
+            const sortedTeams = Object.values(teamStats).sort((a, b) => {
+              if (b.points !== a.points) {
+                return b.points - a.points;
+              }
+              return b.nrr - a.nrr;
+            });
+            
+            setTimeout(() => updateEliminatorSchedule(sortedTeams), 200);
+          }
         } else if (view === 'points') {
           pointsView.classList.add('active');
         } else if (view === 'sponsors') {
@@ -3585,6 +3645,34 @@
         team2Overs: '15.1',  // 15 overs 1 ball - all out (last player not available), so count as 16.0 for NRR
         team2AllOut: true,  // Flag to indicate all out
         winner: 'RBR Returns'
+      },
+      'M4': {
+        team1: 'BULLS (TEAM-A)',
+        team2: 'Risers 11',
+        team1Runs: 129,
+        team1Overs: 16.0,
+        team2Runs: 116,
+        team2Overs: 16.0,
+        winner: 'BULLS (TEAM-A)'
+      },
+      'M5': {
+        team1: 'Velocity Vipers',
+        team2: 'BULLS (TEAM-B)',
+        team1Runs: 152,
+        team1Overs: 16.0,
+        team2Runs: 111,
+        team2Overs: '14.2',  // 14 overs 2 balls - all out, so count as 16.0 for NRR
+        team2AllOut: true,  // Flag to indicate all out
+        winner: 'Velocity Vipers'
+      },
+      'M6': {
+        team1: 'RBR Returns',
+        team2: 'Daredevils',
+        team1Runs: 205,
+        team1Overs: 16.0,
+        team2Runs: 125,
+        team2Overs: 16.0,
+        winner: 'RBR Returns'
       }
     };
     
@@ -3852,6 +3940,83 @@
         
         tbody.appendChild(row);
       });
+      
+      // Update eliminator and final schedule based on standings
+      updateEliminatorSchedule(sortedTeams);
+    }
+    
+    // Update eliminator and final schedule based on points table standings
+    function updateEliminatorSchedule(sortedTeams) {
+      if (!sortedTeams || sortedTeams.length < 3) {
+        // Not enough teams, keep placeholder text
+        return;
+      }
+      
+      const firstPlace = sortedTeams[0].teamName;
+      const secondPlace = sortedTeams[1].teamName;
+      const thirdPlace = sortedTeams[2].teamName;
+      
+      // Find all match items
+      const allMatchItems = document.querySelectorAll('.match-item');
+      let eliminatorItem = null;
+      let finalItem = null;
+      
+      // Find eliminator and final match items
+      allMatchItems.forEach(item => {
+        const label = item.querySelector('.match-label');
+        if (label && label.textContent.trim() === 'Eliminator') {
+          eliminatorItem = item;
+        }
+        const finalLabel = item.querySelector('.match-label-final-label');
+        if (finalLabel && finalLabel.textContent.trim() === 'FINAL') {
+          finalItem = item;
+        }
+      });
+      
+      // Update eliminator match
+      if (eliminatorItem) {
+        const teams = eliminatorItem.querySelectorAll('.match-team');
+        if (teams.length >= 2) {
+          // Update team names with clickable links
+          const team1Div = teams[0];
+          const team2Div = teams[1];
+          
+          // Get logo URLs
+          const logo1Src = getLogoUrl(secondPlace);
+          const logo2Src = getLogoUrl(thirdPlace);
+          
+          team1Div.innerHTML = `
+            <img src="${logo1Src || ''}" alt="${secondPlace}" class="match-team-logo" onerror="this.style.display='none';" onload="this.style.display='';">
+            <span class="match-team-name" onclick="showTeamFromSchedule('${secondPlace}')">${secondPlace}</span>
+          `;
+          team1Div.setAttribute('data-team', secondPlace);
+          
+          team2Div.innerHTML = `
+            <img src="${logo2Src || ''}" alt="${thirdPlace}" class="match-team-logo" onerror="this.style.display='none';" onload="this.style.display='';">
+            <span class="match-team-name" onclick="showTeamFromSchedule('${thirdPlace}')">${thirdPlace}</span>
+          `;
+          team2Div.setAttribute('data-team', thirdPlace);
+        }
+      }
+      
+      // Update final match
+      if (finalItem) {
+        const teams = finalItem.querySelectorAll('.match-team');
+        if (teams.length >= 2) {
+          // First team is 1st place
+          const team1Div = teams[0];
+          const logo1Src = getLogoUrl(firstPlace);
+          
+          team1Div.innerHTML = `
+            <img src="${logo1Src || ''}" alt="${firstPlace}" class="match-team-logo" onerror="this.style.display='none';" onload="this.style.display='';">
+            <span class="match-team-name" onclick="showTeamFromSchedule('${firstPlace}')">${firstPlace}</span>
+          `;
+          team1Div.setAttribute('data-team', firstPlace);
+          
+          // Second team remains "Winner of Eliminator"
+          // Keep it as is since the winner is not known yet
+        }
+      }
     }
     
     // Initialize points table (shows empty/zero stats)
