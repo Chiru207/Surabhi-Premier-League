@@ -2026,7 +2026,7 @@
         <div class="flyer-container">
           <div class="flyer-slideshow" id="flyer-slideshow">
             <img src="flyer.png" alt="Surabhi Premier League 2025 Flyer" class="flyer-slide active" id="slide-0">
-            <img src="eliminator.jpg" alt="Eliminator" class="flyer-slide" id="slide-1">
+            <img src="final.jpg" alt="Final" class="flyer-slide" id="slide-1">
           </div>
         </div>
       </div>
@@ -2356,9 +2356,16 @@
                 <div class="match-item final-match">
                   <span class="match-label-final-label">FINAL</span>
                   <span class="match-time">12:00 Noon</span>
-                  <div class="match-team">1st Place</div>
+                  <a href="https://cricheroes.com/scorecard/20516424/surabhi-premier-league-2025/rbr-returns-vs-velocity-vipers/upcoming" target="_blank" class="match-link">cricheros match page</a>
+                  <div class="match-team" data-team="RBR Returns">
+                    <img src="" alt="RBR Returns" class="match-team-logo" onerror="this.style.display='none';">
+                    <span class="match-team-name" onclick="showTeamFromSchedule('RBR Returns')">RBR Returns</span>
+                  </div>
                   <div class="match-vs">VS</div>
-                  <div class="match-team">Winner of Eliminator</div>
+                  <div class="match-team" data-team="Velocity Vipers">
+                    <img src="" alt="Velocity Vipers" class="match-team-logo" onerror="this.style.display='none';">
+                    <span class="match-team-name" onclick="showTeamFromSchedule('Velocity Vipers')">Velocity Vipers</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -3999,22 +4006,37 @@
         }
       }
       
-      // Update final match
+      // Update final match - RBR Returns vs Velocity Vipers
       if (finalItem) {
         const teams = finalItem.querySelectorAll('.match-team');
         if (teams.length >= 2) {
-          // First team is 1st place
+          // First team: RBR Returns
           const team1Div = teams[0];
-          const logo1Src = getLogoUrl(firstPlace);
+          const team1Name = 'RBR Returns';
+          const logo1Src = getLogoUrl(team1Name);
           
           team1Div.innerHTML = `
-            <img src="${logo1Src || ''}" alt="${firstPlace}" class="match-team-logo" onerror="this.style.display='none';" onload="this.style.display='';">
-            <span class="match-team-name" onclick="showTeamFromSchedule('${firstPlace}')">${firstPlace}</span>
+            <img src="${logo1Src || ''}" alt="${team1Name}" class="match-team-logo" onerror="this.style.display='none';" onload="this.style.display='';">
+            <span class="match-team-name" onclick="showTeamFromSchedule('${team1Name}')">${team1Name}</span>
           `;
-          team1Div.setAttribute('data-team', firstPlace);
+          team1Div.setAttribute('data-team', team1Name);
           
-          // Second team remains "Winner of Eliminator"
-          // Keep it as is since the winner is not known yet
+          // Second team: Velocity Vipers
+          const team2Div = teams[1];
+          const team2Name = 'Velocity Vipers';
+          const logo2Src = getLogoUrl(team2Name);
+          
+          team2Div.innerHTML = `
+            <img src="${logo2Src || ''}" alt="${team2Name}" class="match-team-logo" onerror="this.style.display='none';" onload="this.style.display='';">
+            <span class="match-team-name" onclick="showTeamFromSchedule('${team2Name}')">${team2Name}</span>
+          `;
+          team2Div.setAttribute('data-team', team2Name);
+          
+          // Preserve the CricHeroes link
+          const matchLink = finalItem.querySelector('.match-link');
+          if (matchLink) {
+            matchLink.href = 'https://cricheroes.com/scorecard/20516424/surabhi-premier-league-2025/rbr-returns-vs-velocity-vipers/upcoming';
+          }
         }
       }
     }
