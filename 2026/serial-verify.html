@@ -221,6 +221,36 @@
       sessionStorage.setItem('spl2026_syNumber', details.syNumber || '');
     }
     
+    function verifySerialJsonp(serialNumber, email) {
+      return new Promise(function (resolve, reject) {
+        const callbackName = 'spl2026_cb_' + Date.now();
+        const script = document.createElement('script');
+        let finished = false;
+        const timer = setTimeout(function () {
+          finish(new Error('Verification timed out. Update the Apps Script with the latest google-apps-script-2026.js and deploy a new version, then try again.'));
+        }, 20000);
+        function finish(error, data) {
+          if (finished) return;
+          finished = true;
+          clearTimeout(timer);
+          try { delete window[callbackName]; } catch (ignored) {}
+          if (script.parentNode) script.parentNode.removeChild(script);
+          if (error) reject(error);
+          else resolve(data);
+        }
+        window[callbackName] = function (data) { finish(null, data); };
+        script.onerror = function () { finish(new Error('Could not reach the registration service.')); };
+        const url = new URL(GOOGLE_SCRIPT_URL);
+        url.searchParams.set('action', 'checkSerial');
+        url.searchParams.set('format', 'json');
+        url.searchParams.set('callback', callbackName);
+        url.searchParams.set('serialNumber', serialNumber);
+        url.searchParams.set('email', email);
+        script.src = url.toString();
+        document.body.appendChild(script);
+      });
+    }
+
     function showStatus(message, isError = false) {
       const statusDiv = document.getElementById('statusMessage');
       statusDiv.textContent = message;
@@ -256,10 +286,25 @@
       verifyBtn.disabled = true;
       verifyBtn.textContent = 'Verifying...';
       hideStatus();
-      
-      // Show a message that verification is in progress and may take up to a minute
-      showStatus('Verification in progress. Please wait... This may take up to a minute.', false);
-      
+      showStatus('Verification in progress. Please wait...', false);
+
+      try {
+        const data = await verifySerialJsonp(serialNumber, email);
+        if (!data || !data.success) {
+          showStatus((data && data.error) || 'Verification failed. Please check the serial number and email.', true);
+          verifyBtn.disabled = false;
+          verifyBtn.textContent = 'Verify Serial Number';
+          return;
+        }
+        storeSpl2026Session(data.serialNumber || serialNumber, data.email || email, data);
+        window.location.href = 'email-verify.html';
+      } catch (error) {
+        showStatus(error.message || 'Could not verify the serial number. Please try again.', true);
+        verifyBtn.disabled = false;
+        verifyBtn.textContent = 'Verify Serial Number';
+      }
+      return;
+
       try {
         // Since we're using no-cors, we can't read the response directly
         // We'll use a hidden iframe to get the response
