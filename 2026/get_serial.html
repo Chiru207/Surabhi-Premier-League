@@ -98,10 +98,32 @@
     <a class="back-link" id="backLink" href="../2026.html">← Back to SPL 2026</a>
   </div>
   <script>
-    const ORGANIZERS = {
+    let ORGANIZERS = {
       'Chiranjeevi': 'chiranjeevi.vanarasa20@gmail.com',
       'N R Rao': 'nrrao.art@gmail.com'
     };
+    function loadOrganizers() {
+      const select = document.getElementById('paidTo');
+      const previous = select.value;
+      fetch(window.SPL2026_SCRIPT_URL + '?action=organizers&format=json')
+        .then(function (response) { return response.text(); })
+        .then(function (body) {
+          const data = JSON.parse(body);
+          if (!data || !data.organizers || !data.organizers.length) return;
+          ORGANIZERS = {};
+          select.innerHTML = '<option value="">Select organiser</option>';
+          data.organizers.forEach(function (person) {
+            ORGANIZERS[person.name] = person.email;
+            const option = document.createElement('option');
+            option.value = person.name;
+            option.textContent = person.name;
+            select.appendChild(option);
+          });
+          if (ORGANIZERS[previous]) select.value = previous;
+        })
+        .catch(function () {});
+    }
+    loadOrganizers();
     let otpSent = false;
     let checkedSyNumber = '';
 

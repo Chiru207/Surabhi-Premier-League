@@ -1223,6 +1223,38 @@
       }
     }
 
+    function loadOrganizerMobiles() {
+      return new Promise(function (resolve) {
+        const fallback = ['9395185132', '8074450066'];
+        const callbackName = 'spl2026_org_' + Date.now();
+        const script = document.createElement('script');
+        let finished = false;
+        const timer = setTimeout(function () { finish(fallback); }, 15000);
+        function finish(mobiles) {
+          if (finished) return;
+          finished = true;
+          clearTimeout(timer);
+          try { delete window[callbackName]; } catch (ignored) {}
+          if (script.parentNode) script.parentNode.removeChild(script);
+          resolve(mobiles && mobiles.length ? mobiles : fallback);
+        }
+        window[callbackName] = function (data) {
+          finish(data && data.mobiles && data.mobiles.length ? data.mobiles : fallback);
+        };
+        script.onerror = function () { finish(fallback); };
+        try {
+          const url = new URL(GOOGLE_SCRIPT_URL);
+          url.searchParams.set('action', 'organizers');
+          url.searchParams.set('format', 'json');
+          url.searchParams.set('callback', callbackName);
+          script.src = url.toString();
+          document.body.appendChild(script);
+        } catch (error) {
+          finish(fallback);
+        }
+      });
+    }
+
     function fitPhotoForPdf(dataUrl) {
       return new Promise(function (resolve) {
         if (!dataUrl) {
@@ -1399,7 +1431,8 @@
         // Organizers contact info with hyperlink
         doc.setFontSize(11);
         doc.setTextColor(0, 0, 255); // Blue color for hyperlink
-        const organizersText = 'Organizers: 9395185132, 8074450066. https://surabhipremierleague.info/';
+        const organizerMobiles = await loadOrganizerMobiles();
+        const organizersText = 'Organizers: ' + (organizerMobiles.length ? organizerMobiles.join(', ') + '. ' : '') + 'https://surabhipremierleague.info/';
         const organizersLines = doc.splitTextToSize(organizersText, 170);
         doc.text(organizersLines, 20, yPos);
         
