@@ -38,12 +38,18 @@
     .card {
       background: #111827; border: 1px solid #334155; border-radius: 16px; padding: 22px; margin-top: 18px;
     }
-    .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+    .actions {
+      display: flex; flex-direction: column; align-items: center; gap: 36px;
+      margin: 36px auto 0; width: min(280px, 100%);
+    }
     .actions a {
-      display: inline-block; text-decoration: none; color: white; background: #2563eb;
+      display: block; width: 100%; box-sizing: border-box; text-align: center;
+      text-decoration: none; color: white; background: #2563eb;
       border-radius: 12px; padding: 14px 18px; font-weight: 700;
     }
     .actions a.alt { background: #1e293b; border: 1px solid #475569; }
+    .organiser-action { width: 100%; text-align: center; }
+    .organiser-note { margin: 8px 0 0; color: #94a3b8; font-size: 14px; }
     .blank { color: #94a3b8; }
     .year-link { color: #93c5fd; }
   </style>
@@ -70,8 +76,14 @@
       <h1>SURABHI YUVASENA SPL - 2026</h1>
       <p class="blank">Tournament details will be updated here. Player registration is open.</p>
       <div class="actions">
-        <a href="2026/serial-verify.html">Register</a>
-        <a class="alt" href="2026/get_serial.html">Get Serial Number</a>
+        <div class="organiser-action">
+          <a href="2026/serial-verify.html">Register</a>
+          <p class="organiser-note">For players with serial number</p>
+        </div>
+        <div class="organiser-action">
+          <a class="alt" href="2026/get_serial.html">Get Serial Number</a>
+          <p class="organiser-note">For organisers only</p>
+        </div>
       </div>
     </section>
     <section class="view" id="teams"><div class="card"><h2>Teams</h2><p class="blank">Details will be updated.</p></div></section>
