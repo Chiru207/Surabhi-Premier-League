@@ -8,34 +8,35 @@
   <script src="config.js?v=3"></script>
   <script>window.SPL2026_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbySAf1rruBqW80e8TlXwMgYXCrfbxl10K2UAMO5HvWI1lPZEK_6MlffDA4vZlba8c82/exec';</script>
   <style>
-    body { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; background: #0f172a; color: #e2e8f0; }
+    body { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; background: #f8f4fb; color: #3c2460; }
     .page-logo { position: fixed; top: 16px; right: 16px; width: clamp(60px, 8vw, 110px); }
-    .container { width: min(640px, 100%); background: #111827; border: 2px solid #334155; border-radius: 16px; padding: clamp(20px, 4vw, 36px); }
-    h1 { color: #60a5fa; text-align: center; margin: 0 0 8px; }
-    .subtitle, .help-text, label { color: #94a3b8; }
+    .container { width: min(640px, 100%); background: #ffffff; border: 2px solid #eadff5; border-radius: 16px; padding: clamp(20px, 4vw, 36px); }
+    h1 { color: #5b2d91; text-align: center; margin: 0 0 8px; }
+    .subtitle, .help-text, label { color: #7d6d8c; }
     .subtitle { text-align: center; margin-bottom: 22px; }
-    label { display: block; margin-bottom: 8px; color: #e2e8f0; font-weight: 600; }
-    input, select { width: 100%; box-sizing: border-box; padding: 12px 14px; border-radius: 8px; border: 2px solid #334155; background: #1e293b; color: #e2e8f0; font-size: 16px; }
+    label { display: block; margin-bottom: 8px; color: #3c2460; font-weight: 600; }
+    input, select { width: 100%; box-sizing: border-box; padding: 12px 14px; border-radius: 8px; border: 2px solid #eadff5; background: #ffffff; color: #3c2460; font-size: 16px; }
+    input:focus, select:focus { outline: none; border-color: #6a35a8; }
     .form-group { margin-bottom: 16px; }
     .check-row { display: flex; gap: 10px; align-items: center; }
     .check-row input { width: auto; }
-    .due { background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 12px 14px; color: #6ee7b7; font-weight: 700; }
-    button { width: 100%; margin-top: 8px; padding: 14px; border: 0; border-radius: 8px; background: #2563eb; color: white; font-weight: 700; font-size: 16px; cursor: pointer; }
-    button:disabled { background: #475569; cursor: not-allowed; }
+    .due { background: #e7f6f8; border: 1px solid #0f8fa6; border-radius: 10px; padding: 12px 14px; color: #0b6f82; font-weight: 700; }
+    button { width: 100%; margin-top: 8px; padding: 14px; border: 0; border-radius: 8px; background: #ef6a2f; color: white; font-weight: 700; font-size: 16px; cursor: pointer; }
+    button:disabled { background: #e4d4f2; color: #7d6d8c; cursor: not-allowed; }
     .status { display: none; margin-top: 14px; padding: 12px; border-radius: 8px; text-align: center; }
-    .status.success { display: block; background: #065f46; color: #6ee7b7; }
-    .status.error { display: block; background: #7f1d1d; color: #fecaca; }
-    .serial { font-size: 42px; font-weight: 800; color: #6ee7b7; text-align: center; margin: 8px 0 16px; }
-    .back-link { display: block; text-align: center; margin-top: 18px; color: #60a5fa; }
+    .status.success { display: block; background: #e7f6f8; color: #0b6f82; }
+    .status.error { display: block; background: #fdeceb; color: #7a1c14; }
+    .serial { font-size: 42px; font-weight: 800; color: #0f8fa6; text-align: center; margin: 8px 0 16px; }
+    .back-link { display: block; text-align: center; margin-top: 18px; color: #6a35a8; }
     #syNumberGroup, #otpGroup, #successPage { display: none; }
     .sy-row { display: flex; gap: 8px; align-items: center; }
     .sy-row input { width: 140px; flex: 0 0 140px; }
     #checkSyBtn { width: auto; margin-top: 0; padding: 12px 18px; white-space: nowrap; }
     .member-preview { display: none; }
     .sy-check-result { display: none; margin-top: 10px; padding: 10px 12px; border-radius: 8px; line-height: 1.6; }
-    .sy-check-result.success { display: block; background: #065f46; color: #6ee7b7; }
-    .sy-check-result.error { display: block; background: #7f1d1d; color: #fecaca; }
-    .sy-check-result span { color: #d1fae5; display: inline-block; width: 110px; }
+    .sy-check-result.success { display: block; background: #e7f6f8; color: #0b6f82; }
+    .sy-check-result.error { display: block; background: #fdeceb; color: #7a1c14; }
+    .sy-check-result span { color: #0b6f82; display: inline-block; width: 110px; }
   </style>
 </head>
 <body>
@@ -90,7 +91,7 @@
       <div id="statusMessage" class="status"></div>
     </form>
     <div id="successPage">
-      <h2 style="text-align:center;color:#6ee7b7;">Payment recorded</h2>
+      <h2 style="text-align:center;color:#0f8fa6;">Payment recorded</h2>
       <p class="subtitle">Give this serial number to the player</p>
       <div class="serial" id="serialNumberDisplay"></div>
       <a class="back-link" href="get_serial.html">Enter another payment</a>
