@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Surabhi Premier League - 2026</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { margin: 0; min-height: 100vh; background: #0f172a; color: #e2e8f0; }
+    .page-logo { position: fixed; top: 16px; right: 16px; width: clamp(60px, 8vw, 110px); z-index: 20; }
+    .menu-toggle, .sidebar, .sidebar-backdrop { z-index: 30; }
+    .menu-toggle {
+      position: fixed; top: 16px; left: 16px; width: 46px; height: 46px;
+      border: 2px solid #334155; border-radius: 8px; background: #1e293b;
+      display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 5px; cursor: pointer;
+    }
+    .menu-toggle span { width: 22px; height: 3px; background: #60a5fa; border-radius: 2px; }
+    .sidebar {
+      position: fixed; top: 0; left: 0; height: 100vh; width: min(280px, 82vw);
+      background: linear-gradient(180deg, #1e293b, #0f172a); border-right: 2px solid #334155;
+      padding: 84px 18px 24px; transform: translateX(-105%); transition: transform 0.25s ease;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-title { color: #93c5fd; font-weight: 700; margin-bottom: 8px; }
+    .menu-item, .menu-link {
+      color: #e2e8f0; background: transparent; border: 0; text-align: left;
+      padding: 12px 14px; border-radius: 10px; cursor: pointer; font-size: 16px; text-decoration: none;
+    }
+    .menu-item.active, .menu-item:hover, .menu-link:hover { background: #1e3a8a; }
+    .sidebar-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); }
+    .sidebar-backdrop.open { display: block; }
+    .content { padding: 96px 20px 40px; max-width: 980px; margin: 0 auto; }
+    .view { display: none; }
+    .view.active { display: block; }
+    h1 { margin: 0 0 8px; color: #f8fafc; font-size: clamp(28px, 5vw, 42px); }
+    h2 { margin: 0 0 12px; color: #93c5fd; }
+    .card {
+      background: #111827; border: 1px solid #334155; border-radius: 16px; padding: 22px; margin-top: 18px;
+    }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+    .actions a {
+      display: inline-block; text-decoration: none; color: white; background: #2563eb;
+      border-radius: 12px; padding: 14px 18px; font-weight: 700;
+    }
+    .actions a.alt { background: #1e293b; border: 1px solid #475569; }
+    .blank { color: #94a3b8; }
+    .year-link { color: #93c5fd; }
+  </style>
+</head>
+<body>
+  <button class="menu-toggle" id="menuToggle" aria-label="Open menu"><span></span><span></span><span></span></button>
+  <img src="Surabhi_Yuvasena_Logo.png" alt="Surabhi Yuvasena" class="page-logo">
+  <div class="sidebar-backdrop" id="backdrop"></div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-title">SPL 2026</div>
+    <button class="menu-item active" data-view="home">Home</button>
+    <button class="menu-item" data-view="teams">Teams</button>
+    <button class="menu-item" data-view="schedule">Schedule</button>
+    <button class="menu-item" data-view="points">Points Table</button>
+    <button class="menu-item" data-view="sponsors">Sponsors</button>
+    <button class="menu-item" data-view="playing-conditions">Playing Conditions</button>
+    <button class="menu-item" data-view="organizing-team">Organizing Team</button>
+    <a class="menu-link" href="2026/serial-verify.html">Register</a>
+    <a class="menu-link" href="2026/get_serial.html">Get Serial Number</a>
+    <a class="menu-link" href="index.html">Choose year</a>
+  </nav>
+  <main class="content">
+    <section class="view active" id="home">
+      <h1>SURABHI YUVASENA SPL - 2026</h1>
+      <p class="blank">Tournament details will be updated here. Player registration is open.</p>
+      <div class="actions">
+        <a href="2026/serial-verify.html">Register</a>
+        <a class="alt" href="2026/get_serial.html">Get Serial Number</a>
+      </div>
+    </section>
+    <section class="view" id="teams"><div class="card"><h2>Teams</h2><p class="blank">Details will be updated.</p></div></section>
+    <section class="view" id="schedule"><div class="card"><h2>Schedule</h2><p class="blank">Details will be updated.</p></div></section>
+    <section class="view" id="points"><div class="card"><h2>Points Table</h2><p class="blank">Details will be updated.</p></div></section>
+    <section class="view" id="sponsors"><div class="card"><h2>Sponsors</h2><p class="blank">Details will be updated.</p></div></section>
+    <section class="view" id="playing-conditions"><div class="card"><h2>Playing Conditions</h2><p class="blank">Details will be updated.</p></div></section>
+    <section class="view" id="organizing-team"><div class="card"><h2>Organizing Team</h2><p class="blank">Details will be updated.</p></div></section>
+  </main>
+  <script>
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.getElementById('backdrop');
+    function closeMenu() {
+      sidebar.classList.remove('open');
+      backdrop.classList.remove('open');
+    }
+    document.getElementById('menuToggle').addEventListener('click', function () {
+      sidebar.classList.toggle('open');
+      backdrop.classList.toggle('open');
+    });
+    backdrop.addEventListener('click', closeMenu);
+    document.querySelectorAll('.menu-item').forEach(function (item) {
+      item.addEventListener('click', function () {
+        document.querySelectorAll('.menu-item').forEach(function (el) { el.classList.remove('active'); });
+        document.querySelectorAll('.view').forEach(function (el) { el.classList.remove('active'); });
+        item.classList.add('active');
+        document.getElementById(item.getAttribute('data-view')).classList.add('active');
+        closeMenu();
+      });
+    });
+  </script>
+</body>
+</html>

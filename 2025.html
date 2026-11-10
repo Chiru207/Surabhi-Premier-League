@@ -1,0 +1,4405 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"/>
+  <title>Surabhi Premier League - 2025</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    /* Telugu font stack for proper Unicode rendering */
+    :root {
+      --telugu-font: 'Noto Sans Telugu', 'Nirmala UI', 'Gautami', 'Vani', 'Kartika', 'Lohit Telugu', 'Pothana2000', 'Noto Sans', system-ui, Arial, Helvetica, sans-serif;
+    }
+    
+    body {
+      background: #0f172a;
+      color: #e2e8f0;
+      font-family: var(--telugu-font);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+    
+    /* Ensure all text elements use Telugu font */
+    h1, h2, h3, h4, h5, h6, p, span, div, a, button, input, textarea, select, label, li, td, th {
+      font-family: var(--telugu-font);
+    }
+    
+    /* Logo in top-right corner */
+    .page-logo {
+      position: fixed;
+      top: clamp(10px, 2vh, 20px);
+      right: clamp(10px, 2vw, 20px);
+      width: clamp(60px, 8vw, 120px);
+      height: auto;
+      z-index: 9999;
+      opacity: 0.9;
+      transition: opacity 0.3s;
+    }
+    
+    .page-logo:hover {
+      opacity: 1;
+    }
+    
+    /* Hamburger Menu Icon */
+    .menu-toggle {
+      position: fixed;
+      top: clamp(10px, 2vh, 20px);
+      left: clamp(10px, 2vw, 20px);
+      width: clamp(40px, 6vw, 50px);
+      height: clamp(40px, 6vw, 50px);
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border: 2px solid #334155;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      z-index: 10000;
+      transition: all 0.3s ease;
+      padding: 8px;
+    }
+    
+    .menu-toggle:hover {
+      border-color: #60a5fa;
+      background: linear-gradient(135deg, #1e40af 0%, #1e293b 100%);
+    }
+    
+    .menu-toggle span {
+      width: 70%;
+      height: 3px;
+      background: #60a5fa;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+    
+    .menu-toggle:hover span {
+      background: #93c5fd;
+    }
+    
+    /* Sidebar Menu */
+    .sidebar {
+      width: clamp(200px, 20vw, 280px);
+      background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+      border-right: 2px solid #334155;
+      padding: clamp(20px, 3vh, 40px) clamp(15px, 2vw, 25px);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(15px, 2vh, 25px);
+      overflow-y: auto;
+      overflow-x: hidden;
+      z-index: 9998;
+      flex-shrink: 0;
+      max-height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      height: 100vh;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+    
+    /* Show sidebar on hover over menu toggle or sidebar itself */
+    .menu-toggle:hover ~ .sidebar,
+    .menu-toggle:hover + .page-logo ~ .sidebar,
+    .sidebar:hover {
+      transform: translateX(0);
+    }
+    
+    /* Keep sidebar visible when hovering over it (even if mouse leaves toggle) */
+    .sidebar:hover {
+      transform: translateX(0);
+    }
+    
+    /* Mobile: Show sidebar when active class is present */
+    .sidebar.active {
+      transform: translateX(0);
+    }
+    
+    /* Backdrop overlay for mobile sidebar */
+    .sidebar-backdrop {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 9997;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .sidebar-backdrop.active {
+      display: block;
+      opacity: 1;
+    }
+    
+    /* Mobile: Toggle sidebar on menu toggle click */
+    @media (max-width: 768px) {
+      /* Disable hover effects on mobile */
+      .menu-toggle:hover ~ .sidebar,
+      .menu-toggle:hover + .page-logo ~ .sidebar,
+      .sidebar:hover {
+        transform: translateX(-100%);
+      }
+      
+      .sidebar.active {
+        transform: translateX(0);
+        z-index: 9999;
+      }
+      
+      /* Ensure menu toggle is always clickable on mobile */
+      .menu-toggle {
+        pointer-events: auto;
+        z-index: 10001;
+      }
+    }
+    
+    .sidebar-title {
+      font-size: clamp(18px, 2.5vw, 24px);
+      color: #60a5fa;
+      font-weight: 700;
+      margin-bottom: clamp(10px, 2vh, 20px);
+      text-align: center;
+      padding-bottom: clamp(10px, 2vh, 20px);
+      border-bottom: 2px solid #334155;
+    }
+    
+    .menu-item {
+      padding: clamp(12px, 2vh, 18px) clamp(15px, 2vw, 25px);
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border: 2px solid #334155;
+      border-radius: 12px;
+      color: #94a3b8;
+      font-size: clamp(14px, 2vw, 18px);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+    
+    .menu-item:hover {
+      background: linear-gradient(135deg, #1e40af 0%, #1e293b 100%);
+      border-color: #60a5fa;
+      color: #60a5fa;
+      transform: translateX(5px);
+    }
+    
+    .menu-item.active {
+      background: linear-gradient(135deg, #1e40af 0%, #1e293b 100%);
+      border-color: #60a5fa;
+      color: #60a5fa;
+      box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
+    }
+    
+    /* Main Content Area */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      overflow-x: hidden;
+      position: relative;
+      min-height: 0;
+      margin-left: 0;
+      transition: margin-left 0.3s ease;
+    }
+    
+    /* Sidebar overlays content on desktop, doesn't push it */
+    @media (min-width: 769px) {
+      .main-content {
+        margin-left: 0;
+      }
+    }
+    
+    .content-area {
+      flex: 1;
+      padding: clamp(20px, 3vh, 40px);
+      overflow-y: visible;
+      overflow-x: hidden;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      min-height: fit-content;
+    }
+    
+    /* Flyer View */
+    .flyer-view {
+      width: 100%;
+      min-height: 100%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(20px, 3vh, 40px) 0;
+    }
+    
+    .flyer-view.active {
+      display: flex;
+    }
+    
+    .flyer-container {
+      max-width: 90%;
+      max-height: 90%;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border: 2px solid #334155;
+      border-radius: 16px;
+      padding: clamp(20px, 3vw, 40px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: center;
+      gap: clamp(20px, 3vh, 30px);
+    }
+    
+    .flyer-slideshow {
+      position: relative;
+      width: 100%;
+      max-height: 80vh;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    
+    /* All slides are absolutely positioned and stacked in the same place */
+    .flyer-slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      max-height: 80vh;
+      height: auto;
+      border-radius: 12px;
+      object-fit: contain;
+      display: block;
+      z-index: 1;
+      opacity: 0;
+      visibility: hidden;
+      transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+    }
+    
+    /* Active slide is relative to maintain container height */
+    .flyer-slide.active {
+      position: relative !important;
+      z-index: 2;
+      transform: translateX(0) !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      display: block !important;
+    }
+    
+    /* Slide coming from right (next slide) */
+    .flyer-slide.slide-in-right {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    
+    .flyer-slide.slide-in-right.active {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    
+    /* Slide going to left (previous slide leaving) */
+    .flyer-slide.slide-out-left {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    
+    /* Slide coming from left (previous slide) */
+    .flyer-slide.slide-in-left {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    
+    .flyer-slide.slide-in-left.active {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    
+    /* Slide going to right (next slide leaving) */
+    .flyer-slide.slide-out-right {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    
+    /* Slide in from right (going to next/right) */
+    .flyer-slide.slide-in-right {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    
+    .flyer-slide.slide-in-right.active {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    
+    /* Slide in from left (going to previous/left) */
+    .flyer-slide.slide-in-left {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    
+    .flyer-slide.slide-in-left.active {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    
+    /* Slide out to left (current slide leaving when going right) */
+    .flyer-slide.slide-out-left {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    
+    /* Slide out to right (current slide leaving when going left) */
+    .flyer-slide.slide-out-right {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    
+    /* First slide is relative initially to establish container height */
+    .flyer-slide:first-child {
+      position: relative;
+    }
+    
+    /* Visitor Counter */
+    .visitor-counter {
+      text-align: center;
+      padding: clamp(8px, 1.5vh, 12px) clamp(15px, 3vw, 20px);
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
+      border: 2px solid #334155;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 100%;
+    }
+    
+    .visitor-counter-label {
+      font-size: clamp(12px, 2vw, 16px);
+      color: #94a3b8;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .visitor-counter-number {
+      font-size: clamp(24px, 5vw, 36px);
+      color: #60a5fa;
+      font-weight: 700;
+      font-family: var(--telugu-font);
+      text-shadow: 0 2px 8px rgba(96, 165, 250, 0.3);
+    }
+    
+    /* Teams View */
+    .teams-view {
+      width: 100%;
+      display: none;
+      min-height: 100%;
+      text-align: center;
+    }
+    
+    .teams-view.active {
+      display: block;
+    }
+    
+    .teams-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: clamp(20px, 3vw, 30px);
+      padding: clamp(20px, 3vh, 40px);
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      box-sizing: border-box;
+      justify-items: center;
+    }
+    
+    .captain-card {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border: 2px solid #334155;
+      border-radius: 16px;
+      padding: clamp(20px, 3vw, 30px);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .captain-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 24px rgba(96, 165, 250, 0.3);
+      border-color: #60a5fa;
+    }
+    
+    .captain-photo {
+      width: 100%;
+      max-width: 200px;
+      height: auto;
+      border-radius: 12px;
+      margin: 0 auto clamp(15px, 2vh, 20px);
+      border: 2px solid #334155;
+      object-fit: cover;
+      aspect-ratio: 1;
+    }
+    
+    .captain-name {
+      font-size: clamp(18px, 3vw, 24px);
+      font-weight: 700;
+      color: #60a5fa;
+      margin-bottom: clamp(8px, 1vh, 12px);
+    }
+    
+    .team-count {
+      font-size: clamp(14px, 2vw, 16px);
+      color: #94a3b8;
+      margin-bottom: clamp(4px, 0.5vh, 8px);
+    }
+    
+    .team-name {
+      font-size: clamp(16px, 2.5vw, 20px);
+      color: #60a5fa;
+      font-weight: 600;
+      font-style: italic;
+      margin-bottom: clamp(8px, 1vh, 12px);
+    }
+    
+    .team-logo {
+      width: 100%;
+      max-width: 180px;
+      height: auto;
+      max-height: 120px;
+      border-radius: 8px;
+      margin: 0 auto clamp(15px, 2vh, 20px);
+      border: 2px solid #334155;
+      object-fit: contain;
+      background: #0f172a;
+      order: -1; /* Ensure logo appears first */
+    }
+    
+    /* Team Detail View */
+    .team-detail-view {
+      width: 100%;
+      display: none;
+      min-height: 100%;
+      text-align: center;
+    }
+    
+    .team-detail-view.active {
+      display: block;
+    }
+    
+    .team-header {
+      text-align: center;
+      padding: clamp(20px, 3vh, 40px);
+      border-bottom: 2px solid #334155;
+      margin-bottom: clamp(20px, 3vh, 40px);
+    }
+    
+    .team-header-buttons {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: clamp(15px, 2vw, 25px);
+      flex-wrap: wrap;
+      margin-bottom: clamp(15px, 2vh, 25px);
+    }
+    
+    .back-button,
+    .schedule-button {
+      display: inline-block;
+      padding: clamp(10px, 1.5vh, 15px) clamp(20px, 3vw, 30px);
+      background: linear-gradient(135deg, #1e40af 0%, #1e293b 100%);
+      border: 2px solid #60a5fa;
+      border-radius: 8px;
+      color: #60a5fa;
+      font-size: clamp(14px, 2vw, 18px);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .back-button:hover {
+      background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
+      transform: translateX(-5px);
+    }
+    
+    .schedule-button:hover {
+      background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
+      transform: translateX(5px);
+    }
+    
+    .team-detail-title {
+      font-size: clamp(24px, 4vw, 36px);
+      color: #60a5fa;
+      font-weight: 700;
+      margin-bottom: clamp(10px, 2vh, 20px);
+    }
+    
+    .players-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: clamp(20px, 3vw, 30px);
+      padding: clamp(20px, 3vh, 40px);
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      box-sizing: border-box;
+      justify-items: center;
+    }
+    
+    .player-card {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border: 2px solid #334155;
+      border-radius: 12px;
+      padding: clamp(15px, 2vw, 20px);
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    
+    .player-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(96, 165, 250, 0.2);
+      border-color: #60a5fa;
+    }
+    
+    .player-photo {
+      width: 100%;
+      max-width: 150px;
+      height: auto;
+      border-radius: 8px;
+      margin: 0 auto clamp(10px, 1.5vh, 15px);
+      border: 2px solid #334155;
+      object-fit: cover;
+      object-position: top;
+      aspect-ratio: 1;
+    }
+    
+    .player-name {
+      font-size: clamp(14px, 2vw, 18px);
+      font-weight: 600;
+      color: #e2e8f0;
+      word-wrap: break-word;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: clamp(40px, 5vh, 60px);
+      color: #94a3b8;
+      font-size: clamp(16px, 2.5vw, 20px);
+    }
+    
+    .error {
+      text-align: center;
+      padding: clamp(40px, 5vh, 60px);
+      color: #ef4444;
+      font-size: clamp(16px, 2.5vw, 20px);
+    }
+    
+    /* Schedule and Points Table Views */
+    .schedule-view,
+    .points-view,
+    .sponsors-view,
+    .playing-conditions-view {
+      width: 100%;
+      display: none;
+      padding: clamp(20px, 3vh, 40px);
+      max-width: 1200px;
+      margin: 0 auto;
+      overflow-x: visible;
+    }
+    
+    .organizing-team-view {
+      width: 100%;
+      display: none;
+      padding: clamp(20px, 3vh, 40px);
+      max-width: 1200px;
+      margin: 0 auto;
+      overflow-x: visible;
+    }
+    
+    .schedule-view.active,
+    .points-view.active,
+    .sponsors-view.active,
+    .playing-conditions-view.active,
+    .organizing-team-view.active {
+      display: block;
+    }
+    
+    .section-title {
+      font-size: clamp(24px, 4vw, 36px);
+      color: #60a5fa;
+      font-weight: 700;
+      margin-bottom: clamp(20px, 3vh, 30px);
+      text-align: center;
+    }
+    
+    /* Sponsors View Styles */
+    .sponsors-container {
+      width: 100%;
+      margin-top: clamp(20px, 3vh, 40px);
+    }
+    
+    .sponsors-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: clamp(20px, 3vw, 30px);
+      margin-top: clamp(20px, 3vh, 30px);
+    }
+    
+    .sponsor-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.6) 100%);
+      border: 2px solid #334155;
+      border-radius: 12px;
+      padding: clamp(20px, 3vh, 30px);
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    
+    .sponsor-card:hover {
+      border-color: #60a5fa;
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(96, 165, 250, 0.3);
+    }
+    
+    .sponsor-name {
+      font-size: clamp(16px, 2.5vw, 20px);
+      color: #60a5fa;
+      font-weight: 700;
+      margin-bottom: clamp(12px, 2vh, 18px);
+      line-height: 1.4;
+    }
+    
+    .sponsor-desc {
+      font-size: clamp(14px, 2vw, 16px);
+      color: #cbd5e1;
+      line-height: 1.6;
+      margin: 0;
+    }
+    
+    .sponsor-desc strong {
+      color: #94a3b8;
+      font-weight: 600;
+    }
+    
+    .sponsor-placeholder {
+      grid-column: 1 / -1;
+    }
+    
+    /* Playing Conditions View Styles */
+    .conditions-container {
+      width: 100%;
+      margin-top: clamp(20px, 3vh, 40px);
+    }
+    
+    .conditions-table-container {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: clamp(20px, 3vh, 30px);
+    }
+    
+    .conditions-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border-radius: 12px;
+      overflow: hidden;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    .conditions-table thead {
+      background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+    }
+    
+    .conditions-table th {
+      padding: clamp(12px, 2vh, 18px) clamp(10px, 2vw, 20px);
+      text-align: center;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: clamp(14px, 2vw, 18px);
+      border-right: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .conditions-table th:last-child {
+      border-right: none;
+    }
+    
+    .conditions-table tbody tr {
+      border-bottom: 1px solid #334155;
+      transition: all 0.3s ease;
+    }
+    
+    .conditions-table tbody tr:hover {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
+      transform: scale(1.01);
+    }
+    
+    .conditions-table tbody tr:last-child {
+      border-bottom: none;
+    }
+    
+    .conditions-table td {
+      padding: clamp(12px, 2vh, 18px) clamp(10px, 2vw, 20px);
+      text-align: center;
+      color: #e2e8f0;
+      font-size: clamp(14px, 2vw, 18px);
+      border-right: 1px solid #334155;
+    }
+    
+    .conditions-table td:first-child {
+      text-align: left;
+      font-weight: 600;
+      color: #60a5fa;
+    }
+    
+    .conditions-table td:last-child {
+      border-right: none;
+    }
+    
+    /* Rules Container Styles */
+    .rules-container {
+      width: 100%;
+      max-width: 1000px;
+      margin: clamp(40px, 5vh, 60px) auto 0;
+      padding: clamp(20px, 3vh, 40px);
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.6) 100%);
+      border: 2px solid #334155;
+      border-radius: 12px;
+    }
+    
+    .rules-greeting {
+      margin-bottom: clamp(20px, 3vh, 30px);
+      text-align: center;
+    }
+    
+    .rules-greeting p {
+      font-size: clamp(16px, 2.5vw, 20px);
+      color: #e2e8f0;
+      line-height: 1.6;
+      margin-bottom: clamp(8px, 1vh, 12px);
+    }
+    
+    .rules-list {
+      margin: clamp(20px, 3vh, 30px) 0;
+      padding-left: clamp(20px, 4vw, 40px);
+      color: #e2e8f0;
+    }
+    
+    .rules-list li {
+      font-size: clamp(14px, 2.2vw, 18px);
+      line-height: 1.8;
+      margin-bottom: clamp(15px, 2.5vh, 25px);
+      color: #cbd5e1;
+      text-align: left;
+    }
+    
+    .rules-list li strong {
+      color: #60a5fa;
+    }
+    
+    .rules-closing {
+      margin-top: clamp(30px, 4vh, 40px);
+      text-align: center;
+    }
+    
+    .rules-closing p {
+      font-size: clamp(14px, 2.2vw, 18px);
+      color: #e2e8f0;
+      line-height: 1.6;
+      margin-bottom: clamp(8px, 1vh, 12px);
+    }
+    
+    .rules-closing p strong {
+      color: #60a5fa;
+      font-size: clamp(16px, 2.5vw, 22px);
+    }
+    
+    /* Organizing Team View Styles */
+    .organizing-container {
+      width: 100%;
+      margin-top: clamp(20px, 3vh, 40px);
+      column-count: 3;
+      column-gap: clamp(20px, 3vw, 30px);
+      column-fill: balance;
+    }
+    
+    .organizing-section {
+      width: 100%;
+      display: inline-block;
+      padding: clamp(15px, 2.5vh, 25px);
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.6) 100%);
+      border: 2px solid #334155;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      margin-bottom: clamp(20px, 3vw, 30px);
+      break-inside: avoid;
+      page-break-inside: avoid;
+      -webkit-column-break-inside: avoid;
+      box-sizing: border-box;
+    }
+    
+    /* Force specific sections to start in specific columns */
+    .organizing-section.col-1:first-of-type {
+      break-before: auto;
+    }
+    
+    .organizing-section.col-2:first-of-type {
+      break-before: column;
+      -webkit-column-break-before: always;
+    }
+    
+    .organizing-section.col-3:first-of-type {
+      break-before: column;
+      -webkit-column-break-before: always;
+    }
+    
+    @media (min-width: 900px) {
+      .organizing-container {
+        column-count: 3;
+      }
+    }
+    
+    @media (min-width: 600px) and (max-width: 899px) {
+      .organizing-container {
+        column-count: 2;
+      }
+      
+      .organizing-section.col-2:first-of-type {
+        break-before: column;
+        -webkit-column-break-before: always;
+      }
+      
+      .organizing-section.col-3:first-of-type {
+        break-before: auto;
+      }
+    }
+    
+    @media (max-width: 599px) {
+      .organizing-container {
+        column-count: 1;
+      }
+      
+      .organizing-section.col-2:first-of-type,
+      .organizing-section.col-3:first-of-type {
+        break-before: auto;
+      }
+    }
+    
+    .organizing-section:hover {
+      border-color: #60a5fa;
+      box-shadow: 0 4px 12px rgba(96, 165, 250, 0.2);
+    }
+    
+    .organizing-section-title {
+      font-size: clamp(18px, 3vw, 24px);
+      color: #60a5fa;
+      font-weight: 700;
+      margin-bottom: clamp(15px, 2.5vh, 20px);
+      text-align: left;
+      border-bottom: 2px solid #334155;
+      padding-bottom: clamp(8px, 1.5vh, 12px);
+    }
+    
+    .organizing-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .organizing-list li {
+      font-size: clamp(15px, 2.3vw, 19px);
+      color: #e2e8f0;
+      line-height: 1.8;
+      margin-bottom: clamp(10px, 1.5vh, 15px);
+      padding-left: clamp(20px, 3vw, 30px);
+      position: relative;
+    }
+    
+    .organizing-list li::before {
+      content: "•";
+      color: #60a5fa;
+      font-weight: bold;
+      font-size: clamp(18px, 2.5vw, 22px);
+      position: absolute;
+      left: 0;
+    }
+    
+    .organizing-note {
+      font-size: clamp(14px, 2vw, 16px);
+      color: #94a3b8;
+      font-style: italic;
+      margin-top: clamp(10px, 1.5vh, 15px);
+      padding-left: clamp(20px, 3vw, 30px);
+    }
+    
+    .organizing-footer {
+      column-span: none;
+      margin-top: clamp(30px, 4vh, 40px);
+      padding: clamp(20px, 3vh, 30px);
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
+      border: 2px solid #60a5fa;
+      border-radius: 12px;
+      text-align: center;
+      display: inline-block;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    
+    @media (min-width: 900px) {
+      .organizing-footer {
+        width: 100%;
+      }
+    }
+    
+    @media (max-width: 899px) {
+      .organizing-footer {
+        width: 100%;
+      }
+    }
+    
+    @media (max-width: 599px) {
+      .organizing-footer {
+        width: 100%;
+      }
+    }
+    
+    .organizing-footer-text {
+      font-size: clamp(15px, 2.3vw, 19px);
+      color: #e2e8f0;
+      line-height: 1.8;
+      margin-bottom: clamp(15px, 2vh, 20px);
+    }
+    
+    .organizing-footer-note {
+      font-size: clamp(14px, 2vw, 17px);
+      color: #cbd5e1;
+      line-height: 1.6;
+      margin-top: clamp(15px, 2vh, 20px);
+      padding-top: clamp(15px, 2vh, 20px);
+      border-top: 1px solid #334155;
+    }
+    
+    .organizing-footer-note strong {
+      color: #60a5fa;
+    }
+    
+    .conditions-table td strong {
+      color: #60a5fa;
+      font-weight: 700;
+    }
+    
+    .tournament-dates {
+      text-align: center;
+      color: #94a3b8;
+      font-size: clamp(16px, 2.5vw, 20px);
+      margin-bottom: clamp(20px, 3vh, 30px);
+      font-weight: 500;
+    }
+    
+    /* Scrolling marquee for draw info */
+    .draw-info-marquee {
+      width: 100%;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.3) 0%, rgba(15, 23, 42, 0.3) 100%);
+      border-top: 2px solid #334155;
+      border-bottom: 2px solid #334155;
+      padding: clamp(12px, 2vh, 18px) 0;
+      margin: clamp(20px, 3vh, 30px) 0;
+      position: relative;
+    }
+    
+    .marquee-wrapper {
+      display: flex;
+      width: fit-content;
+      animation: scroll-left 25s linear infinite;
+    }
+    
+    .marquee-content {
+      display: inline-block;
+      font-size: clamp(16px, 2.5vw, 22px);
+      color: #60a5fa;
+      font-weight: 600;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    
+    @keyframes scroll-left {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+    
+    /* Pause animation on hover */
+    .draw-info-marquee:hover .marquee-wrapper {
+      animation-play-state: paused;
+    }
+    
+    .schedule-layout-wrapper {
+      display: flex;
+      gap: clamp(20px, 3vw, 40px);
+      align-items: flex-start;
+      margin: clamp(30px, 4vh, 50px) 0;
+      flex-wrap: wrap;
+      overflow-x: visible;
+      min-width: 0;
+    }
+    
+    .teams-circle-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-shrink: 0;
+      padding: clamp(20px, 3vh, 40px);
+    }
+    
+    .teams-circle {
+      position: relative;
+      width: clamp(200px, 30vw, 300px);
+      height: clamp(200px, 30vw, 300px);
+      border: 3px solid #60a5fa;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.5) 100%);
+      box-shadow: 0 8px 32px rgba(96, 165, 250, 0.2);
+    }
+    
+    .match-arc {
+      position: absolute;
+      pointer-events: none;
+      z-index: 1;
+    }
+    
+    .match-arc svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+    
+    .match-arc path {
+      stroke: #fbbf24;
+      stroke-width: 2;
+      fill: none;
+      opacity: 0.8;
+    }
+    
+    .match-arc-label {
+      position: absolute;
+      background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+      color: #0f172a;
+      font-size: clamp(10px, 1.5vw, 14px);
+      font-weight: 700;
+      padding: clamp(2px, 0.5vw, 4px) clamp(4px, 1vw, 8px);
+      border-radius: 8px;
+      border: 1px solid #fbbf24;
+      box-shadow: 0 2px 8px rgba(251, 191, 36, 0.4);
+      z-index: 2;
+      white-space: nowrap;
+      width: fit-content;
+      display: inline-block;
+    }
+    
+    .match-label {
+      position: absolute;
+      top: clamp(8px, 1vh, 12px);
+      left: clamp(8px, 1.5vw, 12px);
+      background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+      color: #0f172a;
+      font-size: clamp(11px, 1.8vw, 14px);
+      font-weight: 700;
+      padding: clamp(3px, 0.5vw, 5px) clamp(6px, 1vw, 10px);
+      border-radius: 8px;
+      border: 1px solid #fbbf24;
+      box-shadow: 0 2px 6px rgba(251, 191, 36, 0.3);
+      z-index: 1;
+      width: fit-content;
+      display: inline-block;
+    }
+    .match-label-final-label {
+      position: absolute;
+      top: clamp(8px, 1vh, 12px);
+      left: clamp(8px, 1.5vw, 12px);
+      background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+      color: #ffffff;
+      font-size: clamp(11px, 1.8vw, 14px);
+      font-weight: 700;
+      padding: clamp(3px, 0.5vw, 5px) clamp(6px, 1vw, 10px);
+      border-radius: 8px;
+      border: 1px solid #fbbf24;
+      box-shadow: 0 2px 6px rgba(251, 191, 36, 0.3);
+      z-index: 2;
+      width: fit-content;
+      display: inline-block;
+    }
+    
+    .first-two-days-container {
+      flex: 1;
+      min-width: 300px;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(20px, 3vh, 30px);
+    }
+    
+    .team-letter {
+      position: absolute;
+      width: clamp(40px, 6vw, 60px);
+      height: clamp(40px, 6vw, 60px);
+      background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+      border: 2px solid #60a5fa;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-size: clamp(18px, 3vw, 28px);
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(96, 165, 250, 0.4);
+      transition: all 0.3s ease;
+      z-index: 3;
+    }
+    
+    .team-letter:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(96, 165, 250, 0.6);
+    }
+    
+    /* Position teams in a circle */
+    .team-letter:nth-child(1) { /* A - Top */
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%) translateY(-50%);
+    }
+    
+    .team-letter:nth-child(2) { /* B - Top Right */
+      top: 25%;
+      right: 5%;
+      transform: translate(50%, -50%);
+    }
+    
+    .team-letter:nth-child(3) { /* C - Bottom Right */
+      bottom: 25%;
+      right: 5%;
+      transform: translate(50%, 50%);
+    }
+    
+    .team-letter:nth-child(4) { /* D - Bottom */
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%) translateY(50%);
+    }
+    
+    .team-letter:nth-child(5) { /* E - Bottom Left */
+      bottom: 25%;
+      left: 5%;
+      transform: translate(-50%, 50%);
+    }
+    
+    .team-letter:nth-child(6) { /* F - Top Left */
+      top: 25%;
+      left: 5%;
+      transform: translate(-50%, -50%);
+    }
+    
+    .matches-container {
+      margin-top: clamp(40px, 5vh, 60px);
+    }
+    
+    .day-schedule {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border: 2px solid #334155;
+      border-radius: 16px;
+      padding: clamp(20px, 3vh, 30px);
+      margin-bottom: clamp(20px, 3vh, 30px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    .day-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: clamp(15px, 2vh, 25px);
+      padding-bottom: clamp(10px, 1.5vh, 15px);
+      border-bottom: 2px solid #334155;
+      flex-wrap: wrap;
+      gap: clamp(10px, 2vw, 20px);
+    }
+    
+    .day-title {
+      font-size: clamp(20px, 3vw, 28px);
+      color: #60a5fa;
+      font-weight: 700;
+    }
+    
+    .day-date {
+      font-size: clamp(16px, 2.5vw, 20px);
+      color: #94a3b8;
+      font-weight: 500;
+    }
+    
+    .matches-list {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(12px, 2vh, 20px);
+    }
+    
+    .match-item {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.5) 100%);
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: clamp(15px, 2vh, 20px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(15px, 3vw, 30px);
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    .match-item:hover {
+      border-color: #60a5fa;
+      box-shadow: 0 4px 12px rgba(96, 165, 250, 0.2);
+      transform: translateY(-2px);
+    }
+    
+    .match-team {
+      font-size: clamp(16px, 2.5vw, 20px);
+      font-weight: 700;
+      color: #60a5fa;
+      padding: clamp(8px, 1.5vh, 12px) clamp(15px, 3vw, 25px);
+      background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+      border-radius: 8px;
+      border: 2px solid #60a5fa;
+      min-width: clamp(80px, 15vw, 150px);
+      text-align: center;
+      line-height: 1.3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(8px, 1.5vw, 12px);
+      flex-direction: row;
+    }
+    
+    .match-team-logo {
+      width: clamp(30px, 5vw, 45px);
+      height: clamp(30px, 5vw, 45px);
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+    
+    .match-team-name {
+      font-size: clamp(14px, 2.2vw, 18px);
+      line-height: 1.2;
+      color: #ffffff;
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .match-team-name:hover {
+      color: #93c5fd;
+      text-shadow: 0 2px 8px rgba(147, 197, 253, 0.6);
+      transform: scale(1.05);
+    }
+    
+    .match-link {
+      position: absolute;
+      bottom: clamp(8px, 1vh, 12px);
+      right: clamp(8px, 1.5vw, 12px);
+      color: #60a5fa;
+      font-size: clamp(11px, 1.8vw, 14px);
+      font-weight: 500;
+      text-decoration: underline;
+      z-index: 3;
+      transition: all 0.3s ease;
+    }
+    
+    .match-link:hover {
+      color: #93c5fd;
+      text-decoration: underline;
+    }
+    
+    .match-vs {
+      font-size: clamp(16px, 2.5vw, 20px);
+      color: #94a3b8;
+      font-weight: 600;
+    }
+    
+    .match-time {
+      position: absolute;
+      bottom: clamp(35px, 4.5vh, 50px);
+      right: clamp(8px, 1.5vw, 12px);
+      background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+      color: #ffffff;
+      font-size: clamp(11px, 1.8vw, 14px);
+      font-weight: 700;
+      padding: clamp(4px, 0.6vh, 6px) clamp(8px, 1.5vw, 12px);
+      border-radius: 6px;
+      z-index: 2;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+    }
+    
+    .match-item.final-match .match-time {
+      background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+      color: #0f172a;
+      box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3);
+    }
+    
+    .match-label {
+      position: absolute;
+      top: -8px;
+      right: 10px;
+      background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+      color: #0f172a;
+      font-size: clamp(10px, 1.5vw, 12px);
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .final-match {
+      border: 2px solid #fbbf24;
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(245, 158, 11, 0.1) 100%);
+    }
+    
+    .final-match:hover {
+      border-color: #fbbf24;
+      box-shadow: 0 4px 16px rgba(251, 191, 36, 0.3);
+    }
+    
+    .final-label {
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+      color: #1e293b;
+      font-size: clamp(11px, 1.8vw, 14px);
+      padding: 6px 14px;
+    }
+    
+    .eliminator-badge {
+      display: inline-block;
+      /*background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);*/
+      color: #ffffff;
+      padding: clamp(6px, 1vh, 10px) clamp(12px, 2vw, 20px);
+      border-radius: 20px;
+      font-size: clamp(12px, 2vw, 16px);
+      font-weight: 600;
+      margin-left: clamp(10px, 2vw, 15px);
+      border: 2px solid #fca5a5;
+    }
+    
+    .coming-soon {
+      text-align: center;
+      padding: clamp(40px, 5vh, 60px);
+      color: #94a3b8;
+      font-size: clamp(18px, 3vw, 24px);
+    }
+    
+    /* Points Table Styles */
+    .points-table-container {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: clamp(20px, 3vh, 30px);
+    }
+    
+    .points-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    .points-table thead {
+      background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+    }
+    
+    .points-table th {
+      padding: clamp(12px, 2vh, 18px) clamp(10px, 2vw, 20px);
+      text-align: center;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: clamp(14px, 2vw, 18px);
+      border-right: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .points-table th:last-child {
+      border-right: none;
+    }
+    
+    .points-table tbody tr {
+      border-bottom: 1px solid #334155;
+      transition: all 0.3s ease;
+    }
+    
+    .points-table tbody tr:hover {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
+      transform: scale(1.01);
+    }
+    
+    .points-table tbody tr:last-child {
+      border-bottom: none;
+    }
+    
+    .points-table td {
+      padding: clamp(12px, 2vh, 18px) clamp(10px, 2vw, 20px);
+      text-align: center;
+      color: #e2e8f0;
+      font-size: clamp(14px, 2vw, 18px);
+      border-right: 1px solid #334155;
+    }
+    
+    .points-table td:last-child {
+      border-right: none;
+    }
+    
+    .team-cell {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: clamp(10px, 2vw, 15px);
+      text-align: left;
+    }
+    
+    .team-logo-small {
+      width: clamp(30px, 5vw, 50px);
+      height: clamp(30px, 5vw, 50px);
+      object-fit: contain;
+      border-radius: 6px;
+      border: 1px solid #334155;
+      background: #0f172a;
+    }
+    
+    .team-name-cell {
+      font-weight: 600;
+      color: #60a5fa;
+      text-align: left;
+    }
+    
+    .points-highlight {
+      font-weight: 700;
+      color: #60a5fa;
+      font-size: clamp(16px, 2.5vw, 20px);
+    }
+    
+    .nrr-positive {
+      color: #10b981;
+      font-weight: 600;
+    }
+    
+    .nrr-negative {
+      color: #ef4444;
+      font-weight: 600;
+    }
+    
+    .nrr-neutral {
+      color: #94a3b8;
+      font-weight: 600;
+    }
+    
+    /* Team Assignment Legend */
+    .team-assignment-legend {
+      margin-top: 0;
+      padding: clamp(15px, 2.5vh, 25px);
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.6) 100%);
+      border: 2px solid #334155;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .legend-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: clamp(10px, 1.5vh, 15px);
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: clamp(8px, 1.5vw, 12px);
+      padding: clamp(8px, 1.2vh, 12px);
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.4) 100%);
+      border: 1px solid #334155;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+    
+    .legend-item:hover {
+      border-color: #60a5fa;
+      transform: translateX(3px);
+      box-shadow: 0 2px 8px rgba(96, 165, 250, 0.2);
+    }
+    
+    .legend-letter {
+      font-size: clamp(16px, 2.5vw, 20px);
+      font-weight: 700;
+      color: #60a5fa;
+      background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+      border: 2px solid #60a5fa;
+      border-radius: 50%;
+      width: clamp(32px, 5vw, 40px);
+      height: clamp(32px, 5vw, 40px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    
+    .legend-team {
+      font-size: clamp(11px, 1.8vw, 14px);
+      color: #e2e8f0;
+      font-weight: 500;
+      flex: 1;
+    }
+    
+    @media (max-width: 768px) {
+      .legend-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .legend-item {
+        flex-direction: row;
+        text-align: left;
+        gap: clamp(8px, 1.5vw, 12px);
+      }
+      
+      .legend-letter {
+        width: clamp(28px, 4vw, 35px);
+        height: clamp(28px, 4vw, 35px);
+        font-size: clamp(14px, 2.2vw, 18px);
+      }
+      
+      .legend-team {
+        font-size: clamp(10px, 1.6vw, 13px);
+      }
+      
+      .match-team {
+        font-size: clamp(14px, 3.5vw, 18px);
+        min-width: clamp(70px, 20vw, 120px);
+        padding: clamp(6px, 1vh, 10px) clamp(10px, 2.5vw, 18px);
+        flex-direction: row;
+      }
+      
+      .match-team-logo {
+        width: clamp(25px, 4vw, 35px);
+        height: clamp(25px, 4vw, 35px);
+      }
+      
+      .match-team-name {
+        font-size: clamp(12px, 3vw, 16px);
+      }
+      
+      .circle-legend-container {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .teams-circle-container,
+      .team-assignment-legend {
+        width: 100%;
+        min-width: auto;
+      }
+      
+      .points-table-container,
+      .points-table-container,
+      .conditions-table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      
+      .points-table,
+      .conditions-table {
+        min-width: 600px;
+      }
+      
+      .points-table th,
+      .points-table td,
+      .conditions-table th,
+      .conditions-table td {
+        padding: clamp(10px, 1.5vh, 15px) clamp(8px, 2vw, 15px);
+        font-size: clamp(12px, 2vw, 16px);
+      }
+      
+      .team-logo-small {
+        width: clamp(25px, 4vw, 40px);
+        height: clamp(25px, 4vw, 40px);
+      }
+      
+      .organizing-container {
+        column-gap: clamp(15px, 2.5vh, 25px);
+      }
+      
+      .organizing-section {
+        margin-bottom: clamp(15px, 2.5vh, 25px);
+      }
+    }
+    
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      
+      .menu-toggle {
+        width: clamp(35px, 6vw, 45px);
+        height: clamp(35px, 6vw, 45px);
+        top: clamp(5px, 1vh, 10px);
+        left: clamp(5px, 1vw, 10px);
+      }
+      
+      .schedule-view {
+        padding: clamp(15px, 2vh, 25px) clamp(10px, 2vw, 20px);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        max-width: 100%;
+        width: 100%;
+      }
+      
+      .main-content {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+      }
+      
+      .content-area {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+      }
+      
+      .section-title {
+        font-size: clamp(20px, 5vw, 28px);
+        margin-bottom: clamp(15px, 2vh, 25px);
+      }
+      
+      .tournament-dates {
+        font-size: clamp(14px, 3.5vw, 18px);
+        margin-bottom: clamp(15px, 2vh, 25px);
+      }
+      
+      .draw-info-marquee {
+        padding: clamp(10px, 1.5vh, 15px) 0;
+        margin: clamp(15px, 2vh, 25px) 0;
+      }
+      
+      .marquee-content {
+        font-size: clamp(14px, 3.5vw, 18px);
+      }
+      
+      .schedule-layout-wrapper {
+        flex-direction: column;
+        align-items: center;
+        gap: clamp(15px, 2vh, 25px);
+        margin: clamp(20px, 3vh, 35px) 0;
+        overflow-x: visible;
+        width: 100%;
+      }
+      
+      .first-two-days-container {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        min-width: min-content;
+      }
+      
+      .matches-container {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        min-width: min-content;
+      }
+      
+      .day-schedule {
+        min-width: 280px;
+        width: max-content;
+      }
+      
+      .matches-list {
+        min-width: min-content;
+      }
+      
+      .match-item {
+        min-width: min-content;
+        width: 100%;
+        max-width: 100%;
+      }
+      
+      .teams-circle-container {
+        padding: clamp(15px, 2vh, 25px);
+        width: 100%;
+        max-width: 280px;
+      }
+      
+      .teams-circle {
+        width: clamp(180px, 50vw, 250px);
+        height: clamp(180px, 50vw, 250px);
+      }
+      
+      .team-letter {
+        width: clamp(32px, 8vw, 48px);
+        height: clamp(32px, 8vw, 48px);
+        font-size: clamp(14px, 3.5vw, 20px);
+      }
+      
+      .match-arc-label {
+        font-size: clamp(8px, 2vw, 11px);
+        padding: clamp(2px, 0.3vw, 3px) clamp(3px, 0.8vw, 6px);
+      }
+      
+      .first-two-days-container {
+        width: 100%;
+        min-width: 0;
+        gap: clamp(15px, 2vh, 25px);
+      }
+      
+      .day-schedule {
+        padding: clamp(15px, 2vh, 20px);
+        margin-bottom: clamp(15px, 2vh, 25px);
+      }
+      
+      .day-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: clamp(8px, 1vh, 12px);
+        margin-bottom: clamp(12px, 1.5vh, 20px);
+        padding-bottom: clamp(8px, 1vh, 12px);
+      }
+      
+      .day-title {
+        font-size: clamp(18px, 4vw, 24px);
+      }
+      
+      .day-date {
+        font-size: clamp(14px, 3vw, 18px);
+      }
+      
+      .matches-list {
+        gap: clamp(10px, 1.5vh, 15px);
+      }
+      
+      .match-item {
+        padding: clamp(12px, 1.5vh, 18px);
+        gap: clamp(10px, 2vw, 20px);
+        flex-wrap: wrap;
+      }
+      
+      .match-team {
+        font-size: clamp(16px, 4vw, 20px);
+        padding: clamp(6px, 1vh, 10px) clamp(12px, 2.5vw, 20px);
+        min-width: clamp(50px, 12vw, 80px);
+      }
+      
+      .match-vs {
+        font-size: clamp(14px, 3.5vw, 18px);
+      }
+      
+      .match-label {
+        font-size: clamp(9px, 2.2vw, 11px);
+        padding: clamp(2px, 0.4vw, 4px) clamp(5px, 1.2vw, 8px);
+        top: clamp(6px, 0.8vh, 10px);
+        left: clamp(6px, 1.2vw, 10px);
+      }
+      
+      .match-label-final-label {
+        font-size: clamp(9px, 2.2vw, 11px);
+        padding: clamp(2px, 0.4vw, 4px) clamp(5px, 1.2vw, 8px);
+        top: clamp(6px, 0.8vh, 10px);
+        left: clamp(6px, 1.2vw, 10px);
+      }
+      
+      .eliminator-badge {
+        font-size: clamp(11px, 2.5vw, 14px);
+        padding: clamp(5px, 0.8vh, 8px) clamp(10px, 2vw, 16px);
+        margin-left: clamp(8px, 1.5vw, 12px);
+      }
+      
+      .matches-container {
+        margin-top: clamp(30px, 4vh, 45px);
+      }
+      
+      .sidebar {
+        width: 80%;
+        max-width: 280px;
+        border-right: 2px solid #334155;
+        flex-direction: column;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: clamp(20px, 3vh, 30px) clamp(15px, 2vw, 20px);
+      }
+      
+      .sidebar-title {
+        display: block;
+      }
+      
+      .menu-item {
+        white-space: normal;
+        min-width: auto;
+        padding: clamp(12px, 2vh, 18px) clamp(15px, 2vw, 25px);
+      }
+      
+      .content-area {
+        padding: clamp(15px, 2vh, 25px);
+        margin-top: clamp(50px, 8vh, 60px);
+      }
+      
+      .teams-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: clamp(15px, 2vw, 20px);
+        padding: clamp(15px, 2vh, 25px);
+      }
+      
+      .players-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: clamp(15px, 2vw, 20px);
+        padding: clamp(15px, 2vh, 25px);
+      }
+      
+      .page-logo {
+        width: clamp(40px, 8vw, 60px);
+        top: clamp(5px, 1vh, 10px);
+        left: clamp(5px, 1vw, 10px);
+      }
+    }
+    
+    /* Small Mobile Devices */
+    @media (max-width: 480px) {
+      body {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      
+      .schedule-view {
+        padding: clamp(10px, 1.5vh, 20px) clamp(8px, 1.5vw, 15px);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+      }
+      
+      .main-content {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+      }
+      
+      .content-area {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+      }
+      
+      .day-schedule {
+        min-width: 260px;
+        width: max-content;
+      }
+      
+      .section-title {
+        font-size: clamp(18px, 6vw, 24px);
+        margin-bottom: clamp(12px, 1.5vh, 20px);
+      }
+      
+      .tournament-dates {
+        font-size: clamp(13px, 4vw, 16px);
+      }
+      
+      .teams-circle {
+        width: clamp(150px, 60vw, 200px);
+        height: clamp(150px, 60vw, 200px);
+      }
+      
+      .team-letter {
+        width: clamp(28px, 10vw, 40px);
+        height: clamp(28px, 10vw, 40px);
+        font-size: clamp(12px, 4vw, 18px);
+      }
+      
+      .match-arc-label {
+        font-size: clamp(7px, 2.5vw, 10px);
+        padding: 1px 4px;
+      }
+      
+      .day-schedule {
+        padding: clamp(12px, 1.5vh, 18px);
+      }
+      
+      .day-title {
+        font-size: clamp(16px, 5vw, 22px);
+      }
+      
+      .day-date {
+        font-size: clamp(13px, 3.5vw, 16px);
+      }
+      
+      .match-item {
+        padding: clamp(10px, 1.2vh, 15px);
+        gap: clamp(8px, 1.5vw, 15px);
+      }
+      
+      .match-team {
+        font-size: clamp(14px, 4.5vw, 18px);
+        padding: clamp(5px, 0.8vh, 8px) clamp(10px, 2vw, 16px);
+        min-width: clamp(45px, 15vw, 70px);
+      }
+      
+      .match-vs {
+        font-size: clamp(12px, 4vw, 16px);
+      }
+      
+      .match-label,
+      .match-label-final-label {
+        font-size: clamp(8px, 2.5vw, 10px);
+        padding: 2px 6px;
+      }
+      
+      .match-label-final-label {
+        top: clamp(5px, 0.6vh, 8px);
+        left: clamp(5px, 1vw, 8px);
+      }
+      
+      .eliminator-badge {
+        font-size: clamp(10px, 3vw, 13px);
+        padding: clamp(4px, 0.6vh, 6px) clamp(8px, 1.5vw, 14px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Hamburger Menu Toggle -->
+  <div class="menu-toggle">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+  
+  <!-- Logo in top-right corner -->
+  <img src="Surabhi_Yuvasena_Logo.png" alt="Surabhi Yuvasena Logo" class="page-logo" onerror="console.error('Logo failed to load');">
+  
+  <!-- Sidebar Backdrop (mobile only) -->
+  <div class="sidebar-backdrop"></div>
+  
+  <!-- Sidebar Menu -->
+  <div class="sidebar">
+    <div class="sidebar-title">SPL 2025</div>
+    <div class="menu-item active" data-view="flyer">Home</div>
+    <div class="menu-item" data-view="teams">Teams</div>
+    <div class="menu-item" data-view="schedule">Schedule</div>
+    <div class="menu-item" data-view="points">Points Table</div>
+    <div class="menu-item" data-view="sponsors">Sponsors</div>
+    <div class="menu-item" data-view="playing-conditions">Playing Conditions</div>
+    <div class="menu-item" data-view="organizing-team">Organizing Team</div>
+  </div>
+  
+  <!-- Main Content Area -->
+  <div class="main-content">
+    <div class="content-area">
+      <!-- Flyer View (Default) -->
+      <div class="flyer-view active" id="flyer-view">
+        <div class="flyer-container">
+          <div class="flyer-slideshow" id="flyer-slideshow">
+            <img src="flyer.png" alt="Surabhi Premier League 2025 Flyer" class="flyer-slide active" id="slide-0">
+            <img src="final.jpg" alt="Final" class="flyer-slide" id="slide-1">
+          </div>
+        </div>
+      </div>
+      
+      <!-- Teams View -->
+      <div class="teams-view" id="teams-view">
+        <h2 class="section-title">TEAMS</h2>
+        <div class="loading" id="teams-loading">Loading teams...</div>
+        <div class="teams-grid" id="teams-grid" style="display: none;"></div>
+        <div class="error" id="teams-error" style="display: none;"></div>
+      </div>
+      
+      <!-- Team Detail View -->
+      <div class="team-detail-view" id="team-detail-view">
+        <div class="team-header">
+          <div class="team-header-buttons">
+            <button class="back-button" onclick="showTeamsView()">← Back to Teams</button>
+            <button class="schedule-button" onclick="showView('schedule')">Schedule →</button>
+          </div>
+          <div class="team-detail-title" id="team-detail-title"></div>
+        </div>
+        <div class="loading" id="team-loading">Loading team...</div>
+        <div class="players-grid" id="players-grid" style="display: none;"></div>
+        <div class="error" id="team-error" style="display: none;"></div>
+      </div>
+      
+      <!-- Schedule View -->
+      <div class="schedule-view" id="schedule-view">
+        <h2 class="section-title">Tournament Schedule</h2>
+        <div class="tournament-dates">02-12-2025 to 04-12-2025</div>
+        
+        <style>
+          /* Layout for main vertical split */
+          .schedule-main-columns {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(20px, 4vh, 40px);
+            width: 100%;
+          }
+          /* Circle and Legend side by side */
+          .circle-legend-container {
+            display: flex;
+            flex-direction: row;
+            gap: clamp(20px, 4vw, 40px);
+            width: 100%;
+            margin-top: clamp(30px, 5vh, 50px);
+            align-items: flex-start;
+          }
+          .teams-circle-container {
+            display: flex;
+            align-items: center;
+            min-height: 300px;
+            justify-content: center;
+            flex: 1 1 0;
+            min-width: 250px;
+          }
+          .team-assignment-legend {
+            flex: 1 1 0;
+            min-width: 250px;
+            margin-top: 0;
+          }
+          
+          /* Mobile optimizations */
+          @media (max-width: 768px) {
+            .schedule-main-columns {
+              gap: clamp(15px, 3vh, 25px);
+            }
+            
+            .circle-legend-container {
+              flex-direction: column;
+              gap: clamp(20px, 3vh, 30px);
+              margin-top: clamp(20px, 4vh, 35px);
+            }
+            
+            .teams-circle-container {
+              width: 100%;
+              min-width: auto;
+              min-height: 250px;
+            }
+            
+            .team-assignment-legend {
+              width: 100%;
+              min-width: auto;
+            }
+            
+            .day-schedule {
+              width: 100%;
+              padding: clamp(12px, 2vh, 18px);
+              margin-bottom: clamp(15px, 2.5vh, 20px);
+            }
+            
+            .match-item {
+              padding: clamp(28px, 3.5vh, 38px) clamp(10px, 1.5vh, 14px) clamp(10px, 1.5vh, 14px);
+              gap: clamp(8px, 2vw, 12px);
+              flex-wrap: wrap;
+              overflow-x: visible;
+              -webkit-overflow-scrolling: touch;
+              position: relative;
+              justify-content: center;
+            }
+            
+            .match-team {
+              min-width: auto;
+              width: fit-content;
+              max-width: calc(50% - clamp(4px, 1vw, 6px));
+              padding: clamp(6px, 1vh, 8px) clamp(8px, 2vw, 12px);
+              font-size: clamp(12px, 3vw, 16px);
+              flex-shrink: 0;
+            }
+            
+            .match-team-name {
+              font-size: clamp(10px, 2.5vw, 14px);
+              white-space: nowrap;
+              overflow: visible;
+              text-overflow: clip;
+            }
+            
+            .match-team-logo {
+              width: clamp(20px, 4vw, 30px);
+              height: clamp(20px, 4vw, 30px);
+              flex-shrink: 0;
+            }
+            
+            .match-vs {
+              font-size: clamp(12px, 2.5vw, 16px);
+              padding: 0 clamp(4px, 1vw, 8px);
+            }
+            
+            .match-label {
+              font-size: clamp(10px, 2vw, 12px);
+              padding: clamp(3px, 0.5vh, 5px) clamp(6px, 1.5vw, 10px);
+              top: clamp(5px, 0.8vh, 8px);
+              left: clamp(5px, 1vw, 8px);
+            }
+            
+            .match-label-final-label {
+              top: clamp(5px, 0.8vh, 8px);
+              left: clamp(5px, 1vw, 8px);
+            }
+            
+            .match-time {
+              bottom: clamp(30px, 4vh, 45px);
+              right: clamp(5px, 1vw, 8px);
+            }
+            
+            .day-title {
+              font-size: clamp(16px, 4vw, 20px);
+            }
+            
+            .day-date {
+              font-size: clamp(12px, 3vw, 16px);
+            }
+            
+            .eliminator-badge {
+              font-size: clamp(9px, 2vw, 11px);
+              padding: clamp(4px, 0.5vh, 6px) clamp(8px, 1.5vw, 12px);
+            }
+          }
+          
+          @media (max-width: 480px) {
+            .match-item {
+              flex-direction: column;
+              align-items: stretch;
+              padding-top: clamp(30px, 4vh, 40px);
+            }
+            
+            .match-team {
+              width: fit-content;
+              min-width: auto;
+              max-width: 100%;
+              justify-content: flex-start;
+            }
+            
+            .match-vs {
+              align-self: center;
+              margin: clamp(5px, 1vh, 8px) 0;
+            }
+            
+            .match-label,
+            .match-label-final-label {
+              top: clamp(4px, 0.6vh, 6px);
+              left: clamp(4px, 0.8vw, 6px);
+              font-size: clamp(9px, 2.2vw, 11px);
+            }
+            
+            .match-time {
+              bottom: clamp(25px, 3.5vh, 40px);
+              right: clamp(4px, 0.8vw, 6px);
+              font-size: clamp(8px, 2vw, 10px);
+            }
+            
+            .match-link {
+              bottom: clamp(4px, 0.6vh, 6px);
+              right: clamp(4px, 0.8vw, 6px);
+              font-size: clamp(9px, 1.8vw, 11px);
+            }
+            
+            .teams-circle-container {
+              min-height: 200px;
+            }
+            
+            .legend-grid {
+              grid-template-columns: 1fr;
+              gap: clamp(8px, 1.5vh, 12px);
+            }
+          }
+        </style>
+        <div class="schedule-layout-wrapper" style="width: 100%; overflow-x: visible;">
+          <div class="schedule-main-columns">
+            <!-- Row 1: Day 1 -->
+            <div class="day-schedule">
+              <div class="day-header">
+                <div class="day-title">Day 1 <span class="eliminator-badge">GROUP MATCHES</span></div>
+                <div class="day-date">Tuesday, 02-12-2025</div>
+              </div>
+              <div class="matches-list">
+                <div class="match-item">
+                  <span class="match-label">M1</span>
+                  <span class="match-time">8:00 AM</span>
+                  <a href="https://cricheroes.com/scorecard/20484818/surabhi-premier-league-2025/bulls-(team-a)-vs-velocity-vipers/scorecard" target="_blank" class="match-link">cricheros match page</a>
+                  <div class="match-team" data-team="Velocity Vipers">
+                    <img src="" alt="Velocity Vipers" class="match-team-logo" onerror="this.style.display='none';">
+                    <span class="match-team-name" onclick="showTeamFromSchedule('Velocity Vipers')">Velocity Vipers</span>
+                  </div>
+                  <div class="match-vs">VS</div>
+                  <div class="match-team" data-team="BULLS (TEAM-A)">
+                    <img src="" alt="BULLS (TEAM-A)" class="match-team-logo" onerror="this.style.display='none';">
+                    <span class="match-team-name" onclick="showTeamFromSchedule('BULLS (TEAM-A)')">BULLS (TEAM-A)</span>
+                  </div>
+                </div>
+                <div class="match-item">
+                  <span class="match-label">M2</span>
+                  <span class="match-time">11:00 AM</span>
+                  <a href="https://cricheroes.com/scorecard/20340612/surabhi-premier-league-2025/risers-11-vs-dare-devils/upcoming" target="_blank" class="match-link">cricheros match page</a>
+                  <div class="match-team" data-team="Risers 11">
+                    <img src="" alt="Risers 11" class="match-team-logo" onerror="this.style.display='none';">
+                    <span class="match-team-name" onclick="showTeamFromSchedule('Risers 11')">Risers 11</span>
+                  </div>
+                  <div class="match-vs">VS</div>
+                  <div class="match-team" data-team="Daredevils">
+                    <img src="" alt="Daredevils" class="match-team-logo" onerror="this.style.display='none';">
+                    <span class="match-team-name" onclick="showTeamFromSchedule('Daredevils')">Daredevils</span>
+                  </div>
+                </div>
+                <div class="match-item">
+                  <span class="match-label">M3</span>
+                  <span class="match-time">2:00 PM</span>
+                  <a href="https://cricheroes.com/scorecard/20340613/surabhi-premier-league-2025/bulls-(team-b)-vs-rbr-returns/upcoming" target="_blank" class="match-link">cricheros match page</a>
+                  <div class="match-team" data-team="RBR Returns">
+                    <img src="" alt="RBR Returns" class="match-team-logo" onerror="this.style.display='none';">
+                    <span class="match-team-name" onclick="showTeamFromSchedule('RBR Returns')">RBR Returns</span>
+                  </div>
+                  <div class="match-vs">VS</div>
+                  <div class="match-team" data-team="BULLS (TEAM-B)">
+                    <img src="" alt="BULLS (TEAM-B)" class="match-team-logo" onerror="this.style.display='none';">
+                    <span class="match-team-name" onclick="showTeamFromSchedule('BULLS (TEAM-B)')">BULLS (TEAM-B)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Day 2 -->
+            <div class="day-schedule">
+              <div class="day-header">
+                <div class="day-title">Day 2 <span class="eliminator-badge">GROUP MATCHES</span></div>
+                <div class="day-date">Wednesday, 03-12-2025</div>
+              </div>
+              <div class="matches-list">
+                <div class="match-item">
+                  <span class="match-label">M4</span>
+                  <span class="match-time">8:00 AM</span>
+                  <a href="https://cricheroes.com/scorecard/20340614/surabhi-premier-league-2025/bulls-(team-a)-vs-risers-11/upcoming" target="_blank" class="match-link">cricheros match page</a>
+                  <div class="match-team" data-team="BULLS (TEAM-A)">
+                    <img src="" alt="BULLS (TEAM-A)" class="match-team-logo" onerror="this.style.display='none';">
+                    <span class="match-team-name" onclick="showTeamFromSchedule('BULLS (TEAM-A)')">BULLS (TEAM-A)</span>
+                  </div>
+                  <div class="match-vs">VS</div>
+                  <div class="match-team" data-team="Risers 11">
+                    <img src="" alt="Risers 11" class="match-team-logo" onerror="this.style.display='none';">
+                    <span class="match-team-name" onclick="showTeamFromSchedule('Risers 11')">Risers 11</span>
+                  </div>
+                </div>
+                <div class="match-item">
+                  <span class="match-label">M5</span>
+                  <span class="match-time">11:00 AM</span>
+                  <a href="https://cricheroes.com/scorecard/20340617/surabhi-premier-league-2025/bulls-(team-b)-vs-velocity-vipers/upcoming" target="_blank" class="match-link">cricheros match page</a>
+                  <div class="match-team" data-team="Velocity Vipers">
+                    <img src="" alt="Velocity Vipers" class="match-team-logo" onerror="this.style.display='none';">
+                    <span class="match-team-name" onclick="showTeamFromSchedule('Velocity Vipers')">Velocity Vipers</span>
+                  </div>
+                  <div class="match-vs">VS</div>
+                  <div class="match-team" data-team="BULLS (TEAM-B)">
+                    <img src="" alt="BULLS (TEAM-B)" class="match-team-logo" onerror="this.style.display='none';">
+                    <span class="match-team-name" onclick="showTeamFromSchedule('BULLS (TEAM-B)')">BULLS (TEAM-B)</span>
+                  </div>
+                </div>
+                <div class="match-item">
+                  <span class="match-label">M6</span>
+                  <span class="match-time">2:00 PM</span>
+                  <a href="https://cricheroes.com/scorecard/20340619/surabhi-premier-league-2025/dare-devils-vs-rbr-returns/upcoming" target="_blank" class="match-link">cricheros match page</a>
+                  <div class="match-team" data-team="Daredevils">
+                    <img src="" alt="Daredevils" class="match-team-logo" onerror="this.style.display='none';">
+                    <span class="match-team-name" onclick="showTeamFromSchedule('Daredevils')">Daredevils</span>
+                  </div>
+                  <div class="match-vs">VS</div>
+                  <div class="match-team" data-team="RBR Returns">
+                    <img src="" alt="RBR Returns" class="match-team-logo" onerror="this.style.display='none';">
+                    <span class="match-team-name" onclick="showTeamFromSchedule('RBR Returns')">RBR Returns</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Day 3 -->
+            <div class="day-schedule">
+              <div class="day-header">
+                <div class="day-title">Day 3 <span class="eliminator-badge">ELIMINATOR & FINAL</span></div>
+                <div class="day-date">Thursday, 04-12-2025</div>
+              </div>
+              <div class="matches-list">
+                <div class="match-item">
+                  <span class="match-label">Eliminator</span>
+                  <span class="match-time">8:00 AM</span>
+                  <a href="https://cricheroes.com/scorecard/20508133/surabhi-premier-league-2025/risers-11-vs-velocity-vipers/upcoming" target="_blank" class="match-link">cricheros match page</a>
+                  <div class="match-team">2nd Place</div>
+                  <div class="match-vs">VS</div>
+                  <div class="match-team">3rd Place</div>
+                </div>
+                <div class="match-item final-match">
+                  <span class="match-label-final-label">FINAL</span>
+                  <span class="match-time">12:00 Noon</span>
+                  <a href="https://cricheroes.com/scorecard/20516424/surabhi-premier-league-2025/rbr-returns-vs-velocity-vipers/upcoming" target="_blank" class="match-link">cricheros match page</a>
+                  <div class="match-team" data-team="RBR Returns">
+                    <img src="" alt="RBR Returns" class="match-team-logo" onerror="this.style.display='none';">
+                    <span class="match-team-name" onclick="showTeamFromSchedule('RBR Returns')">RBR Returns</span>
+                  </div>
+                  <div class="match-vs">VS</div>
+                  <div class="match-team" data-team="Velocity Vipers">
+                    <img src="" alt="Velocity Vipers" class="match-team-logo" onerror="this.style.display='none';">
+                    <span class="match-team-name" onclick="showTeamFromSchedule('Velocity Vipers')">Velocity Vipers</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Circle Diagram and Team Assignment Legend side by side -->
+        <div class="circle-legend-container">
+          <!-- Circle Diagram -->
+          <div class="teams-circle-container">
+            <div class="teams-circle" style="align-self: center;">
+              <div class="team-letter">A</div>
+              <div class="team-letter">B</div>
+              <div class="team-letter">C</div>
+              <div class="team-letter">D</div>
+              <div class="team-letter">E</div>
+              <div class="team-letter">F</div>
+              <!-- Match labels on arcs (positioned between teams) -->
+              <div class="match-arc-label" style="top: 1%; left: 70%;">M1</div>
+              <div class="match-arc-label" style="bottom: 0%; left: 70%;">M2</div>
+              <div class="match-arc-label" style="bottom: 0%; left: 18%;">M6</div>
+              <div class="match-arc-label" style="top: 50%; right: -6%; transform: translateY(-50%);">M4</div>
+              <div class="match-arc-label" style="top: 1%; left: 18%;">M5</div>
+              <div class="match-arc-label" style="top: 50%; left: -6%; transform: translateY(-50%);">M3</div>
+            </div>
+          </div>
+          
+          <!-- Team Assignment Legend -->
+          <div class="team-assignment-legend">
+            <div class="legend-grid">
+              <div class="legend-item">
+                <span class="legend-letter">A</span>
+                <span class="legend-team">Velocity Vipers (S.A. Manu)</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-letter">B</span>
+                <span class="legend-team">BULLS (TEAM-A) (V. Sairam)</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-letter">C</span>
+                <span class="legend-team">Risers 11 (C.V. Bhanu)</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-letter">D</span>
+                <span class="legend-team">Daredevils (V.Raghava Sai)</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-letter">E</span>
+                <span class="legend-team">RBR Returns (R. Charan)</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-letter">F</span>
+                <span class="legend-team">BULLS (TEAM-B) (V. Suryacharan)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Points Table View -->
+      <div class="points-view" id="points-view">
+        <h2 class="section-title">Points Table</h2>
+        <div class="points-table-container">
+          <table class="points-table">
+            <thead>
+              <tr>
+                <th>Team</th>
+                <th>MP</th>
+                <th>Won</th>
+                <th>Lost</th>
+                <th>Points</th>
+                <th>Runs Scored<br>(in total overs)</th>
+                <th>Runs Conceded<br>(in total overs)</th>
+                <th>NRR</th>
+              </tr>
+            </thead>
+            <tbody id="points-table-body">
+              <!-- Teams will be populated here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- Sponsors View -->
+      <div class="sponsors-view" id="sponsors-view">
+        <h2 class="section-title">Sponsors</h2>
+        <div class="sponsors-container">
+          <div class="sponsors-grid">
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">VJR Transport</h3>
+              <p class="sponsor-desc"><strong>Owner:</strong> V. జితేందర్ రెడ్డి — మూడు రోజుల రవాణా సౌకర్యం</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">కీ.శే. వనారస వేణుగోపాల్ రావు గారి జ్ఞాపకార్థం</h3>
+              <p class="sponsor-desc">వారి మనవడు V. మోహన్ గారు — మొత్తం టోర్నమెంట్ కప్స్</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">C. V. భాను గారు</h3>
+              <p class="sponsor-desc">Rs. 5000/-</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">C. V. పుష్ప గారు</h3>
+              <p class="sponsor-desc">Rs. 1000/-</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">కీ. శే. R. సుధాకర్ గారి జ్ఞాపకార్థం — R. శ్రీనివాస్ గారు, భూపాలపల్లి</h3>
+              <p class="sponsor-desc">Rs. 5016/-</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">C. V. రవి గారు</h3>
+              <p class="sponsor-desc">టోర్నమెంట్‌కు సరిపడా బాల్స్</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">SK ఈవెంట్స్ (A.కరుణాకర్ గారు) — సిద్దిపేట</h3>
+              <p class="sponsor-desc">మొదటి రోజు భోజనం</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">V. చెన్నకేశవ గారు</h3>
+              <p class="sponsor-desc">3 రోజులకు సరిపడా డ్రింకింగ్ వాటర్</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">కీ. శే. T. పూర్ణ గారి జ్ఞాపకార్థం</h3>
+              <p class="sponsor-desc">వారి కుమారులు T. రాము గారు, T. గోపికృష్ణ గారు — కూల్ డ్రింక్స్</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">కీ. శే. V. రాజులమ్మ గారి జ్ఞాపకార్థం</h3>
+              <p class="sponsor-desc">వారి కుమారులు V. వినోద్ గారు, V. జయవర్ధన్ గారు — Eggs (3 days)</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">శ్రీమతి &amp; శ్రీ V. ధనలక్ష్మి - ప్రసాదరావు గార్ల జ్ఞాపకార్థం</h3>
+              <p class="sponsor-desc">వారి కుటుంబ సభ్యులు a. Man of the Series: Rs. 5000 నగదు బహుమతి.<br>b. For Organising the Tournament: Rs. 5000.</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">R. శ్రీను (సునీల్) గారు</h3>
+              <p class="sponsor-desc">Rs. 2000/-</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">Oreo జ్ఞాపకార్థం — V. లోచన సాయి గారు</h3>
+              <p class="sponsor-desc">Rs. 2000/-</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name"> భానోదయ నాట్యమండలి (సురభి)</h3>
+              <p class="sponsor-desc">3 రోజుల సౌండ్ సిస్టమ్</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">కీ. శే. శ్రీ వనారస మధుసూదన్ గారి జ్ఞాపకార్థం</h3>
+              <p class="sponsor-desc">వారి కుమారులు V. రాఘవ సాయి గారు, V. ఉదయ్ శంకర్ గారు — చికెన్ for one day</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">సింధూరి ఉన్నత్ గారి జ్ఞాపకార్థం</h3>
+              <p class="sponsor-desc">వారి అత్తగారు V. కవిత — 3 రోజులు అరటిపండ్లు</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">కీ.శే. శ్రీ వనారస కుమార్ బాబు గారి జ్ఞాపకార్థం</h3>
+              <p class="sponsor-desc">వారి సతీమణి V.కళ్యాణి గారు, రామ్ నగర్ Rs. 2000/-</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">నార్మల్ మదర్ డైరీ, వనస్థలిపురం</h3>
+              <p class="sponsor-desc">శ్రీ అశోక్ రెడ్డి గారు — బాదం పాలు</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">సింధూరి సుబ్బారావు గారి జ్ఞాపకార్థం</h3>
+              <p class="sponsor-desc">వారి కుటుంబ సభ్యులు — జ్ఞాపికలు</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">రేకందార్ భాస్కర్ గారు</h3>
+              <p class="sponsor-desc">Rs. 2000/-</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">రేకందార్ మురళీకృష్ణ గారి జ్ఞాపకార్థం</h3>
+              <p class="sponsor-desc">వారి కుమారుడు రేకందార్ వెంకటేశ్ గారు: ఒక రోజు భోజనాలు</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">వనారస దాశరధి గారి జ్ఞాపకార్థం</h3>
+              <p class="sponsor-desc">వారి కుమారుడు వనారస కార్తీక్ గారు — Rs. 1116/-</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">నల్లపాటి రాజారాం గారు</h3>
+              <p class="sponsor-desc">ఆయిల్, నిత్యావసరాల కోసం — Rs. 3000/-</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">S.A వెంకటేష్ ప్రసాద్ గారు</h3>
+              <p class="sponsor-desc">మూడు రోజులకు టిఫిన్స్ స్పాన్సర్</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">S. పవన్ కుమార్ గారు</h3>
+              <p class="sponsor-desc">Rs. 2000/-</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">S. హిమ కుమార్ గారు</h3>
+              <p class="sponsor-desc">Rs. 2000/-</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">V. ఉదయకృష్ణ మోహన్ గారు, మణుగూరు</h3>
+              <p class="sponsor-desc">Rs. 2000/-</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">M. నాగరాజు గారు</h3>
+              <p class="sponsor-desc">ఉత్తమ క్రీడాస్ఫూర్థి కలిగిన జట్టు  — Fair Play Award</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">కీ.శే. శ్రీ రేకందార్ పుల్లారెడ్డి గారి జ్ఞాపకార్థం</h3>
+              <p class="sponsor-desc">వారి మనవడు R. అజయ్ బాబు గారు — Rs. 500 each for all MoMs & Rs. 1000 for Man of the Final</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">మాధవ ఈవెంట్స్, కొత్తపేట</h3>
+              <p class="sponsor-desc">చైర్స్ & టేబుల్స్ మూడు రోజులకు</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">S.A. వేణుమాధవ గారు</h3>
+              <p class="sponsor-desc">ఒక రైస్ బ్యాగ్</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">శ్రీకాంత్ గారు</h3>
+              <p class="sponsor-desc">టెంట్ హౌస్ డబరాలు, గిన్నెలు</p>
+            </div>
+            <div class="sponsor-card">
+              <h3 class="sponsor-name">GGS వారు</h3>
+              <p class="sponsor-desc">ప్లేట్స్ & గ్లాసెస్</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Playing Conditions View -->
+      <div class="playing-conditions-view" id="playing-conditions-view">
+        <h2 class="section-title">Playing Conditions</h2>
+        <div class="conditions-container">
+          <div class="conditions-table-container">
+            <table class="conditions-table">
+              <thead>
+                <tr>
+                  <th>Match Type</th>
+                  <th>Total Overs</th>
+                  <th>Max Overs</th>
+                  <th>Powerplay</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Group Matches</strong></td>
+                  <td>16</td>
+                  <td>4 for one and 3 for rest</td>
+                  <td>5 overs</td>
+                </tr>
+                <tr>
+                  <td><strong>Final</strong></td>
+                  <td>20</td>
+                  <td>4 for each</td>
+                  <td>6 overs</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="rules-container">
+            <div class="rules-greeting">
+              <p><strong>Dear all Captains,</strong></p>
+              <p>Please follow these Rules and Conditions during SPL-2025.</p>
+            </div>
+            
+            <ol class="rules-list">
+              <li>ప్రతి match కి 15 నిమిషాల ముందు Toss వేయడం జరుగుతుంది. ఆ సమయానికి ఇద్దరు captains 12 players team తెలియజేయాలి. అందులో ఒకరికి కేవలం Batting లేదా Bowling మాత్రమే అనుమతించబడుతుంది.</li>
+              
+              <li>ప్రతి match మొదటి innings powerplay overs లోపు ఇరు teams యొక్క 12 players ground లో అందుబాటులో ఉండాలి. తరువాత వచ్చే players ని ఆ match కి అనుమతించడం జరగదు. ప్రతి ఆటగాడు సమయపాలనతో వ్యవహరించడం చాలా ముఖ్యం. ఈ విషయంలో కెప్టెన్లు చొరవ తీసుకుని హుందాగా వ్యవహరించాలి.</li>
+              
+              <li>Power play జరిగేటప్పుడు కేవలం ఇద్దరు fielders మాత్రమే outside 30-yard circle లో ఉండవచ్చును. మిగిలిన overs లో కనీసం నలుగురు fielders తప్పనిసరిగా inside 30-yard circle లో ఉండవలెను.<br>Bowler తో సంబంధం లేకుండా maximum 5 fielders ను మాత్రమే leg side లో అనుమతిస్తారు.</li>
+              
+              <li>LBW outs ఉండవు. Leg-byes ఉన్నాయి. Batsman action ని బట్టి leg-byes ఇవ్వాలా లేదా అనేది umpire నిర్ణయిస్తారు.</li>
+              
+              <li>No-ball తరువాత ball కు free-hit ఉంటుంది.</li>
+              
+              <li>By-Runner ని అనుమతించరు. ఆడలేని పక్షంలో retired hurt తీసుకొని మళ్ళీ wicket పడినప్పుడు batting కొనసాగించవచ్చును.</li>
+              
+              <li>Throw Bowling అనుమతించరు. Throw Bowling అవునా/కాదా అనేది umpires నిర్ణయిస్తారు.</li>
+              
+              <li>ఒక bowler 2 beamers వేసిన వెంటనే ఆ innings లో అతను bowling నుంచి తొలగించబడతాడు.</li>
+              
+              <li>ముఖ్యంగా ఆటగాళ్ళందరూ వారివారి కెప్టెన్ సందేశాలను అనుసరించి ఆడాలి.<br>ఎటువంటి విషయంలోనైనా కెప్టెన్లను మాత్రమే umpires మరియు organizers తో చర్చించడానికి అనుమతిస్తాము.</li>
+              
+              <li>ప్రతి Team, వారికి వచ్చిన ఆటగాళ్ళను మాత్రమే వారి Team లో ఆడించాలి. Substitute fielder గా కూడా బయటి వారిని అనుమతించము. Players అందరూ, organizers ఇచ్చిన Sports Dress తో మాత్రమే ఆడటానికి రావాలి. ప్రత్యేక కారణాలు ఉంటే తప్ప uniform మినహాయింపు ఉండదు. Players అందరికీ Shoes తప్పనిసరిగా ఉండాలి.</li>
+            </ol>
+            
+            <div class="rules-closing">
+              <p><strong>ALL THE BEST to all the teams.</strong></p>
+              <p>Thank you,</p>
+              <p><strong>SPL-2025 Organisers,<br>Surabhi Yuvasena.</strong></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Organizing Team View -->
+      <div class="organizing-team-view" id="organizing-team-view">
+        <h2 class="section-title">SPL - 2025 Organisers and their responsibilities</h2>
+        
+        <div class="organizing-container">
+          <!-- Column 1: Umpires, అతిథులకు ఆహ్వానాలు, బాల్స్, పబ్లిసిటీ, భోజన -->
+          <div class="organizing-section col-1">
+            <h3 class="organizing-section-title">Umpires</h3>
+            <ul class="organizing-list">
+              <li>S A వేణుమాధవ్ గారు</li>
+              <li>V ఉమా శంకర్ గారు</li>
+              <li>C V శ్రీనివాస్ గారు</li>
+              <li>R రాజేష్ గారు</li>
+              <li>R పూజిత్ సాయి గారు</li>
+              <li>R రోజానంద్ గారు</li>
+            </ul>
+          </div>
+          
+          <div class="organizing-section col-1">
+            <h3 class="organizing-section-title">అతిథులకు ఆహ్వానాలు</h3>
+            <ul class="organizing-list">
+              <li>R వెంకట్ రెడ్డి గారు</li>
+              <li>C V భాను గారు</li>
+              <li>V జితేందర్ గారు</li>
+              <li>R పూజిత్ సాయి గారు</li>
+              <li>R చంద్రమోహన్ గారు</li>
+              <li>R మహేష్ గారు</li>
+            </ul>
+          </div>
+          
+          <div class="organizing-section col-1">
+            <h3 class="organizing-section-title">బాల్స్</h3>
+            <ul class="organizing-list">
+              <li>R జయానంద్ గారు</li>
+            </ul>
+          </div>
+          
+          <div class="organizing-section col-1">
+            <h3 class="organizing-section-title">పబ్లిసిటీ, ప్రింట్ & ఎలక్ట్రానిక్ మీడియా</h3>
+            <ul class="organizing-list">
+              <li>R జయానంద్ గారు</li>
+              <li>R లక్ష్మణ్ గారు</li>
+            </ul>
+          </div>
+          
+          <div class="organizing-section col-1">
+            <h3 class="organizing-section-title">భోజన సదుపాయ విభాగము</h3>
+            <ul class="organizing-list">
+              <li>R పూజిత్ సాయి గారు</li>
+              <li>C V భాను గారు</li>
+              <li>R మహేష్ గారు</li>
+              <li>R లక్ష్మణ్ గారు</li>
+              <li>V ఉదయ్ గారు</li>
+              <li>R యోగేష్ గారు</li>
+              <li>V జితేందర్ రెడ్డి గారు</li>
+              <li>R శుభకర్ గారు (వంటల వద్ద)</li>
+            </ul>
+            <p class="organizing-note">అవసరాన్ని బట్టి ఇతరులు కూడా సహాయ సహకారాలు అందించగలరు.</p>
+          </div>
+          
+          <!-- Column 2: Scorers, Sound System, క్రికెట్ కిట్, వాటర్ -->
+          <div class="organizing-section col-2">
+            <h3 class="organizing-section-title">Scorers</h3>
+            <ul class="organizing-list">
+              <li>V దుర్గాప్రసాద్ గారు</li>
+              <li>V శ్రీనివాసరావు గారు</li>
+              <li>V చిరంజీవి గారు</li>
+              <li>V సాయి శుభకర్ గారు</li>
+            </ul>
+          </div>
+          
+          <div class="organizing-section col-2">
+            <h3 class="organizing-section-title">Sound System</h3>
+            <ul class="organizing-list">
+              <li>R గిరీష్ భాను గారు</li>
+              <li>R హరీష్ భాను గారు</li>
+            </ul>
+          </div>
+          
+          <div class="organizing-section col-2">
+            <h3 class="organizing-section-title">క్రికెట్ కిట్ ఇంచార్జ్, మ్యాట్స్ & పట్టాలు</h3>
+            <ul class="organizing-list">
+              <li>V సూర్య గారు</li>
+              <li>R యోగేష్ గారు</li>
+              <li>R వెంకటేష్ గారు</li>
+              <li>V బన్నీ గారు</li>
+              <li>R గిరీష్ భాను గారు</li>
+            </ul>
+          </div>
+          
+          <div class="organizing-section col-2">
+            <h3 class="organizing-section-title">వాటర్ అండ్ ఐస్ ఇంచార్జ్</h3>
+            <ul class="organizing-list">
+              <li>R మహేష్ గారు</li>
+              <li>R పూర్ణేష్ భాను గారు</li>
+              <li>R యోగేష్ గారు</li>
+            </ul>
+          </div>
+          
+          <!-- Column 3: Ground Incharges, రవాణా, ప్రత్యక్ష వ్యాఖ్యాన, స్నాక్స్ -->
+          <div class="organizing-section col-3">
+            <h3 class="organizing-section-title">Ground Incharges</h3>
+            <ul class="organizing-list">
+              <li>V చిరంజీవి గారు</li>
+              <li>R జయానంద్ గారు</li>
+              <li>R చరణ్ గారు</li>
+              <li>R పూజిత్ సాయి గారు</li>
+              <li>R చంద్రమోహన్ గారు</li>
+              <li>C V భాను గారు</li>
+            </ul>
+          </div>
+          
+          <div class="organizing-section col-3">
+            <h3 class="organizing-section-title">రవాణా విభాగము</h3>
+            <ul class="organizing-list">
+              <li>V జితేందర్ గారు</li>
+              <li>R శివ (భువనగిరి) గారు</li>
+              <li>R వెంకట్రావు (నాని)గారు</li>
+              <li>V ఉదయ్ గారు</li>
+              <li>T గోపికృష్ణ గారు</li>
+            </ul>
+          </div>
+          
+          <div class="organizing-section col-3">
+            <h3 class="organizing-section-title">ప్రత్యక్ష వ్యాఖ్యాన విభాగము</h3>
+            <ul class="organizing-list">
+              <li>S రమేష్ గారు</li>
+              <li>M నాగరాజు గారు</li>
+            </ul>
+          </div>
+          
+          <div class="organizing-section col-3">
+            <h3 class="organizing-section-title">స్నాక్స్ ఇంచార్జ్ అండ్ కూల్ డ్రింక్స్</h3>
+            <ul class="organizing-list">
+              <li>R చంద్రమోహన్ గారు</li>
+              <li>R లక్ష్మణ్ గారు</li>
+              <li>R యోగేష్ గారు</li>
+              <li>R పూర్ణేష్ గారు</li>
+            </ul>
+          </div>
+          
+          <div class="organizing-footer">
+            <p class="organizing-footer-text">ఎవరూ ఖాళీగా ఉండకుండా ఇతర విభాగాల వాళ్ళకి కూడా వారి వంతు సహాయ సహకారాలు అందించాలని కమిటీ తరపున కోరుకుంటున్నాము 🙏</p>
+            <p class="organizing-footer-note"><strong>గమనిక:</strong> ఆటగాళ్లు ఎవరైనా మ్యాచుల సమయంలో ఏదైనా మాట్లాడవలసివస్తే గ్రౌండ్ ఇన్ ఛార్జ్ లతో మాత్రమే మాట్లాడాలి.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // ============================================
+    // CONFIGURATION
+    // ============================================
+    // Local Excel file (in the same folder as photos)
+    const EXCEL_FILE = 'SPL-2025 team wise details.xlsx';
+    
+    // Captain name and team mapping
+    // Note: Captain names in sheet are: Bhanu, Charan, Manu, Raghava, Sairam, Surya
+    const CAPTAIN_INFO = {
+      'Bhanu': { name: 'C.V. Bhanu', teamName: 'Risers 11', serialNo: '34' },
+      'Charan': { name: 'R. Charan', teamName: 'RBR Returns', serialNo: '42' },
+      'Manu': { name: 'S.A. Manohar', teamName: 'Velocity Vipers', serialNo: '16' },
+      'Sairam': { name: 'V. Sairam', teamName: 'BULLS (TEAM-A)', serialNo: '62' },
+      'Surya': { name: 'V. Surya Charan', teamName: 'BULLS (TEAM-B)', serialNo: '66' },
+      'Raghava': { name: 'V. Raghava Sai', teamName: 'Daredevils', serialNo: '29' }
+    };
+    
+    // Reverse mapping: serial number to captain key
+    const SERIAL_TO_CAPTAIN = {
+      '34': 'Bhanu',
+      '42': 'Charan',
+      '16': 'Manu',
+      '62': 'Sairam',
+      '66': 'Surya',
+      '29': 'Raghava'
+    };
+    
+    // Logo filename mapping based on actual file names
+    const LOGO_FILE_MAP = {
+      'Risers 11': 'Risers_11_logo.jpg',
+      'RBR Returns': 'RBR_Returns_Logo.jpg',
+      'Velocity Vipers': 'Velocity_Vipers.JPG',
+      'BULLS (TEAM-A)': 'Bulls_A.jpg',
+      'BULLS (TEAM-B)': 'Bulls_B.jpg',
+      'Daredevils': 'Dare_devils.jpg',
+      'Bulls [Team A]': 'Bulls_A.jpg',
+      'Bulls [Team B]': 'Bulls_B.jpg',
+      'BULLS (TEAM-A)': 'Bulls_A.jpg',
+      'BULLS (TEAM-B)': 'Bulls_B.jpg'
+    };
+    
+    // Helper function to get logo filename from team name
+    function getLogoUrl(teamName) {
+      if (!teamName) return '';
+      
+      // Normalize team name for matching
+      const normalizedName = teamName.trim();
+      
+      // Check direct mapping first
+      if (LOGO_FILE_MAP[normalizedName]) {
+        return LOGO_FILE_MAP[normalizedName];
+      }
+      
+      // Handle BULLS teams with various formats
+      if (teamName.includes('Bulls') && (teamName.includes('Team A') || teamName.includes('TEAM-A'))) {
+        return 'Bulls_A.jpg';
+      }
+      if (teamName.includes('Bulls') && (teamName.includes('Team B') || teamName.includes('TEAM-B'))) {
+        return 'Bulls_B.jpg';
+      }
+      
+      // Try case-insensitive partial matching
+      const nameLower = normalizedName.toLowerCase();
+      for (const [key, filename] of Object.entries(LOGO_FILE_MAP)) {
+        const keyLower = key.toLowerCase();
+        const cleanKey = key.replace(/\([^)]*\)/g, '').replace(/\[.*?\]/g, '').trim().toLowerCase();
+        const cleanTeamName = normalizedName.replace(/\([^)]*\)/g, '').replace(/\[.*?\]/g, '').trim().toLowerCase();
+        
+        // Exact match after cleaning
+        if (cleanTeamName === cleanKey) {
+          return filename;
+        }
+        
+        // Partial match
+        if (nameLower.includes(keyLower) || keyLower.includes(nameLower)) {
+          return filename;
+        }
+        
+        // Match by key words
+        if (cleanTeamName.includes(cleanKey) || cleanKey.includes(cleanTeamName)) {
+          return filename;
+        }
+      }
+      
+      // Special handling for common variations
+      if (nameLower.includes('velocity') && nameLower.includes('vipers')) {
+        return 'Velocity_Vipers.JPG';
+      }
+      if (nameLower.includes('risers') && nameLower.includes('11')) {
+        return 'Risers_11_logo.jpg';
+      }
+      if (nameLower.includes('rbr') && nameLower.includes('returns')) {
+        return 'RBR_Returns_Logo.jpg';
+      }
+      if (nameLower.includes('daredevils') || nameLower.includes('dare devils')) {
+        return 'Dare_devils.jpg';
+      }
+      
+      // Fallback: try common patterns
+      const cleanName = normalizedName.replace(/\([^)]*\)/g, '').replace(/\[.*?\]/g, '').trim();
+      const variations = [
+        `${cleanName.replace(/\s+/g, '_')}_logo.jpg`,
+        `${cleanName.replace(/\s+/g, '_')}.jpg`,
+        `${cleanName.replace(/\s+/g, '_')}_Logo.jpg`,
+        `${cleanName.replace(/\s+/g, '_')}.JPG`
+      ];
+      
+      return variations[0];
+    }
+    
+    // Fallback image
+    const FALLBACK_IMAGE = 'Surabhi_Yuvasena_Logo.png';
+    
+    // ============================================
+    // Application Code
+    // ============================================
+    
+    let teamsData = {};
+    let currentView = 'flyer';
+    
+    // Helper function to get local photo URL (photos are in current folder)
+    function getPhotoUrl(serialNo) {
+      if (!serialNo) return FALLBACK_IMAGE;
+      const serial = String(serialNo).trim();
+      if (!serial || isNaN(parseInt(serial))) return FALLBACK_IMAGE;
+      
+      // Use local path: just the filename in current folder
+      return `${serial}.jpg`;
+    }
+    
+    // Menu navigation
+    document.querySelectorAll('.menu-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const view = item.getAttribute('data-view');
+        showView(view);
+        if (view === 'teams' && Object.keys(teamsData).length === 0) {
+          loadTeamsData();
+        }
+        
+        // Close sidebar on mobile after menu item click
+        if (window.innerWidth <= 768) {
+          const sidebar = document.querySelector('.sidebar');
+          if (sidebar) {
+            sidebar.classList.remove('active');
+          }
+        }
+      });
+    });
+    
+    // Toggle sidebar on menu toggle click (mobile and desktop)
+    function setupMenuToggle() {
+      const menuToggle = document.querySelector('.menu-toggle');
+      const sidebar = document.querySelector('.sidebar');
+      const sidebarBackdrop = document.querySelector('.sidebar-backdrop');
+      
+      if (!menuToggle || !sidebar) return;
+      
+      function toggleSidebar(e) {
+        if (e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        
+        const isActive = sidebar.classList.contains('active');
+        
+        if (isActive) {
+          sidebar.classList.remove('active');
+          if (sidebarBackdrop) {
+            sidebarBackdrop.classList.remove('active');
+          }
+        } else {
+          sidebar.classList.add('active');
+          if (sidebarBackdrop) {
+            sidebarBackdrop.classList.add('active');
+          }
+        }
+      }
+      
+      // Add both click and touchstart events for better mobile support
+      menuToggle.addEventListener('click', toggleSidebar);
+      menuToggle.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        toggleSidebar(e);
+      }, { passive: false });
+      
+      // Close sidebar when backdrop is clicked/touched
+      if (sidebarBackdrop) {
+        sidebarBackdrop.addEventListener('click', () => {
+          sidebar.classList.remove('active');
+          sidebarBackdrop.classList.remove('active');
+        });
+        sidebarBackdrop.addEventListener('touchstart', () => {
+          sidebar.classList.remove('active');
+          sidebarBackdrop.classList.remove('active');
+        });
+      }
+      
+      // Close sidebar when clicking outside on mobile
+      document.addEventListener('click', (e) => {
+        if (window.innerWidth <= 768) {
+          const isClickInsideSidebar = sidebar.contains(e.target);
+          const isClickOnToggle = menuToggle.contains(e.target);
+          const isClickOnBackdrop = sidebarBackdrop && sidebarBackdrop.contains(e.target);
+          
+          if (!isClickInsideSidebar && !isClickOnToggle && !isClickOnBackdrop && sidebar.classList.contains('active')) {
+            sidebar.classList.remove('active');
+            if (sidebarBackdrop) {
+              sidebarBackdrop.classList.remove('active');
+            }
+          }
+        }
+      });
+    }
+    
+    // Setup menu toggle when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupMenuToggle);
+    } else {
+      setupMenuToggle();
+    }
+    
+    function showView(view) {
+      currentView = view;
+      
+      // Update menu active state
+      document.querySelectorAll('.menu-item').forEach(item => {
+        item.classList.toggle('active', item.getAttribute('data-view') === view);
+      });
+      
+      // Get all view elements
+      const flyerView = document.getElementById('flyer-view');
+      const teamsView = document.getElementById('teams-view');
+      const teamDetailView = document.getElementById('team-detail-view');
+      const scheduleView = document.getElementById('schedule-view');
+      const pointsView = document.getElementById('points-view');
+      const sponsorsView = document.getElementById('sponsors-view');
+      const playingConditionsView = document.getElementById('playing-conditions-view');
+      const organizingTeamView = document.getElementById('organizing-team-view');
+      
+      // Hide all views
+      flyerView.classList.remove('active');
+      teamsView.classList.remove('active');
+      teamDetailView.classList.remove('active');
+      scheduleView.classList.remove('active');
+      pointsView.classList.remove('active');
+      sponsorsView.classList.remove('active');
+      playingConditionsView.classList.remove('active');
+      organizingTeamView.classList.remove('active');
+      
+      // Show selected view and hide flyer on non-home pages
+      if (view === 'flyer') {
+        flyerView.classList.add('active');
+      } else {
+        // Hide flyer on all other pages
+        flyerView.classList.remove('active');
+        if (view === 'teams') {
+          teamsView.classList.add('active');
+        } else if (view === 'schedule') {
+          scheduleView.classList.add('active');
+          // Initialize logos when schedule view is shown
+          setTimeout(() => initializeScheduleLogos(), 100);
+          // Update eliminator schedule based on current standings
+          if (Object.keys(matchResults).length > 0) {
+            // Recalculate sorted teams and update eliminator schedule
+            const teams = Object.values(CAPTAIN_INFO);
+            const teamStats = {};
+            
+            teams.forEach(team => {
+              teamStats[team.teamName] = {
+                teamName: team.teamName,
+                matchesPlayed: 0,
+                won: 0,
+                lost: 0,
+                points: 0,
+                nrr: 0
+              };
+            });
+            
+            // Process match results to get sorted teams
+            Object.values(matchResults).forEach(match => {
+              if (!match.team1 || !match.team2) return;
+              const team1 = match.team1;
+              const team2 = match.team2;
+              
+              if (match.team1Runs !== undefined && match.team2Runs !== undefined) {
+                if (teamStats[team1]) teamStats[team1].matchesPlayed++;
+                if (teamStats[team2]) teamStats[team2].matchesPlayed++;
+                
+                if (match.winner) {
+                  if (match.winner === team1) {
+                    if (teamStats[team1]) {
+                      teamStats[team1].won++;
+                      teamStats[team1].points += 2;
+                    }
+                    if (teamStats[team2]) teamStats[team2].lost++;
+                  } else if (match.winner === team2) {
+                    if (teamStats[team2]) {
+                      teamStats[team2].won++;
+                      teamStats[team2].points += 2;
+                    }
+                    if (teamStats[team1]) teamStats[team1].lost++;
+                  }
+                }
+              }
+            });
+            
+            // Calculate NRR for sorting
+            Object.keys(teamStats).forEach(teamName => {
+              const stats = calculateTeamStats(teamName, matchResults);
+              teamStats[teamName].nrr = stats.nrr;
+            });
+            
+            // Sort teams
+            const sortedTeams = Object.values(teamStats).sort((a, b) => {
+              if (b.points !== a.points) {
+                return b.points - a.points;
+              }
+              return b.nrr - a.nrr;
+            });
+            
+            setTimeout(() => updateEliminatorSchedule(sortedTeams), 200);
+          }
+        } else if (view === 'points') {
+          pointsView.classList.add('active');
+        } else if (view === 'sponsors') {
+          sponsorsView.classList.add('active');
+        } else if (view === 'playing-conditions') {
+          playingConditionsView.classList.add('active');
+        } else if (view === 'organizing-team') {
+          organizingTeamView.classList.add('active');
+        }
+      }
+    }
+    
+    function showTeamsView() {
+      showView('teams');
+    }
+    
+    // Load teams data from local Excel file
+    async function loadTeamsData() {
+      const loadingEl = document.getElementById('teams-loading');
+      const gridEl = document.getElementById('teams-grid');
+      const errorEl = document.getElementById('teams-error');
+      
+      loadingEl.style.display = 'block';
+      gridEl.style.display = 'none';
+      errorEl.style.display = 'none';
+      
+      try {
+        // Fetch the local Excel file
+        const response = await fetch(EXCEL_FILE);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch Excel file: ${response.status}. Make sure the file "${EXCEL_FILE}" exists in the same folder.`);
+        }
+        
+        const blob = await response.blob();
+        const arrayBuffer = await blob.arrayBuffer();
+        
+        // Parse XLSX using SheetJS (xlsx library)
+        if (typeof XLSX === 'undefined') {
+          // Load xlsx library if not already loaded
+          const script = document.createElement('script');
+          script.src = 'https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js';
+          document.head.appendChild(script);
+          await new Promise((resolve, reject) => {
+            script.onload = resolve;
+            script.onerror = reject;
+            setTimeout(reject, 10000);
+          });
+        }
+        
+        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const rows = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+        
+        // Debug: Log first few rows and column names
+        console.log('Total rows from sheet:', rows.length);
+        if (rows.length > 0) {
+          console.log('Row 0 (header row):', rows[0]);
+          const columnNames = Object.keys(rows[0]);
+          console.log('Column names in header row:', columnNames);
+        }
+        
+        // Process rows
+        teamsData = {};
+        const captainSerialNos = {}; // Store captain serial numbers
+        let processedCount = 0;
+        let skippedCount = 0;
+        
+        // Map column names from row 0 (header row)
+        // Row 0 has: __EMPTY="S. No.", __EMPTY_1="NAME OF THE PLAYER ", __EMPTY_8="S. No.", __EMPTY_9="captain", __EMPTY_10="Name", __EMPTY_11="MOBILE NUMBER"
+        let serialCol = null;
+        let nameCol = null;
+        let captainCol = null;
+        let mobileCol = null;
+        
+        // Auto-detect column names from header row (row 0, index 0)
+        if (rows.length > 0) {
+          const headerRow = rows[0];
+          const allKeys = Object.keys(headerRow);
+          
+          // Find columns by checking header values
+          for (const key of allKeys) {
+            const headerValue = String(headerRow[key] || '').trim();
+            const headerLower = headerValue.toLowerCase();
+            
+            // Find serial number column - use __EMPTY_8 (second S. No.) or __EMPTY (first S. No.)
+            if (headerLower === 's. no.' || headerLower === 's no.') {
+              if (!serialCol) {
+                serialCol = key;
+              } else if (key === '__EMPTY_8') {
+                // Prefer the second S. No. column (__EMPTY_8) as it's in the data section
+                serialCol = key;
+              }
+            }
+            
+            // Find player name column - prefer "NAME OF THE PLAYER" over "Name"
+            if (headerLower.includes('name of the player')) {
+              nameCol = key;
+            } else if (!nameCol && (headerLower === 'name' || headerLower.includes('name'))) {
+              nameCol = key;
+            }
+            
+            // Find captain column
+            if (headerLower === 'captain') {
+              captainCol = key;
+            }
+            
+            // Find mobile column
+            if (headerLower.includes('mobile') || headerLower.includes('phone')) {
+              mobileCol = key;
+            }
+          }
+          
+          console.log('Detected columns:', { serialCol, nameCol, captainCol, mobileCol });
+          console.log('Column mapping:', {
+            serialCol: serialCol ? `${serialCol} = "${headerRow[serialCol]}"` : 'not found',
+            nameCol: nameCol ? `${nameCol} = "${headerRow[nameCol]}"` : 'not found',
+            captainCol: captainCol ? `${captainCol} = "${headerRow[captainCol]}"` : 'not found',
+            mobileCol: mobileCol ? `${mobileCol} = "${headerRow[mobileCol]}"` : 'not found'
+          });
+        }
+        
+        // Process data rows starting from row 1 (index 1) - skip row 0 (header row)
+        rows.forEach((row, index) => {
+          // Skip header row (row 0, index 0)
+          if (index < 1) {
+            return;
+          }
+          
+          // Use detected columns
+          let serialNo = serialCol ? row[serialCol] : '';
+          let playerName = nameCol ? row[nameCol] : '';
+          let captain = captainCol ? row[captainCol] : '';
+          let mobile = mobileCol ? row[mobileCol] : '';
+          
+          // Convert to strings and trim
+          serialNo = String(serialNo || '').trim();
+          playerName = String(playerName || '').trim();
+          captain = String(captain || '').trim();
+          mobile = String(mobile || '').trim();
+          
+          // Debug first few rows with actual values
+          if (index < 5) {
+            console.log(`Row ${index}:`, { 
+              serialNo, 
+              playerName, 
+              captain, 
+              mobile, 
+              allKeys: Object.keys(row),
+              allValues: row
+            });
+          }
+          
+          // Skip rows without captain or player name
+          if (!captain || !playerName) {
+            skippedCount++;
+            if (index < 5) {
+              console.log(`Skipping row ${index}: missing captain (${captain}) or player name (${playerName})`);
+            }
+            return;
+          }
+          
+          // Filter out invalid serial numbers (like "Full hands")
+          serialNo = String(serialNo).trim();
+          if (!serialNo || isNaN(parseInt(serialNo))) {
+            return;
+          }
+          
+          // Normalize captain name
+          const captainKey = captain.trim();
+          
+          if (!teamsData[captainKey]) {
+            teamsData[captainKey] = [];
+          }
+          
+          // Check if this player is the captain using serial number mapping
+          const serialStr = String(serialNo).trim();
+          const isCaptainBySerial = SERIAL_TO_CAPTAIN[serialStr] === captainKey;
+          
+          // Also check by name patterns
+          const captainNameLower = captainKey.toLowerCase();
+          const playerNameLower = playerName.toLowerCase();
+          
+          const isCaptainByName = playerName.includes('(C)') || 
+                           playerNameLower.includes('captain') ||
+                           playerNameLower.includes(captainNameLower) ||
+                           captainNameLower.includes(playerNameLower) ||
+                           // Check if captain key matches common patterns
+                           (captainKey === 'Bhanu' && playerNameLower.includes('bhanu') && !playerNameLower.includes('raghava')) ||
+                           (captainKey === 'Charan' && playerNameLower.includes('charan')) ||
+                           (captainKey === 'Manu' && (playerNameLower.includes('manohar') || playerNameLower.includes('manu'))) ||
+                           (captainKey === 'Sairam' && playerNameLower.includes('sairam')) ||
+                           (captainKey === 'Surya' && (playerNameLower.includes('surya') || playerNameLower.includes('suryacharan'))) ||
+                           (captainKey === 'Raghava' && (playerNameLower.includes('raghava') || playerNameLower.includes('raghav')));
+          
+          const isCaptain = isCaptainBySerial || isCaptainByName;
+          
+          if (isCaptain) {
+            captainSerialNos[captainKey] = serialNo;
+          }
+          
+          // If no captain found yet, use known serial number from CAPTAIN_INFO
+          if (!captainSerialNos[captainKey] && CAPTAIN_INFO[captainKey] && CAPTAIN_INFO[captainKey].serialNo) {
+            captainSerialNos[captainKey] = CAPTAIN_INFO[captainKey].serialNo;
+          }
+          
+          teamsData[captainKey].push({
+            serialNo: serialNo,
+            name: playerName.trim(),
+            mobile: mobile.trim(),
+            isCaptain: isCaptain
+          });
+          processedCount++;
+        });
+        
+        console.log(`Processed ${processedCount} players, skipped ${skippedCount} rows`);
+        console.log('Teams found:', Object.keys(teamsData));
+        
+        // Store captain serial numbers for later use
+        window.captainSerialNos = captainSerialNos;
+        
+        // Render teams
+        renderTeams();
+        
+        // Show the grid after rendering
+        loadingEl.style.display = 'none';
+        if (Object.keys(teamsData).length > 0) {
+          gridEl.style.display = 'grid';
+        } else {
+          errorEl.textContent = `No teams found in the data. Please check the Excel file "${EXCEL_FILE}" has the correct columns: S. No. (or Serial No), NAME OF THE PLAYER (or Name), captain (or Captain). Detected columns: ${serialCol || 'not found'}, ${nameCol || 'not found'}, ${captainCol || 'not found'}`;
+          errorEl.style.display = 'block';
+        }
+        
+      } catch (error) {
+        console.error('Error loading teams:', error);
+        loadingEl.style.display = 'none';
+        errorEl.textContent = `Error loading teams: ${error.message}`;
+        errorEl.style.display = 'block';
+      }
+    }
+    
+    function renderTeams() {
+      const gridEl = document.getElementById('teams-grid');
+      gridEl.innerHTML = '';
+      
+      // Debug: log teams data
+      console.log('Teams data:', teamsData);
+      console.log('Captain serial nos:', window.captainSerialNos);
+      console.log('Number of teams:', Object.keys(teamsData).length);
+      console.log('Team keys:', Object.keys(teamsData));
+      
+      if (!teamsData || Object.keys(teamsData).length === 0) {
+        gridEl.innerHTML = `<div class="error">No teams data found. Please check the Excel file "${EXCEL_FILE}".</div>`;
+        return;
+      }
+      
+      let teamsRendered = 0;
+      Object.keys(teamsData).forEach(captainKey => {
+        const captainInfo = CAPTAIN_INFO[captainKey] || { name: captainKey, teamName: '' };
+        const captainDisplayName = captainInfo.name;
+        const teamName = captainInfo.teamName;
+        const players = teamsData[captainKey];
+        const playerCount = players.length;
+        
+        if (playerCount === 0) {
+          console.warn(`No players found for captain: ${captainKey}`);
+          return;
+        }
+        
+        // Find captain's serial number - prioritize CAPTAIN_INFO first
+        let captainSerialNo = null;
+        
+        // Method 1: Use known serial number from CAPTAIN_INFO (most reliable)
+        if (captainInfo.serialNo) {
+          captainSerialNo = String(captainInfo.serialNo).trim();
+          console.log(`Using CAPTAIN_INFO serial for ${captainKey}: ${captainSerialNo}`);
+        }
+        
+        // Method 2: Use stored captain serial number from data processing
+        if (!captainSerialNo && window.captainSerialNos && window.captainSerialNos[captainKey]) {
+          captainSerialNo = String(window.captainSerialNos[captainKey]).trim();
+          console.log(`Using stored serial for ${captainKey}: ${captainSerialNo}`);
+        }
+        
+        // Method 3: Find captain player by serial number mapping
+        if (!captainSerialNo) {
+          const captainPlayer = players.find(p => {
+            const serialStr = String(p.serialNo).trim();
+            return SERIAL_TO_CAPTAIN[serialStr] === captainKey;
+          });
+          if (captainPlayer) {
+            captainSerialNo = String(captainPlayer.serialNo).trim();
+            console.log(`Using SERIAL_TO_CAPTAIN mapping for ${captainKey}: ${captainSerialNo}`);
+          }
+        }
+        
+        // Method 4: Find captain player by isCaptain flag
+        if (!captainSerialNo) {
+          const captainPlayer = players.find(p => p.isCaptain);
+          if (captainPlayer) {
+            captainSerialNo = String(captainPlayer.serialNo).trim();
+            console.log(`Using isCaptain flag for ${captainKey}: ${captainSerialNo}`);
+          }
+        }
+        
+        // Method 5: Use first player as fallback (should not happen if data is correct)
+        if (!captainSerialNo && players.length > 0) {
+          captainSerialNo = String(players[0].serialNo).trim();
+          console.warn(`Using first player as fallback for ${captainKey}: ${captainSerialNo}`);
+        }
+        
+        // Final validation: ensure serial number is valid
+        if (captainSerialNo && (isNaN(parseInt(captainSerialNo)) || parseInt(captainSerialNo) <= 0)) {
+          console.error(`Invalid serial number for ${captainKey}: ${captainSerialNo}`);
+          captainSerialNo = null;
+        }
+        
+        const card = document.createElement('div');
+        card.className = 'captain-card';
+        card.onclick = () => showTeamDetail(captainKey);
+        
+        // Use local path for captain photo
+        const photoSrc = getPhotoUrl(captainSerialNo);
+        const logoSrc = getLogoUrl(teamName);
+        
+        // Try multiple logo filename formats
+        const logoVariations = logoSrc ? [
+          logoSrc, // "Risers 11.jpg"
+          logoSrc.replace(/\s+/g, '_'), // "Risers_11.jpg"
+          logoSrc.replace(/\s+/g, ''), // "Risers11.jpg"
+          logoSrc.toLowerCase().replace(/\s+/g, '_') // "risers_11.jpg"
+        ] : [];
+        
+        // Debug: log captain serial number
+        console.log(`Captain: ${captainKey}, Serial No: ${captainSerialNo}, Photo: ${photoSrc}`);
+        
+        card.innerHTML = `
+          ${logoSrc ? `<img src="${logoSrc}" alt="${teamName}" class="team-logo" onerror="this.onerror=null; this.src='${logoVariations[1] || ''}'; if(!this.src) this.style.display='none';" />` : ''}
+          <img src="${photoSrc}" alt="${captainDisplayName}" class="captain-photo" onerror="console.error('Photo not found: ${photoSrc}'); this.src='${FALLBACK_IMAGE}';">
+          <div class="captain-name">${captainDisplayName}</div>
+          ${teamName ? `<div class="team-name">${teamName}</div>` : ''}
+          <div class="team-count">${playerCount} Players</div>
+        `;
+        
+        gridEl.appendChild(card);
+        teamsRendered++;
+        console.log(`Rendered team: ${captainKey} - ${captainDisplayName} (${playerCount} players)`);
+      });
+      
+      console.log(`Total teams rendered: ${teamsRendered}`);
+      
+      if (teamsRendered === 0) {
+        gridEl.innerHTML = '<div class="error">Teams data loaded but no teams could be rendered. Check console for details.</div>';
+      }
+    }
+    
+    function showTeamDetail(captainKey) {
+      const captainInfo = CAPTAIN_INFO[captainKey] || { name: captainKey, teamName: '' };
+      const captainDisplayName = captainInfo.name;
+      const teamName = captainInfo.teamName;
+      const players = teamsData[captainKey] || [];
+      
+      const titleText = teamName 
+        ? `${captainDisplayName} - ${teamName}`
+        : `${captainDisplayName}'s Team`;
+      
+      // Update title with logo if available
+      const titleEl = document.getElementById('team-detail-title');
+      const logoSrc = getLogoUrl(teamName);
+      if (logoSrc) {
+        titleEl.innerHTML = `
+          <div style="display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap;">
+            <img src="${logoSrc}" alt="${teamName}" style="max-height: 60px; max-width: 200px; object-fit: contain;" onerror="this.style.display='none';" />
+            <span>${titleText}</span>
+          </div>
+        `;
+      } else {
+        titleEl.textContent = titleText;
+      }
+      
+      const loadingEl = document.getElementById('team-loading');
+      const gridEl = document.getElementById('players-grid');
+      const errorEl = document.getElementById('team-error');
+      
+      loadingEl.style.display = 'block';
+      gridEl.style.display = 'none';
+      errorEl.style.display = 'none';
+      
+      setTimeout(() => {
+        gridEl.innerHTML = '';
+        
+        // Sort players: captain first, then others
+        const sortedPlayers = [...players].sort((a, b) => {
+          if (a.isCaptain) return -1;
+          if (b.isCaptain) return 1;
+          return parseInt(a.serialNo) - parseInt(b.serialNo);
+        });
+        
+        sortedPlayers.forEach(player => {
+          const card = document.createElement('div');
+          card.className = 'player-card';
+          
+          // Use local path for player photo (photos are in current folder)
+          const photoSrc = getPhotoUrl(player.serialNo);
+          const displayName = player.name;
+          
+          card.innerHTML = `
+            <img src="${photoSrc}" alt="${player.name}" class="player-photo" onerror="this.src='${FALLBACK_IMAGE}';">
+            <div class="player-name">${displayName}</div>
+          `;
+          
+          gridEl.appendChild(card);
+        });
+        
+        loadingEl.style.display = 'none';
+        gridEl.style.display = 'grid';
+      }, 300);
+      
+      // Hide teams view and show team detail view
+      document.getElementById('teams-view').classList.remove('active');
+      document.getElementById('team-detail-view').classList.add('active');
+    }
+    
+    // Function to show team from schedule page
+    function showTeamFromSchedule(teamName) {
+      // Find captain key from team name
+      let captainKey = null;
+      
+      // Search through CAPTAIN_INFO to find matching team
+      for (const [key, info] of Object.entries(CAPTAIN_INFO)) {
+        if (info.teamName === teamName) {
+          captainKey = key;
+          break;
+        }
+      }
+      
+      if (captainKey) {
+        // Hide all views including schedule
+        const flyerView = document.getElementById('flyer-view');
+        const teamsView = document.getElementById('teams-view');
+        const teamDetailView = document.getElementById('team-detail-view');
+        const scheduleView = document.getElementById('schedule-view');
+        const pointsView = document.getElementById('points-view');
+        const sponsorsView = document.getElementById('sponsors-view');
+        const playingConditionsView = document.getElementById('playing-conditions-view');
+        const organizingTeamView = document.getElementById('organizing-team-view');
+        
+        // Hide all views
+        flyerView.classList.remove('active');
+        teamsView.classList.remove('active');
+        scheduleView.classList.remove('active');
+        pointsView.classList.remove('active');
+        sponsorsView.classList.remove('active');
+        playingConditionsView.classList.remove('active');
+        organizingTeamView.classList.remove('active');
+        
+        // Update menu active state to "Teams"
+        document.querySelectorAll('.menu-item').forEach(item => {
+          item.classList.toggle('active', item.getAttribute('data-view') === 'teams');
+        });
+        
+        // Ensure teams data is loaded
+        if (Object.keys(teamsData).length === 0) {
+          loadTeamsData().then(() => {
+            showTeamDetail(captainKey);
+          });
+        } else {
+          showTeamDetail(captainKey);
+        }
+      } else {
+        console.warn(`Team not found: ${teamName}`);
+        // Try to show teams view and let user select
+        showView('teams');
+        if (Object.keys(teamsData).length === 0) {
+          loadTeamsData();
+        }
+      }
+    }
+    
+    // Match results data structure
+    // Format: { matchId: { team1: 'Team Name', team2: 'Team Name', team1Runs: 150, team1Overs: 16.0, team2Runs: 140, team2Overs: 16.0, winner: 'Team Name' or null } }
+    // 
+    // Usage example:
+    // updateMatchResult({
+    //   matchId: 'M1',
+    //   team1: 'Velocity Vipers',
+    //   team2: 'BULLS (TEAM-A)',
+    //   team1Runs: 150,
+    //   team1Overs: 16.0,  // Can be 16.0 or "16.3" (16 overs 3 balls)
+    //   team2Runs: 140,
+    //   team2Overs: 16.0,
+    //   winner: 'Velocity Vipers'  // null for tie/no result
+    // });
+    let matchResults = {
+      'M1': {
+        team1: 'BULLS (TEAM-A)',
+        team2: 'Velocity Vipers',
+        team1Runs: 141,
+        team1Overs: 16.0,
+        team2Runs: 142,
+        team2Overs: '15.1',  // 15 overs 1 ball
+        winner: 'Velocity Vipers'
+      },
+      'M2': {
+        team1: 'Daredevils',
+        team2: 'Risers 11',
+        team1Runs: 55,
+        team1Overs: '9.5',  // 9 overs 5 balls - all out, so count as 16.0 for NRR
+        team1AllOut: true,  // Flag to indicate all out
+        team2Runs: 59,
+        team2Overs: '11.2',  // 11 overs 2 balls
+        winner: 'Risers 11'
+      },
+      'M3': {
+        team1: 'RBR Returns',
+        team2: 'BULLS (TEAM-B)',
+        team1Runs: 129,
+        team1Overs: 16.0,
+        team2Runs: 115,
+        team2Overs: '15.1',  // 15 overs 1 ball - all out (last player not available), so count as 16.0 for NRR
+        team2AllOut: true,  // Flag to indicate all out
+        winner: 'RBR Returns'
+      },
+      'M4': {
+        team1: 'BULLS (TEAM-A)',
+        team2: 'Risers 11',
+        team1Runs: 129,
+        team1Overs: 16.0,
+        team2Runs: 116,
+        team2Overs: 16.0,
+        winner: 'BULLS (TEAM-A)'
+      },
+      'M5': {
+        team1: 'Velocity Vipers',
+        team2: 'BULLS (TEAM-B)',
+        team1Runs: 152,
+        team1Overs: 16.0,
+        team2Runs: 111,
+        team2Overs: '14.2',  // 14 overs 2 balls - all out, so count as 16.0 for NRR
+        team2AllOut: true,  // Flag to indicate all out
+        winner: 'Velocity Vipers'
+      },
+      'M6': {
+        team1: 'RBR Returns',
+        team2: 'Daredevils',
+        team1Runs: 205,
+        team1Overs: 16.0,
+        team2Runs: 125,
+        team2Overs: 16.0,
+        winner: 'RBR Returns'
+      }
+    };
+    
+    // Convert overs from format like "16.3" (16 overs 3 balls) to decimal (16.5)
+    function convertOversToDecimal(overs) {
+      if (typeof overs === 'number') return overs;
+      if (typeof overs === 'string') {
+        const parts = overs.split('.');
+        if (parts.length === 2) {
+          const oversInt = parseInt(parts[0]) || 0;
+          const balls = parseInt(parts[1]) || 0;
+          // 6 balls = 1 over, so balls/6 gives decimal part
+          return oversInt + (balls / 6);
+        }
+        return parseFloat(overs) || 0;
+      }
+      return 0;
+    }
+    
+    // Calculate NRR and run statistics for a team
+    function calculateTeamStats(teamName, matchResults) {
+      let totalRunsScored = 0;
+      let totalOversFaced = 0;
+      let totalRunsConceded = 0;
+      let totalOversBowled = 0;
+      
+      // Store overs format for display (use 16.0 if all out for runs scored column)
+      let oversFacedList = [];
+      let oversBowledList = [];
+      
+      Object.values(matchResults).forEach(match => {
+        if (match.team1 === teamName) {
+          totalRunsScored += match.team1Runs || 0;
+          // If all out, use 16.0 overs for NRR calculation, otherwise use actual overs
+          const oversForNRR = (match.team1AllOut === true) ? 16.0 : convertOversToDecimal(match.team1Overs || 0);
+          totalOversFaced += oversForNRR;
+          // For display: if all out, show 16.0; otherwise show actual overs
+          oversFacedList.push((match.team1AllOut === true) ? 16.0 : (match.team1Overs || 0));
+          
+          totalRunsConceded += match.team2Runs || 0;
+          const oversBowledForNRR = (match.team2AllOut === true) ? 16.0 : convertOversToDecimal(match.team2Overs || 0);
+          totalOversBowled += oversBowledForNRR;
+          // For runs conceded: if opponent was all out, show 16.0; otherwise show actual overs
+          oversBowledList.push((match.team2AllOut === true) ? 16.0 : (match.team2Overs || 0));
+        } else if (match.team2 === teamName) {
+          totalRunsScored += match.team2Runs || 0;
+          // If all out, use 16.0 overs for NRR calculation, otherwise use actual overs
+          const oversForNRR = (match.team2AllOut === true) ? 16.0 : convertOversToDecimal(match.team2Overs || 0);
+          totalOversFaced += oversForNRR;
+          // For display: if all out, show 16.0; otherwise show actual overs
+          oversFacedList.push((match.team2AllOut === true) ? 16.0 : (match.team2Overs || 0));
+          
+          totalRunsConceded += match.team1Runs || 0;
+          const oversBowledForNRR = (match.team1AllOut === true) ? 16.0 : convertOversToDecimal(match.team1Overs || 0);
+          totalOversBowled += oversBowledForNRR;
+          // For runs conceded: if opponent was all out, show 16.0; otherwise show actual overs
+          oversBowledList.push((match.team1AllOut === true) ? 16.0 : (match.team1Overs || 0));
+        }
+      });
+      
+      // Calculate NRR: (Runs scored per over) - (Runs conceded per over)
+      const runsScoredPerOver = totalOversFaced > 0 ? totalRunsScored / totalOversFaced : 0;
+      const runsConcededPerOver = totalOversBowled > 0 ? totalRunsConceded / totalOversBowled : 0;
+      const nrr = runsScoredPerOver - runsConcededPerOver;
+      
+      return {
+        nrr: nrr,
+        runsScored: totalRunsScored,
+        oversFaced: totalOversFaced, // Decimal for NRR calculation
+        oversFacedList: oversFacedList, // Original format for display
+        runsConceded: totalRunsConceded,
+        oversBowled: totalOversBowled, // Decimal for NRR calculation
+        oversBowledList: oversBowledList // Original format for display
+      };
+    }
+    
+    // Calculate NRR for a team (backward compatibility)
+    function calculateNRR(teamName, matchResults) {
+      return calculateTeamStats(teamName, matchResults).nrr;
+    }
+    
+    // Update match result
+    // matchData: { matchId: string, team1: string, team2: string, team1Runs: number, team1Overs: number|string, team2Runs: number, team2Overs: number|string, winner: string|null }
+    function updateMatchResult(matchData) {
+      if (!matchData || !matchData.matchId) {
+        console.error('Invalid match data: matchId is required');
+        return;
+      }
+      
+      matchResults[matchData.matchId] = {
+        team1: matchData.team1,
+        team2: matchData.team2,
+        team1Runs: matchData.team1Runs || 0,
+        team1Overs: matchData.team1Overs || 0,
+        team2Runs: matchData.team2Runs || 0,
+        team2Overs: matchData.team2Overs || 0,
+        winner: matchData.winner || null
+      };
+      
+      // Update points table
+      updatePointsTable();
+    }
+    
+    // Update points table based on match results
+    function updatePointsTable() {
+      const tbody = document.getElementById('points-table-body');
+      if (!tbody) return;
+      
+      // Get all teams from CAPTAIN_INFO
+      const teams = Object.values(CAPTAIN_INFO);
+      
+      // Calculate stats for each team
+      const teamStats = {};
+      
+      teams.forEach(team => {
+        const teamName = team.teamName;
+        teamStats[teamName] = {
+          teamName: teamName,
+          matchesPlayed: 0,
+          won: 0,
+          lost: 0,
+          points: 0,
+          nrr: 0,
+          runsScored: 0,
+          oversFaced: 0,
+          runsConceded: 0,
+          oversBowled: 0
+        };
+      });
+      
+      // Process each match result
+      Object.values(matchResults).forEach(match => {
+        if (!match.team1 || !match.team2) return;
+        
+        const team1 = match.team1;
+        const team2 = match.team2;
+        
+        // Only count matches that have been played (have runs/overs data)
+        if (match.team1Runs !== undefined && match.team2Runs !== undefined) {
+          if (teamStats[team1]) {
+            teamStats[team1].matchesPlayed++;
+          }
+          if (teamStats[team2]) {
+            teamStats[team2].matchesPlayed++;
+          }
+          
+          // Determine winner
+          if (match.winner) {
+            if (match.winner === team1) {
+              if (teamStats[team1]) {
+                teamStats[team1].won++;
+                teamStats[team1].points += 2;
+              }
+              if (teamStats[team2]) {
+                teamStats[team2].lost++;
+              }
+            } else if (match.winner === team2) {
+              if (teamStats[team2]) {
+                teamStats[team2].won++;
+                teamStats[team2].points += 2;
+              }
+              if (teamStats[team1]) {
+                teamStats[team1].lost++;
+              }
+            }
+            // If winner is null or doesn't match either team, it's a tie/no result (1 point each)
+            else {
+              if (teamStats[team1]) {
+                teamStats[team1].points += 1;
+              }
+              if (teamStats[team2]) {
+                teamStats[team2].points += 1;
+              }
+            }
+          }
+        }
+      });
+      
+      // Calculate NRR and run statistics for each team
+      Object.keys(teamStats).forEach(teamName => {
+        const stats = calculateTeamStats(teamName, matchResults);
+        teamStats[teamName].nrr = stats.nrr;
+        teamStats[teamName].runsScored = stats.runsScored;
+        teamStats[teamName].oversFaced = stats.oversFaced; // Decimal for NRR calculation
+        teamStats[teamName].oversFacedList = stats.oversFacedList; // Original format for display
+        teamStats[teamName].runsConceded = stats.runsConceded;
+        teamStats[teamName].oversBowled = stats.oversBowled; // Decimal for NRR calculation
+        teamStats[teamName].oversBowledList = stats.oversBowledList; // Original format for display
+      });
+      
+      // Convert to array and sort: first by points (descending), then by NRR (descending)
+      const sortedTeams = Object.values(teamStats).sort((a, b) => {
+        if (b.points !== a.points) {
+          return b.points - a.points;
+        }
+        return b.nrr - a.nrr;
+      });
+      
+      // Update table
+      tbody.innerHTML = '';
+      
+      sortedTeams.forEach((stats, index) => {
+        const row = document.createElement('tr');
+        const logoSrc = getLogoUrl(stats.teamName);
+        
+        // Determine NRR class based on value
+        const nrrClass = stats.nrr > 0 ? 'nrr-positive' : stats.nrr < 0 ? 'nrr-negative' : 'nrr-neutral';
+        const nrrDisplay = stats.nrr.toFixed(3);
+        
+        // Format overs to display in original format (e.g., "9.5", "15.1", "16.0")
+        const formatOversForDisplay = (oversList) => {
+          if (!oversList || oversList.length === 0) return '0';
+          
+          // Sum up the original overs format
+          let totalOvers = 0;
+          let totalBalls = 0;
+          
+          oversList.forEach(overs => {
+            if (typeof overs === 'string') {
+              const parts = overs.split('.');
+              if (parts.length === 2) {
+                totalOvers += parseInt(parts[0]) || 0;
+                totalBalls += parseInt(parts[1]) || 0;
+              } else {
+                totalOvers += parseFloat(overs) || 0;
+              }
+            } else if (typeof overs === 'number') {
+              totalOvers += overs;
+            }
+          });
+          
+          // Convert balls to overs (6 balls = 1 over)
+          totalOvers += Math.floor(totalBalls / 6);
+          const remainingBalls = totalBalls % 6;
+          
+          if (remainingBalls === 0) {
+            return totalOvers.toString();
+          } else {
+            return `${totalOvers}.${remainingBalls}`;
+          }
+        };
+        
+        const runsScoredDisplay = stats.runsScored > 0 || (stats.oversFacedList && stats.oversFacedList.length > 0)
+          ? `${stats.runsScored} (${formatOversForDisplay(stats.oversFacedList)})` 
+          : '0 (0)';
+        const runsConcededDisplay = stats.runsConceded > 0 || (stats.oversBowledList && stats.oversBowledList.length > 0)
+          ? `${stats.runsConceded} (${formatOversForDisplay(stats.oversBowledList)})` 
+          : '0 (0)';
+        
+        row.innerHTML = `
+          <td>
+            <div class="team-cell">
+              ${logoSrc ? `<img src="${logoSrc}" alt="${stats.teamName}" class="team-logo-small" onerror="console.error('Logo not found: ${logoSrc}'); this.style.display='none';" />` : ''}
+              <span class="team-name-cell">${stats.teamName}</span>
+            </div>
+          </td>
+          <td>${stats.matchesPlayed}</td>
+          <td>${stats.won}</td>
+          <td>${stats.lost}</td>
+          <td class="points-highlight">${stats.points}</td>
+          <td>${runsScoredDisplay}</td>
+          <td>${runsConcededDisplay}</td>
+          <td class="${nrrClass}">${nrrDisplay}</td>
+        `;
+        
+        tbody.appendChild(row);
+      });
+      
+      // Update eliminator and final schedule based on standings
+      updateEliminatorSchedule(sortedTeams);
+    }
+    
+    // Update eliminator and final schedule based on points table standings
+    function updateEliminatorSchedule(sortedTeams) {
+      if (!sortedTeams || sortedTeams.length < 3) {
+        // Not enough teams, keep placeholder text
+        return;
+      }
+      
+      const firstPlace = sortedTeams[0].teamName;
+      const secondPlace = sortedTeams[1].teamName;
+      const thirdPlace = sortedTeams[2].teamName;
+      
+      // Find all match items
+      const allMatchItems = document.querySelectorAll('.match-item');
+      let eliminatorItem = null;
+      let finalItem = null;
+      
+      // Find eliminator and final match items
+      allMatchItems.forEach(item => {
+        const label = item.querySelector('.match-label');
+        if (label && label.textContent.trim() === 'Eliminator') {
+          eliminatorItem = item;
+        }
+        const finalLabel = item.querySelector('.match-label-final-label');
+        if (finalLabel && finalLabel.textContent.trim() === 'FINAL') {
+          finalItem = item;
+        }
+      });
+      
+      // Update eliminator match
+      if (eliminatorItem) {
+        const teams = eliminatorItem.querySelectorAll('.match-team');
+        if (teams.length >= 2) {
+          // Update team names with clickable links
+          const team1Div = teams[0];
+          const team2Div = teams[1];
+          
+          // Get logo URLs
+          const logo1Src = getLogoUrl(secondPlace);
+          const logo2Src = getLogoUrl(thirdPlace);
+          
+          team1Div.innerHTML = `
+            <img src="${logo1Src || ''}" alt="${secondPlace}" class="match-team-logo" onerror="this.style.display='none';" onload="this.style.display='';">
+            <span class="match-team-name" onclick="showTeamFromSchedule('${secondPlace}')">${secondPlace}</span>
+          `;
+          team1Div.setAttribute('data-team', secondPlace);
+          
+          team2Div.innerHTML = `
+            <img src="${logo2Src || ''}" alt="${thirdPlace}" class="match-team-logo" onerror="this.style.display='none';" onload="this.style.display='';">
+            <span class="match-team-name" onclick="showTeamFromSchedule('${thirdPlace}')">${thirdPlace}</span>
+          `;
+          team2Div.setAttribute('data-team', thirdPlace);
+        }
+      }
+      
+      // Update final match - RBR Returns vs Velocity Vipers
+      if (finalItem) {
+        const teams = finalItem.querySelectorAll('.match-team');
+        if (teams.length >= 2) {
+          // First team: RBR Returns
+          const team1Div = teams[0];
+          const team1Name = 'RBR Returns';
+          const logo1Src = getLogoUrl(team1Name);
+          
+          team1Div.innerHTML = `
+            <img src="${logo1Src || ''}" alt="${team1Name}" class="match-team-logo" onerror="this.style.display='none';" onload="this.style.display='';">
+            <span class="match-team-name" onclick="showTeamFromSchedule('${team1Name}')">${team1Name}</span>
+          `;
+          team1Div.setAttribute('data-team', team1Name);
+          
+          // Second team: Velocity Vipers
+          const team2Div = teams[1];
+          const team2Name = 'Velocity Vipers';
+          const logo2Src = getLogoUrl(team2Name);
+          
+          team2Div.innerHTML = `
+            <img src="${logo2Src || ''}" alt="${team2Name}" class="match-team-logo" onerror="this.style.display='none';" onload="this.style.display='';">
+            <span class="match-team-name" onclick="showTeamFromSchedule('${team2Name}')">${team2Name}</span>
+          `;
+          team2Div.setAttribute('data-team', team2Name);
+          
+          // Preserve the CricHeroes link
+          const matchLink = finalItem.querySelector('.match-link');
+          if (matchLink) {
+            matchLink.href = 'https://cricheroes.com/scorecard/20516424/surabhi-premier-league-2025/rbr-returns-vs-velocity-vipers/upcoming';
+          }
+        }
+      }
+    }
+    
+    // Initialize points table (shows empty/zero stats)
+    function initializePointsTable() {
+      // If there are match results, use updatePointsTable instead
+      if (Object.keys(matchResults).length > 0) {
+        updatePointsTable();
+        return;
+      }
+      
+      const tbody = document.getElementById('points-table-body');
+      if (!tbody) return;
+      
+      // Get all teams from CAPTAIN_INFO
+      const teams = Object.values(CAPTAIN_INFO);
+      
+      // Sort teams alphabetically by team name for initial display
+      teams.sort((a, b) => a.teamName.localeCompare(b.teamName));
+      
+      tbody.innerHTML = '';
+      
+      teams.forEach((team, index) => {
+        const row = document.createElement('tr');
+        const logoSrc = getLogoUrl(team.teamName);
+        
+        // Debug: log logo source
+        console.log(`Team: ${team.teamName}, Logo: ${logoSrc}`);
+        
+        row.innerHTML = `
+          <td>
+            <div class="team-cell">
+              ${logoSrc ? `<img src="${logoSrc}" alt="${team.teamName}" class="team-logo-small" onerror="console.error('Logo not found: ${logoSrc}'); this.style.display='none';" />` : ''}
+              <span class="team-name-cell">${team.teamName}</span>
+            </div>
+          </td>
+          <td>0</td>
+          <td>0</td>
+          <td>0</td>
+          <td class="points-highlight">0</td>
+          <td>0 (0)</td>
+          <td>0 (0)</td>
+          <td class="nrr-positive">0.000</td>
+        `;
+        
+        tbody.appendChild(row);
+      });
+    }
+    
+    // Initialize flyer slideshow
+    let flyerSlideIndex = 0;
+    let flyerSlideInterval = null;
+    let touchStartX = 0;
+    let touchEndX = 0;
+    
+    function initializeFlyerSlideshow() {
+      const slides = document.querySelectorAll('.flyer-slide');
+      if (slides.length === 0) return;
+      
+      // Function to show a specific slide with animation direction
+      function showSlide(index, direction = 'right') {
+        if (index < 0) index = slides.length - 1;
+        if (index >= slides.length) index = 0;
+        
+        const currentIndex = flyerSlideIndex;
+        flyerSlideIndex = index;
+        
+        // Get current and next slides
+        const currentSlide = slides[currentIndex];
+        const nextSlide = slides[index];
+        
+        // Remove all animation classes first
+        slides.forEach(slide => {
+          slide.classList.remove('slide-in-right', 'slide-in-left', 'slide-out-left', 'slide-out-right');
+        });
+        
+        if (currentSlide && nextSlide && currentIndex !== index) {
+          // Make next slide visible and positioned before animation
+          nextSlide.style.position = 'absolute';
+          nextSlide.style.display = 'block';
+          nextSlide.style.visibility = 'visible';
+          nextSlide.style.opacity = '0';
+          
+          // Use requestAnimationFrame to ensure browser processes display change before animation
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              if (direction === 'right') {
+                // Next slide: coming from right, current going to left
+                currentSlide.classList.add('slide-out-left');
+                nextSlide.classList.add('slide-in-right');
+                nextSlide.classList.add('active');
+                currentSlide.classList.remove('active');
+              } else {
+                // Previous slide: coming from left, current going to right
+                currentSlide.classList.add('slide-out-right');
+                nextSlide.classList.add('slide-in-left');
+                nextSlide.classList.add('active');
+                currentSlide.classList.remove('active');
+              }
+              
+              // Update positions
+              nextSlide.style.position = 'relative';
+              currentSlide.style.position = 'absolute';
+              
+              // Clean up after animation
+              setTimeout(() => {
+                currentSlide.classList.remove('slide-out-left', 'slide-out-right');
+                nextSlide.classList.remove('slide-in-right', 'slide-in-left');
+              }, 500);
+            });
+          });
+        } else {
+          // No animation needed (same slide or initial load)
+          slides.forEach((slide, i) => {
+            if (i === index) {
+              slide.classList.add('active');
+              slide.style.position = 'relative';
+              slide.style.display = 'block';
+              slide.style.visibility = 'visible';
+            } else {
+              slide.classList.remove('active');
+              slide.style.position = 'absolute';
+              slide.style.opacity = '0';
+              slide.style.visibility = 'hidden';
+            }
+          });
+        }
+      }
+      
+      // Function to go to next slide (slides come from right)
+      function nextSlide() {
+        showSlide(flyerSlideIndex + 1, 'right');
+        resetSlideshow();
+      }
+      
+      // Function to go to previous slide (slides come from left)
+      function prevSlide() {
+        showSlide(flyerSlideIndex - 1, 'left');
+        resetSlideshow();
+      }
+      
+      // Start the slideshow only when flyer view is active
+      function startSlideshow() {
+        if (flyerSlideInterval) {
+          clearInterval(flyerSlideInterval);
+        }
+        flyerSlideInterval = setInterval(() => {
+          showSlide(flyerSlideIndex + 1, 'right'); // Default slideshow slides from right
+        }, 3000); // 3 seconds
+      }
+      
+      // Stop the slideshow
+      function stopSlideshow() {
+        if (flyerSlideInterval) {
+          clearInterval(flyerSlideInterval);
+          flyerSlideInterval = null;
+        }
+      }
+      
+      // Reset and restart slideshow (useful after manual navigation)
+      function resetSlideshow() {
+        stopSlideshow();
+        const flyerView = document.getElementById('flyer-view');
+        if (flyerView && flyerView.classList.contains('active')) {
+          startSlideshow();
+        }
+      }
+      
+      // Initialize first slide (no animation on initial load)
+      const firstSlide = slides[0];
+      if (firstSlide) {
+        firstSlide.classList.add('active');
+        firstSlide.style.position = 'relative';
+        firstSlide.style.opacity = '1';
+        firstSlide.style.visibility = 'visible';
+        slides.forEach((slide, i) => {
+          if (i !== 0) {
+            slide.classList.remove('active');
+            slide.style.position = 'absolute';
+            slide.style.opacity = '0';
+            slide.style.visibility = 'hidden';
+          }
+        });
+      }
+      
+      // Keyboard navigation (arrow keys)
+      function handleKeyDown(e) {
+        const flyerView = document.getElementById('flyer-view');
+        if (flyerView && flyerView.classList.contains('active')) {
+          if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            prevSlide();
+          } else if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            nextSlide();
+          }
+        }
+      }
+      
+      // Touch gesture handlers and pause functionality
+      let touchHoldTimer = null;
+      let mouseDown = false;
+      
+      function handleTouchStart(e) {
+        touchStartX = e.changedTouches[0].screenX;
+        
+        // Pause slideshow on touch (touchscreens)
+        const flyerView = document.getElementById('flyer-view');
+        if (flyerView && flyerView.classList.contains('active')) {
+          stopSlideshow();
+        }
+      }
+      
+      function handleTouchEnd(e) {
+        touchEndX = e.changedTouches[0].screenX;
+        
+        const flyerView = document.getElementById('flyer-view');
+        if (!flyerView || !flyerView.classList.contains('active')) return;
+        
+        // Check if it was a swipe or just a touch/hold
+        const swipeThreshold = 50;
+        const diff = Math.abs(touchStartX - touchEndX);
+        
+        if (diff > swipeThreshold) {
+          // It was a swipe - handle navigation
+          const swipeDiff = touchStartX - touchEndX;
+          if (swipeDiff > 0) {
+            // Swipe left - go to next slide
+            nextSlide();
+          } else {
+            // Swipe right - go to previous slide
+            prevSlide();
+          }
+        } else {
+          // It was just a touch/hold - resume slideshow
+          startSlideshow();
+        }
+        
+        // Clear any timers
+        if (touchHoldTimer) {
+          clearTimeout(touchHoldTimer);
+          touchHoldTimer = null;
+        }
+      }
+      
+      // Add keyboard event listener
+      document.addEventListener('keydown', handleKeyDown);
+      
+      // Add touch and mouse event listeners to slideshow container
+      const slideshow = document.getElementById('flyer-slideshow');
+      if (slideshow) {
+        // Touch events for swipe navigation and pause
+        slideshow.addEventListener('touchstart', handleTouchStart, { passive: true });
+        slideshow.addEventListener('touchend', handleTouchEnd, { passive: true });
+        
+        // Pause on mouse click and hold (desktop/laptop)
+        slideshow.addEventListener('mousedown', (e) => {
+          const flyerView = document.getElementById('flyer-view');
+          if (flyerView && flyerView.classList.contains('active')) {
+            mouseDown = true;
+            stopSlideshow();
+          }
+        });
+        
+        slideshow.addEventListener('mouseup', (e) => {
+          const flyerView = document.getElementById('flyer-view');
+          if (mouseDown) {
+            mouseDown = false;
+            // Resume slideshow when mouse is released
+            if (flyerView && flyerView.classList.contains('active')) {
+              startSlideshow();
+            }
+          }
+        });
+        
+        // Also handle mouse leave (in case user drags outside)
+        slideshow.addEventListener('mouseleave', (e) => {
+          if (mouseDown) {
+            mouseDown = false;
+            const flyerView = document.getElementById('flyer-view');
+            if (flyerView && flyerView.classList.contains('active')) {
+              startSlideshow();
+            }
+          }
+        });
+      }
+      
+      // Start slideshow if flyer view is active
+      const flyerView = document.getElementById('flyer-view');
+      if (flyerView && flyerView.classList.contains('active')) {
+        startSlideshow();
+      }
+      
+      // Watch for view changes to start/stop slideshow
+      const observer = new MutationObserver(() => {
+        if (flyerView && flyerView.classList.contains('active')) {
+          startSlideshow();
+        } else {
+          stopSlideshow();
+        }
+      });
+      
+      if (flyerView) {
+        observer.observe(flyerView, { attributes: true, attributeFilter: ['class'] });
+      }
+    }
+    
+    // Initialize schedule logos
+    function initializeScheduleLogos() {
+      const matchTeams = document.querySelectorAll('.match-team[data-team]');
+      matchTeams.forEach(teamEl => {
+        const teamName = teamEl.getAttribute('data-team');
+        const logoSrc = getLogoUrl(teamName);
+        const logoImg = teamEl.querySelector('.match-team-logo');
+        if (logoImg) {
+          if (logoSrc) {
+            logoImg.src = logoSrc;
+            logoImg.style.display = 'block';
+            console.log(`Setting logo for "${teamName}": ${logoSrc}`);
+          } else {
+            console.warn(`No logo found for team: "${teamName}"`);
+            logoImg.style.display = 'none';
+          }
+        }
+      });
+    }
+    
+    // Initialize: Load xlsx library if needed and setup points table
+    window.addEventListener('DOMContentLoaded', () => {
+      // Check if xlsx is already loaded
+      if (typeof XLSX === 'undefined') {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js';
+        document.head.appendChild(script);
+      }
+      
+      // Initialize points table
+      initializePointsTable();
+      
+      // Initialize schedule logos
+      initializeScheduleLogos();
+      
+      // Initialize flyer slideshow
+      initializeFlyerSlideshow();
+    });
+    
+    // Also initialize when points view is shown
+    document.addEventListener('DOMContentLoaded', () => {
+      const pointsMenuItem = document.querySelector('.menu-item[data-view="points"]');
+      if (pointsMenuItem) {
+        pointsMenuItem.addEventListener('click', () => {
+          // Ensure points table is initialized when view is shown
+          setTimeout(() => {
+            const tbody = document.getElementById('points-table-body');
+            if (tbody && tbody.children.length === 0) {
+              initializePointsTable();
+            }
+          }, 100);
+        });
+      }
+    });
+  </script>
+</body>
+</html>
+
