@@ -1,0 +1,2768 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"/>
+  <title>Register - Surabhi Premier League 2026</title>
+  <link rel="stylesheet" href="../style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="config.js"></script>
+  <style>
+    /* Logo in top-right corner - Always visible */
+    .page-logo {
+      position: fixed !important;
+      top: clamp(10px, 2vh, 20px) !important;
+      right: clamp(10px, 2vw, 20px) !important;
+      width: clamp(60px, 8vw, 120px) !important;
+      height: auto !important;
+      z-index: 9999 !important;
+      opacity: 0.9 !important;
+      transition: opacity 0.3s;
+      display: block !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+    }
+    
+    .page-logo:hover {
+      opacity: 1 !important;
+    }
+    
+    @media (max-width: 768px) {
+      .page-logo {
+        width: clamp(50px, 10vw, 80px) !important;
+        top: clamp(8px, 1.5vh, 15px) !important;
+        right: clamp(8px, 2vw, 15px) !important;
+      }
+    }
+    
+    body {
+      background: #0f172a;
+      color: #e2e8f0;
+      font-family: system-ui, Arial, Helvetica, sans-serif;
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .container {
+      max-width: 600px;
+      width: 100%;
+      background: #111827;
+      border: 2px solid #334155;
+      border-radius: 16px;
+      padding: clamp(20px, 4vw, 40px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+    
+    h1 {
+      font-size: clamp(24px, 5vw, 36px);
+      margin-bottom: 10px;
+      color: #60a5fa;
+      font-weight: 700;
+      text-align: center;
+    }
+    
+    .subtitle {
+      text-align: center;
+      color: #94a3b8;
+      margin-bottom: 30px;
+      font-size: clamp(14px, 2.5vw, 16px);
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #e2e8f0;
+      font-weight: 500;
+      font-size: clamp(14px, 2.5vw, 16px);
+    }
+    
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 16px;
+      background: #1e293b;
+      border: 2px solid #334155;
+      border-radius: 8px;
+      color: #e2e8f0;
+      font-size: 16px;
+      box-sizing: border-box;
+      transition: border-color 0.3s;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #60a5fa;
+    }
+    
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      background: #10b981;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+      margin-top: 10px;
+    }
+    
+    .submit-btn:hover {
+      background: #059669;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.3);
+    }
+    
+    .back-link {
+      display: inline-block;
+      margin-top: 20px;
+      color: #60a5fa;
+      text-decoration: none;
+      font-size: 14px;
+      text-align: center;
+      width: 100%;
+    }
+    
+    .back-link:hover {
+      text-decoration: underline;
+    }
+    
+    .help-text {
+      display: block;
+      margin-top: 5px;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+    
+    .photo-preview {
+      margin-top: 10px;
+      display: none;
+    }
+    
+    .photo-preview img {
+      max-width: 200px;
+      max-height: 200px;
+      border-radius: 8px;
+      border: 2px solid #334155;
+      margin-top: 10px;
+    }
+    
+    .confirmation-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 999999;
+      overflow-y: auto;
+      padding: 20px;
+      box-sizing: border-box;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .confirmation-overlay.active {
+      display: flex;
+    }
+    
+    .confirmation-box {
+      background: #111827;
+      border: 2px solid #334155;
+      border-radius: 16px;
+      padding: 30px;
+      max-width: 700px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+    
+    .confirmation-title {
+      font-size: 24px;
+      color: #60a5fa;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    .confirmation-details {
+      background: #1e293b;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .confirmation-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #334155;
+    }
+    
+    .confirmation-row:last-child {
+      border-bottom: none;
+    }
+    
+    .confirmation-label {
+      font-weight: 600;
+      color: #94a3b8;
+      flex: 0 0 40%;
+    }
+    
+    .confirmation-value {
+      color: #e2e8f0;
+      flex: 1;
+      text-align: right;
+    }
+    
+    .confirmation-photo {
+      text-align: center;
+      margin: 20px 0;
+    }
+    
+    .confirmation-photo img {
+      max-width: 200px;
+      max-height: 200px;
+      border-radius: 8px;
+      border: 2px solid #334155;
+    }
+    
+    .confirmation-fee {
+      background: #10b981;
+      color: white;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: 700;
+      margin: 20px 0;
+    }
+    
+    .confirmation-buttons {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+    }
+    
+    .confirmation-btn {
+      flex: 1;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .btn-confirm {
+      background: #10b981;
+      color: white;
+    }
+    
+    .btn-confirm:hover {
+      background: #059669;
+      transform: translateY(-2px);
+    }
+    
+    .btn-back {
+      background: #3b82f6;
+      color: white;
+    }
+    
+    .btn-back:hover {
+      background: #2563eb;
+      transform: translateY(-2px);
+    }
+    
+    .photo-preview.active {
+      display: block;
+    }
+    
+    .error-message {
+      color: #ef4444;
+      font-size: 14px;
+      margin-top: 5px;
+      display: none;
+    }
+    
+    .error-message.show {
+      display: block;
+    }
+    
+    input:invalid {
+      border-color: #ef4444;
+    }
+    
+    input:valid {
+      border-color: #10b981;
+    }
+    
+    .fee-display {
+      padding: 12px 16px;
+      background: #1e293b;
+      border: 2px solid #10b981;
+      border-radius: 8px;
+      color: #10b981;
+      font-size: 20px;
+      font-weight: 700;
+      text-align: center;
+    }
+    
+    .check-note {
+      background: #fef3c7;
+      color: #92400e;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: center;
+      border: 2px solid #fbbf24;
+    }
+    
+    .success-page {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #0f172a;
+      z-index: 2000;
+      overflow-y: auto;
+      padding: 20px;
+    }
+    
+    .success-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #111827;
+      border: 2px solid #334155;
+      border-radius: 16px;
+      padding: clamp(20px, 4vw, 40px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+    
+    .success-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .success-icon {
+      width: 80px;
+      height: 80px;
+      background: #10b981;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 50px;
+      color: white;
+      font-weight: bold;
+    }
+    
+    .success-header h1 {
+      color: #10b981;
+      font-size: clamp(24px, 5vw, 36px);
+      margin-bottom: 10px;
+    }
+    
+    .success-subtitle {
+      color: #94a3b8;
+      font-size: clamp(14px, 2.5vw, 18px);
+    }
+    
+    .success-details {
+      background: #1e293b;
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 30px;
+    }
+    
+    .success-detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 15px 0;
+      border-bottom: 1px solid #334155;
+    }
+    
+    .success-detail-row:last-child {
+      border-bottom: none;
+    }
+    
+    .success-detail-label {
+      font-weight: 600;
+      color: #94a3b8;
+      flex: 0 0 40%;
+    }
+    
+    .success-detail-value {
+      color: #e2e8f0;
+      flex: 1;
+      text-align: right;
+    }
+    
+    .success-detail-value.orn {
+      color: #60a5fa;
+      font-size: 20px;
+      font-weight: 700;
+    }
+    
+    .success-detail-value.fee {
+      color: #10b981;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    
+    .payment-instructions {
+      background: #1e293b;
+      border: 2px solid #fbbf24;
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 30px;
+    }
+    
+    .payment-instructions h3 {
+      color: #fbbf24;
+      margin-bottom: 15px;
+      font-size: clamp(18px, 3vw, 24px);
+    }
+    
+    .payment-note {
+      background: #fef3c7;
+      color: #92400e;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    .payment-contacts {
+      color: #e2e8f0;
+    }
+    
+    .payment-contacts p {
+      margin-bottom: 15px;
+      font-weight: 600;
+    }
+    
+    .contact-item {
+      padding: 10px 0;
+      font-size: clamp(14px, 2.5vw, 16px);
+    }
+    
+    .contact-item strong {
+      color: #60a5fa;
+    }
+    
+    .contact-item a {
+      color: #10b981;
+      text-decoration: none;
+      margin-left: 10px;
+    }
+    
+    .contact-item a:hover {
+      text-decoration: underline;
+    }
+    
+    .success-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    .download-btn {
+      width: 100%;
+      padding: 16px;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+    }
+    
+    .download-btn:hover {
+      background: #2563eb;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.3);
+    }
+    
+    .new-registration-btn, .home-btn {
+      display: block;
+      text-align: center;
+      padding: 14px;
+      background: #334155;
+      color: white;
+      text-decoration: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    
+    .new-registration-btn:hover, .home-btn:hover {
+      background: #475569;
+      transform: translateY(-2px);
+    }
+    
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      overflow-y: auto;
+      padding: 20px;
+    }
+    
+    .modal-content {
+      background: #111827;
+      border: 2px solid #334155;
+      border-radius: 16px;
+      padding: 30px;
+      max-width: 600px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .modal-content h2 {
+      color: #60a5fa;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    .confirmation-details {
+      background: #1e293b;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .confirmation-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #334155;
+    }
+    
+    .confirmation-row:last-child {
+      border-bottom: none;
+    }
+    
+    .confirmation-label {
+      font-weight: 600;
+      color: #94a3b8;
+      flex: 0 0 40%;
+    }
+    
+    .confirmation-value {
+      color: #e2e8f0;
+      flex: 1;
+      text-align: right;
+    }
+    
+    .confirmation-photo {
+      text-align: center;
+      margin-top: 15px;
+    }
+    
+    .confirmation-photo img {
+      max-width: 200px;
+      max-height: 200px;
+      border-radius: 8px;
+      border: 2px solid #334155;
+    }
+    
+    .modal-buttons {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+    }
+    
+    .btn-confirm, .btn-back {
+      flex: 1;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .btn-confirm {
+      background: #10b981;
+      color: white;
+    }
+    
+    .btn-confirm:hover {
+      background: #059669;
+      transform: translateY(-2px);
+    }
+    
+    .btn-back {
+      background: #3b82f6;
+      color: white;
+    }
+    
+    .btn-back:hover {
+      background: #2563eb;
+      transform: translateY(-2px);
+    }
+    
+    @media (max-width: 768px) {
+      .modal-content {
+        padding: 20px;
+      }
+      
+      .confirmation-row {
+        flex-direction: column;
+      }
+      
+      .confirmation-value {
+        text-align: left;
+        margin-top: 5px;
+      }
+      
+      .modal-buttons {
+        flex-direction: column;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+      
+      .container {
+        padding: 20px;
+      }
+      
+      input, select, textarea {
+        font-size: 16px; /* Prevents zoom on iOS */
+      }
+      
+      .success-detail-row {
+        flex-direction: column;
+        gap: 5px;
+      }
+      
+      .success-detail-value {
+        text-align: left;
+      }
+      
+      .success-detail-value.orn {
+        font-size: 18px;
+      }
+      
+      .payment-contacts {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Logo in top-right corner -->
+  <img src="../Surabhi_Yuvasena_Logo.png" alt="Surabhi Yuvasena Logo" class="page-logo" onerror="console.error('Logo failed to load, but keeping it visible');">
+  <div class="container">
+    <h1>Register for Surabhi Premier League 2026</h1>
+    <p class="subtitle">Fill in your details to register</p>
+    
+    <form id="registrationForm" enctype="multipart/form-data" novalidate>
+      <div class="form-group">
+        <label for="name">Name *</label>
+        <input type="text" id="name" name="name" pattern="[A-Za-z\s]+" title="Only alphabets and spaces are allowed" required>
+        <small class="help-text">Only alphabets and spaces allowed</small>
+      </div>
+      
+      <div class="form-group">
+        <label for="fatherName">Father Name *</label>
+        <input type="text" id="fatherName" name="fatherName" pattern="[A-Za-z\s]+" title="Only alphabets and spaces are allowed" required>
+        <small class="help-text">Only alphabets and spaces allowed</small>
+      </div>
+      
+      <div class="form-group">
+        <label for="category">Category *</label>
+        <select id="category" name="category" required>
+          <option value="">Select category</option>
+          <option value="Batsman">Batsman</option>
+          <option value="All-Rounder">All-Rounder</option>
+          <option value="Bowler">Bowler</option>
+          <option value="Keeper">Keeper</option>
+        </select>
+      </div>
+      
+      <!-- Email is verified in email-verify.html, stored in sessionStorage -->
+      
+      <div class="form-group">
+        <label for="mobile">Mobile Number *</label>
+        <input type="tel" id="mobile" name="mobile" pattern="[0-9]{10}" title="Enter exactly 10 digits" maxlength="10" required>
+        <small class="help-text">Enter 10 digit mobile number</small>
+      </div>
+      
+      <div class="form-group" id="captaincyInfoGroup">
+        <label>Captaincy Status</label>
+        <div class="fee-display" id="captaincyStatus">Determined by payment amount</div>
+        <small class="help-text">₹2000 = Captaincy (Yes), ₹500 = No Captaincy</small>
+      </div>
+      
+      <div class="form-group" id="registrationFeeGroup">
+        <label>Amount paid</label>
+        <div class="fee-display" id="registrationFee">₹0</div>
+        <small class="help-text">Surabhi Yuvasena members have ₹500 deducted from the fee</small>
+      </div>
+
+      <div class="form-group" id="syInfoGroup">
+        <label>Surabhi Yuvasena member</label>
+        <div class="fee-display" id="syMemberStatus">No</div>
+        <small class="help-text" id="syNumberStatus"></small>
+      </div>
+      
+      <div class="form-group">
+        <label for="jerseyName">Name on Jersey *</label>
+        <input type="text" id="jerseyName" name="jerseyName" pattern="[A-Za-z\s]+" title="Only alphabets and spaces are allowed" required>
+        <small class="help-text">Only alphabets and spaces allowed</small>
+      </div>
+      
+      <div class="form-group">
+        <label for="jerseyNumber">Jersey Number *</label>
+        <input type="text" id="jerseyNumber" name="jerseyNumber" pattern="[0-9]+" title="Only numbers are allowed" maxlength="3" required>
+        <small class="help-text">Only numbers allowed</small>
+      </div>
+      
+      <div class="form-group">
+        <label for="tshirtSize">T-shirt Size *</label>
+        <select id="tshirtSize" name="tshirtSize" required>
+          <option value="">Select T-shirt size</option>
+          <option value="S">S</option>
+          <option value="M">M</option>
+          <option value="L">L</option>
+          <option value="XL">XL</option>
+          <option value="XXL">XXL</option>
+          <option value="XXXL">XXXL</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="trouserSize">Trouser Size *</label>
+        <select id="trouserSize" name="trouserSize" required>
+          <option value="">Select trouser size</option>
+          <option value="S">S</option>
+          <option value="M">M</option>
+          <option value="L">L</option>
+          <option value="XL">XL</option>
+          <option value="XXL">XXL</option>
+          <option value="XXXL">XXXL</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="photo">Upload Photo *</label>
+        <input type="file" id="photo" name="photo" accept="image/*,.jpg,.jpeg,.png,.gif,.webp">
+        <small class="help-text">Supported formats: JPG, PNG, GIF, WebP. Maximum size: 10MB</small>
+        <div id="photoPreview" class="photo-preview"></div>
+      </div>
+      
+      <button type="button" id="reviewBtn" class="submit-btn">Review Registration</button>
+    </form>
+    
+    <!-- Confirmation Overlay -->
+    <div id="confirmationOverlay" class="confirmation-overlay">
+      <div class="confirmation-box">
+        <h2 class="confirmation-title">Confirm Registration Details</h2>
+        <div class="check-note">
+          <strong>⚠️ Please check all details carefully before confirming!</strong>
+        </div>
+        <div class="confirmation-details" id="confirmationDetails"></div>
+        <div class="confirmation-fee" id="confirmationFee"></div>
+        <div class="confirmation-buttons">
+          <button class="confirmation-btn btn-back" id="goBackBtn">Go Back</button>
+          <button class="confirmation-btn btn-confirm" id="confirmBtn">Confirm</button>
+        </div>
+      </div>
+    </div>
+    
+    <a href="../2026.html" class="back-link">← Back to Home</a>
+  </div>
+  
+  <!-- Success Page (hidden initially, outside container) -->
+  <div id="successPage" class="success-page" style="display: none;">
+    <div class="success-container">
+      <div class="success-header">
+        <div class="success-icon">✓</div>
+        <h1>Registration Successful!</h1>
+        <p class="success-subtitle">Your registration has been submitted successfully</p>
+      </div>
+      
+      <div class="success-details" id="successDetails"></div>
+      
+      
+      <div class="success-actions">
+        <button id="emailPdfBtn" class="download-btn">📧 Email Registration Details (PDF)</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Google Sheets configuration
+    //const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxBPR-onenOPpruhW6gtr0GkyX4p6o_pt4k7OTADa7WEgl0Ph4toB5KDZdcERUakUtZ/exec'; // Will be set after deploying Apps Script
+    const GOOGLE_SCRIPT_URL = window.SPL2026_SCRIPT_URL;
+
+    function spl2026Context() {
+      const feeType = parseInt(sessionStorage.getItem('spl2026_feeType') || '0', 10);
+      const amountRaw = sessionStorage.getItem('spl2026_paymentAmount');
+      const amountPaid = amountRaw === null || amountRaw === '' ? 0 : (parseInt(amountRaw, 10) || 0);
+      const syMember = sessionStorage.getItem('spl2026_syMember') === 'Yes' ? 'Yes' : 'No';
+      return {
+        feeType: feeType,
+        amountPaid: amountPaid,
+        syMember: syMember,
+        syNumber: sessionStorage.getItem('spl2026_syNumber') || '',
+        captaincy: feeType === 2000 ? 'Yes' : 'No',
+        paidTo: sessionStorage.getItem('spl2026_paymentToWhom') || ''
+      };
+    }
+    
+    // Store registration data for success page
+    let registrationData = null;
+    let generatedPdfBase64 = null; // Store PDF locally after generation
+    
+    // Flag to track if we've received postMessage (to prevent duplicate processing)
+    let postMessageReceived = false;
+    
+    // Backup of form data that persists even after pendingFormData is cleared
+    let backupFormData = null;
+    
+    // Flag to track if PDF has already been saved to Drive (prevent duplicate saves)
+    let pdfSavedToDrive = false;
+    
+    // Listen for postMessage from iframe (Google Apps Script response)
+    // This avoids CORS issues when reading iframe content
+    window.addEventListener('message', function(event) {
+      // Log all messages for debugging
+      console.log('📨 Message received from origin:', event.origin, 'Data:', event.data);
+      
+      // Verify message is from Google Apps Script (script.google.com)
+      // Be more lenient with origin check
+      const isGoogleScript = event.origin.includes('script.google.com') || 
+                            event.origin.includes('script.googleusercontent.com') ||
+                            event.origin.includes('googleusercontent.com');
+      
+      if (isGoogleScript) {
+        if (event.data && event.data.type === 'registration-success' && !postMessageReceived) {
+          postMessageReceived = true;
+          console.log('✅ Received postMessage from Google Apps Script:', event.data);
+          
+          // Find the confirmation button to restore its state
+          const confirmBtn = document.querySelector('#confirmationOverlay .confirm-btn');
+          const originalText = confirmBtn ? confirmBtn.textContent : 'Confirm Registration';
+          
+          // Use backupFormData if pendingFormData is null
+          const formDataToUse = pendingFormData || backupFormData || {};
+          // Determine captaincy from payment amount
+          const paymentAmount = sessionStorage.getItem('spl2026_paymentAmount') || '';
+          const amount = parseInt(paymentAmount) || 0;
+          const captaincy = spl2026Context().captaincy;
+          
+          const successData = {
+            name: formDataToUse.name || '',
+            fatherName: formDataToUse.fatherName || '',
+            category: formDataToUse.category || '',
+            mobile: formDataToUse.mobile || '',
+            captaincy: captaincy,
+            registrationFee: amount.toString() || '0',
+            jerseyName: formDataToUse.jerseyName || '',
+            jerseyNumber: formDataToUse.jerseyNumber || '',
+            tshirtSize: formDataToUse.tshirtSize || '',
+            trouserSize: formDataToUse.trouserSize || '',
+            photoPreview: pendingPhotoPreview || null
+          };
+          
+          document.getElementById('confirmationOverlay').classList.remove('active');
+          document.getElementById('registrationForm').reset();
+          document.getElementById('photoPreview').classList.remove('active');
+          document.getElementById('photoPreview').innerHTML = '';
+          document.getElementById('registrationFeeGroup').style.display = 'none';
+          
+          showSuccessPage(successData);
+          
+          // Clear pending data
+          pendingFormData = null;
+          pendingPhotoBase64 = null;
+          pendingPhotoName = null;
+          pendingPhotoType = null;
+          pendingPhotoPreview = null;
+          
+          // Reset postMessage flag after a delay
+          setTimeout(() => { postMessageReceived = false; }, 5000);
+        } else if (event.data && event.data.type === 'registration-error' && !postMessageReceived) {
+          postMessageReceived = true;
+          console.log('❌ Received error from Google Apps Script:', event.data);
+          alert('Registration Error:\n\n' + (event.data.error || event.data.message || 'Registration failed') + '\n\nPlease correct the issue and try again.');
+          document.getElementById('confirmationOverlay').classList.remove('active');
+          const confirmBtn = document.querySelector('#confirmationOverlay .confirm-btn');
+          if (confirmBtn) {
+            confirmBtn.disabled = false;
+            confirmBtn.textContent = 'Confirm Registration';
+          }
+          setTimeout(() => { postMessageReceived = false; }, 5000);
+        }
+      }
+    });
+    
+    // Function to show success page with all details
+    function showSuccessPage(data) {
+      try {
+        console.log('showSuccessPage called with data:', data);
+        
+        // Get verified email from sessionStorage
+        const verifiedEmail = sessionStorage.getItem('spl2026_verifiedEmail') || '';
+        registrationData = { ...data, email: verifiedEmail };
+        
+        // Log to verify
+        console.log('registrationData after setting:', registrationData);
+        
+        // Hide form container
+        const container = document.querySelector('.container');
+        const backLink = document.querySelector('.back-link');
+        
+        if (container) {
+          container.style.display = 'none';
+        }
+        if (backLink) {
+          backLink.style.display = 'none';
+        }
+        
+        // Show success page
+        const successPage = document.getElementById('successPage');
+        if (!successPage) {
+          console.error('Success page element not found!');
+          alert('Registration successful! Please quote your mobile number when making payment.');
+          return;
+        }
+        
+        successPage.style.display = 'block';
+        console.log('Success page displayed');
+        
+        // Get details div
+        const detailsDiv = document.getElementById('successDetails');
+        if (!detailsDiv) {
+          console.error('Success details div not found!');
+          alert('Registration successful! Please quote your mobile number when making payment.');
+          return;
+        }
+        
+        // Build success details HTML
+        let detailsHTML = '';
+        
+        detailsHTML += '<div class="success-detail-row">';
+        detailsHTML += '<span class="success-detail-label">Name:</span>';
+        detailsHTML += '<span class="success-detail-value">' + (data.name || '') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="success-detail-row">';
+        detailsHTML += '<span class="success-detail-label">Father Name:</span>';
+        detailsHTML += '<span class="success-detail-value">' + (data.fatherName || '') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="success-detail-row">';
+        detailsHTML += '<span class="success-detail-label">Category:</span>';
+        detailsHTML += '<span class="success-detail-value">' + (data.category || '') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="success-detail-row">';
+        detailsHTML += '<span class="success-detail-label">Email:</span>';
+        detailsHTML += '<span class="success-detail-value">' + verifiedEmail + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="success-detail-row">';
+        detailsHTML += '<span class="success-detail-label">Serial Number:</span>';
+        detailsHTML += '<span class="success-detail-value">' + (sessionStorage.getItem('spl2026_verifiedSerial') || '') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="success-detail-row">';
+        detailsHTML += '<span class="success-detail-label">Mobile Number:</span>';
+        detailsHTML += '<span class="success-detail-value">' + (data.mobile || '') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="success-detail-row">';
+        detailsHTML += '<span class="success-detail-label">Captaincy:</span>';
+        detailsHTML += '<span class="success-detail-value">' + (data.captaincy || '') + '</span>';
+        detailsHTML += '</div>';
+
+        const syCtx = spl2026Context();
+        detailsHTML += '<div class="success-detail-row">';
+        detailsHTML += '<span class="success-detail-label">Fee type:</span>';
+        detailsHTML += '<span class="success-detail-value">Rs. ' + (syCtx.feeType || '') + '</span>';
+        detailsHTML += '</div>';
+        detailsHTML += '<div class="success-detail-row">';
+        detailsHTML += '<span class="success-detail-label">SY member:</span>';
+        detailsHTML += '<span class="success-detail-value">' + syCtx.syMember + (syCtx.syMember === 'Yes' && syCtx.syNumber ? ' (' + syCtx.syNumber + ')' : '') + '</span>';
+        detailsHTML += '</div>';
+        
+        // Combine Registration Fee and Amount Paid into Registration Fee Paid
+        const paymentAmount = sessionStorage.getItem('spl2026_paymentAmount') || '';
+        const paymentToWhom = sessionStorage.getItem('spl2026_paymentToWhom') || '';
+        const registrationFeePaid = paymentAmount || data.registrationFee || '0';
+        
+        detailsHTML += '<div class="success-detail-row">';
+        detailsHTML += '<span class="success-detail-label">Registration Fee Paid:</span>';
+        detailsHTML += '<span class="success-detail-value fee">Rs. ' + registrationFeePaid + '</span>';
+        detailsHTML += '</div>';
+        if (paymentToWhom) {
+          detailsHTML += '<div class="success-detail-row">';
+          detailsHTML += '<span class="success-detail-label">Paid To:</span>';
+          detailsHTML += '<span class="success-detail-value">' + paymentToWhom + '</span>';
+          detailsHTML += '</div>';
+        }
+        
+        detailsHTML += '<div class="success-detail-row">';
+        detailsHTML += '<span class="success-detail-label">Name on Jersey:</span>';
+        detailsHTML += '<span class="success-detail-value">' + (data.jerseyName || '') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="success-detail-row">';
+        detailsHTML += '<span class="success-detail-label">Jersey Number:</span>';
+        detailsHTML += '<span class="success-detail-value">' + (data.jerseyNumber || '') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="success-detail-row">';
+        detailsHTML += '<span class="success-detail-label">T-shirt Size:</span>';
+        detailsHTML += '<span class="success-detail-value">' + (data.tshirtSize || '') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="success-detail-row">';
+        detailsHTML += '<span class="success-detail-label">Trouser Size:</span>';
+        detailsHTML += '<span class="success-detail-value">' + (data.trouserSize || '') + '</span>';
+        detailsHTML += '</div>';
+        
+        if (data.photo && data.photoPreview) {
+          detailsHTML += '<div class="success-detail-row">';
+          detailsHTML += '<span class="success-detail-label">Photo:</span>';
+          detailsHTML += '<span class="success-detail-value"><img src="' + data.photoPreview + '" alt="Photo" style="max-width: 100px; max-height: 100px; border-radius: 8px;"></span>';
+          detailsHTML += '</div>';
+        }
+        
+        detailsDiv.innerHTML = detailsHTML;
+        console.log('Success details HTML set');
+        
+        // Add thanks message at the end
+        const thanksMessage = document.createElement('div');
+        thanksMessage.style.cssText = 'text-align: center; margin-top: 30px; padding: 20px; background: #065f46; color: #6ee7b7; border-radius: 8px; border: 1px solid #10b981;';
+        thanksMessage.innerHTML = '<h2 style="margin: 0 0 10px 0; color: #6ee7b7;">Thank you for registering!</h2><p style="margin: 0; font-size: 16px;">Thank you for participating in Surabhi Premier League - 2026</p>';
+        detailsDiv.appendChild(thanksMessage);
+        
+        // Scroll to top
+        window.scrollTo(0, 0);
+        console.log('Success page displayed successfully');
+        
+        // Automatically generate and save PDF to Drive when success page is shown (only once)
+        if (!pdfSavedToDrive) {
+          console.log('Starting PDF generation...');
+          savePDFToDrive();
+        } else {
+          console.log('PDF already saved to Drive, skipping duplicate save');
+        }
+      } catch (error) {
+        console.error('Error in showSuccessPage:', error);
+        alert('Registration successful! Please quote your mobile number when making payment.\n\nError displaying details: ' + error.message);
+      }
+    }
+    
+    // Helper function to load logo once and return base64 data URL for reuse
+    async function loadLogoForPDF() {
+      return new Promise((resolve) => {
+        try {
+          const logoImg = new Image();
+          logoImg.crossOrigin = 'anonymous';
+          
+          logoImg.onload = function() {
+            try {
+              const canvas = document.createElement('canvas');
+              canvas.width = logoImg.width;
+              canvas.height = logoImg.height;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(logoImg, 0, 0);
+              const logoDataUrl = canvas.toDataURL('image/png');
+              console.log('✓ Logo loaded successfully for PDF');
+              resolve(logoDataUrl);
+            } catch (error) {
+              console.error('Error processing logo for PDF:', error);
+              resolve(null);
+            }
+          };
+          
+          // Try multiple paths in order
+          const logoPaths = [
+            '../Surabhi_Yuvasena_Logo.png',
+            '../Surabhi_Yuvasena_Logo.png',
+            'Surabhi yuvasena logo.png',
+            './Surabhi yuvasena logo.png'
+          ];
+          
+          let pathIndex = 0;
+          
+          logoImg.onerror = function() {
+            pathIndex++;
+            if (pathIndex < logoPaths.length) {
+              console.log('Trying logo path:', logoPaths[pathIndex]);
+              logoImg.src = logoPaths[pathIndex];
+            } else {
+              console.error('All logo paths failed to load');
+              resolve(null);
+            }
+          };
+          
+          // Start with first path
+          console.log('Loading logo from:', logoPaths[pathIndex]);
+          logoImg.src = logoPaths[pathIndex];
+        } catch (error) {
+          console.error('Error in loadLogoForPDF:', error);
+          resolve(null);
+        }
+      });
+    }
+    
+    // Helper function to add logo to a specific page
+    function addLogoToPage(doc, logoDataUrl, pageNumber) {
+      if (!logoDataUrl) {
+        console.log('No logo data available, skipping logo on page ' + pageNumber);
+        return;
+      }
+      
+      try {
+        const logoWidth = 30;
+        const logoHeight = 30;
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const logoX = pageWidth - logoWidth - 5;
+        const logoY = 5;
+        
+        doc.addImage(logoDataUrl, 'PNG', logoX, logoY, logoWidth, logoHeight);
+        console.log('✓ Logo added to page ' + pageNumber);
+      } catch (error) {
+        console.error('Error adding logo to page ' + pageNumber + ':', error);
+      }
+    }
+    
+    // Function to generate PDF and save it to Drive automatically
+    async function savePDFToDrive() {
+      if (!registrationData) {
+        console.log('No registration data available to save PDF.');
+        return;
+      }
+      
+      // Prevent duplicate saves - check flag first
+      if (pdfSavedToDrive) {
+        console.log('PDF already saved to Drive, skipping duplicate save');
+        return;
+      }
+      
+      // Set flag immediately to prevent concurrent calls
+      pdfSavedToDrive = true;
+      console.log('PDF generation started, flag set to prevent duplicates');
+      
+      try {
+        console.log('Generating PDF to save to Drive with data:', registrationData);
+        
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        
+        // Load logo once for reuse across all pages
+        const logoDataUrl = await loadLogoForPDF();
+        
+        // Set font
+        doc.setFontSize(20);
+        doc.setTextColor(0, 0, 0);
+        doc.text('Surabhi Premier League 2026', 105, 20, { align: 'center' });
+        
+        doc.setFontSize(16);
+        doc.text('Registration Confirmation', 105, 30, { align: 'center' });
+        
+        // Draw line
+        doc.setLineWidth(0.5);
+        doc.line(20, 35, 190, 35);
+        
+        // Registration details
+        let yPos = 45;
+        doc.setFontSize(12);
+        doc.setTextColor(0, 0, 0);
+        
+        // Mobile Number
+        doc.setFontSize(14);
+        doc.setTextColor(0, 100, 200);
+        doc.setFont(undefined, 'bold');
+        doc.text('Mobile Number:', 20, yPos);
+        doc.text(registrationData.mobile || '', 120, yPos);
+        yPos += 10;
+        
+        doc.setFontSize(12);
+        doc.setTextColor(0, 0, 0);
+        doc.setFont(undefined, 'normal');
+        doc.line(20, yPos, 190, yPos);
+        yPos += 10;
+        
+        // Other details
+        const paymentAmount = sessionStorage.getItem('spl2026_paymentAmount') || '';
+        const paymentToWhom = sessionStorage.getItem('spl2026_paymentToWhom') || '';
+        const serialNumber = sessionStorage.getItem('spl2026_verifiedSerial') || '';
+        
+        // Combine Registration Fee and Amount Paid into Registration Fee Paid
+        const registrationFeePaid = paymentAmount || registrationData.registrationFee || '0';
+        
+        const details = [
+          ['Name:', registrationData.name || ''],
+          ['Father Name:', registrationData.fatherName || ''],
+          ['Category:', registrationData.category || ''],
+          ['Email:', registrationData.email || ''],
+          ['Serial Number:', serialNumber],
+          ['Captaincy:', registrationData.captaincy || ''],
+          ['Fee type:', 'Rs. ' + (sessionStorage.getItem('spl2026_feeType') || '')],
+          ['SY member:', (sessionStorage.getItem('spl2026_syMember') || 'No') + (sessionStorage.getItem('spl2026_syNumber') ? ' (' + sessionStorage.getItem('spl2026_syNumber') + ')' : '')],
+          ['Registration Fee Paid:', 'Rs. ' + registrationFeePaid]
+        ];
+        
+        // Add payment to whom if available
+        if (paymentToWhom) {
+          details.push(['Paid To:', paymentToWhom]);
+        }
+        
+        // Continue with other details
+        details.push(
+          ['Name on Jersey:', registrationData.jerseyName || ''],
+          ['Jersey Number:', registrationData.jerseyNumber || ''],
+          ['T-shirt Size:', registrationData.tshirtSize || ''],
+          ['Trouser Size:', registrationData.trouserSize || '']
+        );
+        
+        details.forEach(([label, value]) => {
+          if (yPos > 270) {
+            doc.addPage();
+            yPos = 20;
+          }
+          doc.setFont(undefined, 'bold');
+          doc.text(label, 20, yPos);
+          doc.setFont(undefined, 'normal');
+          // Wrap long text if needed
+          const maxWidth = 100;
+          const lines = doc.splitTextToSize(value || '', maxWidth);
+          doc.text(lines, 80, yPos);
+          yPos += Math.max(8, lines.length * 6);
+        });
+        
+        // Thank you message and contact information
+        if (yPos > 250) {
+          doc.addPage();
+          yPos = 20;
+        } else {
+          yPos += 10;
+        }
+        
+        // Thank you message
+        doc.setFontSize(12);
+        doc.setFont(undefined, 'normal');
+        doc.setTextColor(0, 0, 0);
+        const thankYouText = 'Thank you for successfully registering for SPL-2026. All the best';
+        const thankYouLines = doc.splitTextToSize(thankYouText, 170);
+        doc.text(thankYouLines, 20, yPos);
+        yPos += Math.max(8, thankYouLines.length * 6) + 5;
+        
+        // Organizers contact info with hyperlink
+        doc.setFontSize(11);
+        doc.setTextColor(0, 0, 255); // Blue color for hyperlink
+        const organizersText = 'Organizers: 9395185132, 8074450066. https://surabhipremierleague.info/';
+        const organizersLines = doc.splitTextToSize(organizersText, 170);
+        doc.text(organizersLines, 20, yPos);
+        
+        // Add hyperlink to the URL (jsPDF supports this)
+        const urlText = 'https://surabhipremierleague.info/';
+        const urlStartIndex = organizersText.indexOf(urlText);
+        if (urlStartIndex >= 0) {
+          // Calculate position of URL in the text
+          const urlX = 20 + doc.getTextWidth(organizersText.substring(0, urlStartIndex));
+          const urlY = yPos;
+          doc.link(urlX, urlY - 5, doc.getTextWidth(urlText), 5, { url: urlText });
+        }
+        yPos += Math.max(8, organizersLines.length * 6);
+        
+        // Footer and logo on all pages
+        const pageCount = doc.internal.pages.length - 1;
+        for (let i = 1; i <= pageCount; i++) {
+          doc.setPage(i);
+          
+          // Add logo to each page (using pre-loaded logo data)
+          addLogoToPage(doc, logoDataUrl, i);
+          
+          doc.setFontSize(10);
+          doc.setTextColor(128, 128, 128);
+          doc.text('Organised by Surabhi Yuvasena, Surabhi Colony', 105, 285, { align: 'center' });
+        }
+        
+        // Convert PDF to base64
+        const pdfBase64 = doc.output('datauristring').split(',')[1];
+        
+        // Store PDF locally for emailing later
+        generatedPdfBase64 = pdfBase64;
+        console.log('✓ PDF generated and stored locally');
+        
+        // Get serial number for filename
+        const serialNum = serialNumber || 'unknown';
+        
+        // Send PDF to Google Apps Script for saving to Drive
+        try {
+          const response = await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+              action: 'savePdfToDrive',
+              pdfData: pdfBase64,
+              serialNumber: serialNum
+            })
+          });
+          
+          const result = await response.text();
+          
+          if (result.includes('success') || result.includes('saved')) {
+            console.log('✓ PDF saved to Drive successfully with filename: ' + serialNum + '.pdf');
+            pdfSavedToDrive = true; // Mark as saved
+          } else {
+            console.error('Error saving PDF to Drive: ' + result);
+            // Reset flag on error so it can be retried
+            pdfSavedToDrive = false;
+          }
+        } catch (error) {
+          console.error('Error saving PDF to Drive:', error);
+          // Don't show alert to user - this is a background operation
+        }
+      } catch (error) {
+        console.error('Error generating PDF for Drive:', error);
+        // Reset flag on error so it can be retried
+        pdfSavedToDrive = false;
+        // Don't show alert to user - this is a background operation
+      }
+    }
+    
+    // Function to email PDF (use locally stored PDF)
+    async function emailPDF() {
+      if (!registrationData) {
+        alert('No registration data available to email.');
+        return;
+      }
+      
+      const btn = document.getElementById('emailPdfBtn');
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Sending PDF...';
+      }
+      
+      const email = registrationData.email || sessionStorage.getItem('spl2026_verifiedEmail') || '';
+      
+      if (!email) {
+        alert('Email address not found. Cannot send PDF.');
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = '📧 Email Registration Details (PDF)';
+        }
+        return;
+      }
+      
+      // Check if PDF is available locally
+      if (!generatedPdfBase64) {
+        alert('PDF not available. Please wait for PDF generation to complete or contact organizers.');
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = '📧 Email Registration Details (PDF)';
+        }
+        return;
+      }
+      
+      console.log('Sending locally stored PDF to email:', email);
+      
+      // Send locally stored PDF to Google Apps Script for emailing
+      try {
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: new URLSearchParams({
+            action: 'emailPdf',
+            email: email,
+            pdfData: generatedPdfBase64,
+            name: registrationData.name || '',
+            mobile: registrationData.mobile || ''
+          })
+        });
+        
+        const result = await response.text();
+        
+        if (result.includes('success') || result.includes('sent')) {
+          alert('✓ PDF has been sent to your email address: ' + email);
+        } else {
+          alert('Error sending PDF: ' + result);
+        }
+      } catch (error) {
+        alert('Error sending PDF. Please try again.');
+        console.error('PDF email error:', error);
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = '📧 Email Registration Details (PDF)';
+        }
+      }
+    }
+    
+    // Attach PDF email button handler
+    document.addEventListener('DOMContentLoaded', function() {
+      const emailBtn = document.getElementById('emailPdfBtn');
+      if (emailBtn) {
+        emailBtn.addEventListener('click', emailPDF);
+      }
+    });
+    // Name validation - only alphabets
+    document.getElementById('name').addEventListener('input', function(e) {
+      this.value = this.value.replace(/[^A-Za-z\s]/g, '');
+    });
+    
+    // Father name validation - only alphabets
+    document.getElementById('fatherName').addEventListener('input', function(e) {
+      this.value = this.value.replace(/[^A-Za-z\s]/g, '');
+    });
+    
+    // Jersey name validation - only alphabets
+    document.getElementById('jerseyName').addEventListener('input', function(e) {
+      this.value = this.value.replace(/[^A-Za-z\s]/g, '');
+    });
+    
+    // Jersey number validation - only numbers
+    document.getElementById('jerseyNumber').addEventListener('input', function(e) {
+      this.value = this.value.replace(/[^0-9]/g, '');
+      if (this.value.length > 3) {
+        this.value = this.value.slice(0, 3);
+      }
+    });
+    
+    // Mobile number validation - only digits, max 10
+    document.getElementById('mobile').addEventListener('input', function(e) {
+      this.value = this.value.replace(/[^0-9]/g, '');
+      if (this.value.length > 10) {
+        this.value = this.value.slice(0, 10);
+      }
+    });
+    
+    // Calculate captaincy and fee based on payment amount
+    function updateCaptaincyAndFee() {
+      const ctx = spl2026Context();
+      const feeGroup = document.getElementById('registrationFeeGroup');
+      const feeDisplay = document.getElementById('registrationFee');
+      const captaincyStatus = document.getElementById('captaincyStatus');
+      const captaincyInfoGroup = document.getElementById('captaincyInfoGroup');
+      const syMemberStatus = document.getElementById('syMemberStatus');
+      const syNumberStatus = document.getElementById('syNumberStatus');
+      
+      if (ctx.feeType === 500 || ctx.feeType === 2000) {
+        feeGroup.style.display = 'block';
+        captaincyInfoGroup.style.display = 'block';
+        feeDisplay.textContent = '₹' + ctx.amountPaid;
+        captaincyStatus.textContent = ctx.captaincy === 'Yes' ? 'Yes (Captaincy)' : 'No (No Captaincy)';
+        captaincyStatus.style.color = ctx.captaincy === 'Yes' ? '#10b981' : '#94a3b8';
+        if (syMemberStatus) syMemberStatus.textContent = ctx.syMember;
+        if (syNumberStatus) {
+          syNumberStatus.textContent = ctx.syMember === 'Yes'
+            ? 'SY number: ' + ctx.syNumber + '. ₹500 has been deducted from the ₹' + ctx.feeType + ' fee.'
+            : 'No member exemption. Fee type ₹' + ctx.feeType + '.';
+        }
+      } else {
+        feeGroup.style.display = 'block';
+        captaincyInfoGroup.style.display = 'block';
+        feeDisplay.textContent = '₹0';
+        captaincyStatus.textContent = 'Not determined';
+      }
+    }
+    
+    // Update on page load
+    updateCaptaincyAndFee();
+    
+    // Photo upload validation and preview
+    document.getElementById('photo').addEventListener('change', function(e) {
+      const file = this.files[0];
+      const preview = document.getElementById('photoPreview');
+      const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+      
+      // Clear previous preview
+      preview.innerHTML = '';
+      preview.classList.remove('active');
+      
+      if (file) {
+        // Check file size
+        if (file.size > maxSize) {
+          alert('File size exceeds 10MB. Please choose a smaller file.');
+          this.value = '';
+          return;
+        }
+        
+        // Check file type
+        const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        if (!validTypes.includes(file.type)) {
+          alert('Invalid file type. Please upload an image file (JPG, PNG, GIF, or WebP).');
+          this.value = '';
+          return;
+        }
+        
+        // Show preview
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          preview.appendChild(img);
+          preview.classList.add('active');
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+    
+    // Store form data for confirmation
+    let pendingFormData = null;
+    let pendingPhotoBase64 = null;
+    let pendingPhotoName = null;
+    let pendingPhotoType = null;
+    let pendingPhotoPreview = null;
+    
+    // Initialize registration page
+    function initRegistrationPage() {
+      // Check if email is verified (from email-verify.html)
+      const verifiedEmail = sessionStorage.getItem('spl2026_verifiedEmail');
+      if (!verifiedEmail) {
+        alert('Please verify your email first. Redirecting to email verification page...');
+        window.location.href = 'email-verify.html';
+        return;
+      }
+      
+      console.log('Verified email from sessionStorage:', verifiedEmail);
+      
+      // Wait for DOM to be ready before attaching event listeners
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', attachFormListener);
+      } else {
+        attachFormListener();
+      }
+    }
+    
+    // Start initialization
+    initRegistrationPage();
+    
+    function attachFormListener() {
+      const form = document.getElementById('registrationForm');
+      const reviewBtn = document.getElementById('reviewBtn');
+      
+      if (!form) {
+        console.error('Registration form not found!');
+        return;
+      }
+      
+      if (!reviewBtn) {
+        console.error('Review button not found!');
+        return;
+      }
+      
+      console.log('Attaching event listener to Review button...');
+      console.log('Review button element:', reviewBtn);
+      console.log('Review button type:', reviewBtn.type);
+      console.log('Review button ID:', reviewBtn.id);
+      
+      // Attach click handler to Review button directly (more reliable than form submit)
+      reviewBtn.addEventListener('click', function(e) {
+        console.log('=== REVIEW BUTTON CLICKED ===');
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        
+        // Make sure the button is not disabled
+        if (this.disabled) {
+          console.log('Button is disabled, returning');
+          return false;
+        }
+        
+        // Call the review function
+        return handleReviewClick.call(this, e);
+      });
+      
+      // Also handle form submit as backup
+      if (form) {
+        form.addEventListener('submit', function(e) {
+          console.log('=== FORM SUBMIT EVENT ===');
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          
+          // Trigger review button click
+          if (reviewBtn && !reviewBtn.disabled) {
+            reviewBtn.click();
+          }
+          return false;
+        });
+      }
+    }
+    
+    // Separate function for review click handling
+    function handleReviewClick(e) {
+      console.log('=== HANDLE REVIEW CLICK ===');
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      
+      // Validate all required fields first
+      const name = document.getElementById('name').value.trim();
+      const fatherName = document.getElementById('fatherName').value.trim();
+      const category = document.getElementById('category').value;
+      const mobile = document.getElementById('mobile').value.trim();
+      const jerseyName = document.getElementById('jerseyName').value.trim();
+      const jerseyNumber = document.getElementById('jerseyNumber').value.trim();
+      const tshirtSize = document.getElementById('tshirtSize').value;
+      const trouserSize = document.getElementById('trouserSize').value;
+      
+      // Get payment amount and determine captaincy
+      const paymentAmount = sessionStorage.getItem('spl2026_paymentAmount') || '';
+      const amount = parseInt(paymentAmount) || 0;
+      const captaincy = spl2026Context().captaincy;
+      const calculatedRegistrationFee = amount || 0;
+      
+      // Validate required fields
+      if (!name) {
+        alert('Please enter your name.');
+        return false;
+      }
+      if (!fatherName) {
+        alert('Please enter father name.');
+        return false;
+      }
+      if (!category) {
+        alert('Please select a category.');
+        return false;
+      }
+      if (!mobile || mobile.length !== 10) {
+        alert('Please enter a valid 10-digit mobile number.');
+        return false;
+      }
+      if (spl2026Context().feeType !== 500 && spl2026Context().feeType !== 2000) {
+        alert('Payment details not found. Please verify your serial number and email first.');
+        return false;
+      }
+      if (!jerseyName) {
+        alert('Please enter jersey name.');
+        return false;
+      }
+      if (!jerseyNumber) {
+        alert('Please enter jersey number.');
+        return false;
+      }
+      if (!tshirtSize) {
+        alert('Please select T-shirt size.');
+        return false;
+      }
+      if (!trouserSize) {
+        alert('Please select trouser size.');
+        return false;
+      }
+      
+      console.log('All validations passed');
+      
+      // Validate photo if provided
+      const photoInput = document.getElementById('photo');
+      const file = photoInput.files[0];
+      const maxSize = 10 * 1024 * 1024; // 10MB
+      
+      // Check if photo is provided (it's marked as required in label)
+      if (!file) {
+        alert('Please upload a photo to continue.');
+        return false;
+      }
+      
+      if (file.size > maxSize) {
+        alert('Photo size exceeds 10MB. Please choose a smaller file.');
+        return false;
+      }
+      
+      // Registration fee is already determined from payment amount
+      const registrationFee = calculatedRegistrationFee;
+      
+      // Get verified email and serial number from sessionStorage
+      const verifiedEmail = sessionStorage.getItem('spl2026_verifiedEmail') || '';
+      const verifiedSerial = sessionStorage.getItem('spl2026_verifiedSerial') || '';
+      
+      // Get all form data
+      const registrationForm = document.getElementById('registrationForm');
+      const formData = new FormData(registrationForm);
+      pendingFormData = {
+        name: name,
+        fatherName: fatherName,
+        category: category,
+        email: verifiedEmail,
+        serialNumber: verifiedSerial,
+        mobile: mobile,
+        captaincy: captaincy,
+        registrationFee: registrationFee.toString(),
+        feeType: String(spl2026Context().feeType),
+        syMember: spl2026Context().syMember,
+        syNumber: spl2026Context().syNumber,
+        jerseyName: jerseyName,
+        jerseyNumber: jerseyNumber,
+        tshirtSize: tshirtSize,
+        trouserSize: trouserSize
+      };
+      
+      // Also save to backup so it persists even if pendingFormData is cleared
+      backupFormData = { ...pendingFormData };
+      
+      console.log('Pending form data prepared:', pendingFormData);
+      console.log('Backup form data saved:', backupFormData);
+      
+      // Check mobile number uniqueness before showing confirmation
+      console.log('Checking mobile number uniqueness...');
+      const checkMobileBtn = document.getElementById('reviewBtn');
+      if (checkMobileBtn) {
+        checkMobileBtn.disabled = true;
+        checkMobileBtn.textContent = 'Checking...';
+      }
+      
+      // Call Google Apps Script to check mobile number
+      const GOOGLE_SCRIPT_URL = window.SPL2026_SCRIPT_URL;
+      fetch(GOOGLE_SCRIPT_URL + '?action=checkMobile&mobile=' + encodeURIComponent(mobile))
+        .then(response => response.text())
+        .then(result => {
+          console.log('Mobile check response:', result);
+          
+          // Re-enable button
+          if (checkMobileBtn) {
+            checkMobileBtn.disabled = false;
+            checkMobileBtn.textContent = 'Review Registration';
+          }
+          
+          // Check if mobile is already registered
+          if (result.includes('already registered') || result.includes('Duplicate') || result.toLowerCase().includes('error')) {
+            alert('This mobile number is already registered. Please use a different mobile number or contact the organizers.');
+            return false;
+          }
+          
+          // Mobile number is unique, proceed with photo processing and confirmation
+          // Convert photo to base64 if exists
+          if (file) {
+            console.log('Photo file found, converting to base64...');
+            const reader = new FileReader();
+            reader.onload = function(e) {
+              console.log('Photo converted to base64');
+              pendingPhotoBase64 = e.target.result.split(',')[1];
+              pendingPhotoName = file.name;
+              pendingPhotoType = file.type;
+              pendingPhotoPreview = e.target.result; // Full data URL for preview
+              
+              // Show confirmation
+              console.log('Calling showConfirmation with photo...');
+              showConfirmation(pendingFormData, registrationFee, pendingPhotoPreview);
+            };
+            reader.onerror = function(error) {
+              console.error('Error reading photo:', error);
+              alert('Error reading photo file. Please try again.');
+            };
+            reader.readAsDataURL(file);
+          } else {
+            console.log('No photo file, proceeding without photo...');
+            pendingPhotoBase64 = '';
+            pendingPhotoName = '';
+            pendingPhotoType = '';
+            pendingPhotoPreview = null;
+            
+            // Show confirmation immediately (no photo to process)
+            console.log('Calling showConfirmation without photo...');
+            showConfirmation(pendingFormData, registrationFee, null);
+          }
+        })
+        .catch(error => {
+          console.error('Error checking mobile number:', error);
+          // Re-enable button
+          if (checkMobileBtn) {
+            checkMobileBtn.disabled = false;
+            checkMobileBtn.textContent = 'Review Registration';
+          }
+          // Proceed anyway (server will check again on submission)
+          alert('Could not verify mobile number uniqueness. You can proceed, but the server will check again on submission.');
+          
+          // Convert photo to base64 if exists
+          if (file) {
+            console.log('Photo file found, converting to base64...');
+            const reader = new FileReader();
+            reader.onload = function(e) {
+              console.log('Photo converted to base64');
+              pendingPhotoBase64 = e.target.result.split(',')[1];
+              pendingPhotoName = file.name;
+              pendingPhotoType = file.type;
+              pendingPhotoPreview = e.target.result; // Full data URL for preview
+              
+              // Show confirmation
+              console.log('Calling showConfirmation with photo...');
+              showConfirmation(pendingFormData, registrationFee, pendingPhotoPreview);
+            };
+            reader.onerror = function(error) {
+              console.error('Error reading photo:', error);
+              alert('Error reading photo file. Please try again.');
+            };
+            reader.readAsDataURL(file);
+          } else {
+            console.log('No photo file, proceeding without photo...');
+            pendingPhotoBase64 = '';
+            pendingPhotoName = '';
+            pendingPhotoType = '';
+            pendingPhotoPreview = null;
+            
+            // Show confirmation immediately (no photo to process)
+            console.log('Calling showConfirmation without photo...');
+            showConfirmation(pendingFormData, registrationFee, null);
+          }
+        });
+      
+      return false;
+    }
+    
+    // Show confirmation overlay
+    function showConfirmation(data, fee, photoPreview) {
+      console.log('=== showConfirmation FUNCTION CALLED ===');
+      console.log('Data received:', data);
+      console.log('Fee:', fee);
+      console.log('Photo preview exists:', !!photoPreview);
+      
+      try {
+        const overlay = document.getElementById('confirmationOverlay');
+        const detailsDiv = document.getElementById('confirmationDetails');
+        const feeDiv = document.getElementById('confirmationFee');
+        
+        console.log('Overlay element found:', !!overlay);
+        console.log('Details div found:', !!detailsDiv);
+        console.log('Fee div found:', !!feeDiv);
+        
+        if (!overlay) {
+          console.error('ERROR: Confirmation overlay not found in DOM!');
+          alert('Error: Confirmation overlay not found. Please refresh the page and try again.');
+          return;
+        }
+        
+        if (!detailsDiv) {
+          console.error('ERROR: Confirmation details div not found!');
+          alert('Error: Could not display confirmation details. Please refresh the page and try again.');
+          return;
+        }
+        
+        console.log('Building confirmation details HTML...');
+        
+        // Build confirmation details HTML
+        let detailsHTML = '';
+        
+        if (photoPreview) {
+          detailsHTML += '<div class="confirmation-photo"><img src="' + photoPreview + '" alt="Photo Preview"></div>';
+        }
+        
+        detailsHTML += '<div class="confirmation-row">';
+        detailsHTML += '<span class="confirmation-label">Name:</span>';
+        detailsHTML += '<span class="confirmation-value">' + (data.name || 'N/A') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="confirmation-row">';
+        detailsHTML += '<span class="confirmation-label">Father Name:</span>';
+        detailsHTML += '<span class="confirmation-value">' + (data.fatherName || 'N/A') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="confirmation-row">';
+        detailsHTML += '<span class="confirmation-label">Category:</span>';
+        detailsHTML += '<span class="confirmation-value">' + (data.category || 'N/A') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="confirmation-row">';
+        detailsHTML += '<span class="confirmation-label">Mobile:</span>';
+        detailsHTML += '<span class="confirmation-value">' + (data.mobile || 'N/A') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="confirmation-row">';
+        detailsHTML += '<span class="confirmation-label">Captaincy:</span>';
+        detailsHTML += '<span class="confirmation-value">' + (data.captaincy || 'N/A') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="confirmation-row">';
+        detailsHTML += '<span class="confirmation-label">Jersey Name:</span>';
+        detailsHTML += '<span class="confirmation-value">' + (data.jerseyName || 'N/A') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="confirmation-row">';
+        detailsHTML += '<span class="confirmation-label">Jersey Number:</span>';
+        detailsHTML += '<span class="confirmation-value">' + (data.jerseyNumber || 'N/A') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="confirmation-row">';
+        detailsHTML += '<span class="confirmation-label">T-shirt Size:</span>';
+        detailsHTML += '<span class="confirmation-value">' + (data.tshirtSize || 'N/A') + '</span>';
+        detailsHTML += '</div>';
+        
+        detailsHTML += '<div class="confirmation-row">';
+        detailsHTML += '<span class="confirmation-label">Trouser Size:</span>';
+        detailsHTML += '<span class="confirmation-value">' + (data.trouserSize || 'N/A') + '</span>';
+        detailsHTML += '</div>';
+        
+        console.log('Setting details HTML...');
+        detailsDiv.innerHTML = detailsHTML;
+        console.log('Details HTML set, length:', detailsHTML.length);
+        console.log('Details div innerHTML length:', detailsDiv.innerHTML.length);
+        
+        if (feeDiv) {
+          // Combine Registration Fee and Amount Paid
+          const paymentAmount = sessionStorage.getItem('spl2026_paymentAmount') || '';
+          const registrationFeePaid = paymentAmount || fee.toString();
+          feeDiv.textContent = 'Registration Fee Paid: Rs. ' + registrationFeePaid;
+          console.log('Fee set:', registrationFeePaid);
+        }
+        
+        // Ensure confirmation box is visible
+        const confirmationBox = overlay.querySelector('.confirmation-box');
+        if (confirmationBox) {
+          confirmationBox.style.display = 'block';
+          confirmationBox.style.visibility = 'visible';
+          confirmationBox.style.opacity = '1';
+          confirmationBox.style.zIndex = '1000000';
+          console.log('Confirmation box found and made visible');
+          console.log('Confirmation box computed display:', window.getComputedStyle(confirmationBox).display);
+        } else {
+          console.error('Confirmation box not found inside overlay!');
+          console.error('Overlay HTML:', overlay.innerHTML.substring(0, 200));
+        }
+        
+        console.log('Applying styles to overlay...');
+        
+        // Simple approach: just add the active class
+        overlay.classList.add('active');
+        
+        // Remove any inline styles that might interfere
+        overlay.removeAttribute('style');
+        
+        // Ensure confirmation box is visible (remove any inline styles)
+        if (confirmationBox) {
+          confirmationBox.removeAttribute('style');
+          console.log('Confirmation box found and styles cleared');
+        } else {
+          console.error('CRITICAL: Confirmation box not found!');
+          console.error('Overlay children:', overlay.children.length);
+          console.error('Overlay innerHTML length:', overlay.innerHTML.length);
+        }
+        
+        console.log('Overlay classes after:', overlay.className);
+        console.log('Overlay computed display:', window.getComputedStyle(overlay).display);
+        console.log('Overlay computed z-index:', window.getComputedStyle(overlay).zIndex);
+        console.log('Overlay offsetHeight:', overlay.offsetHeight);
+        console.log('Overlay offsetWidth:', overlay.offsetWidth);
+        
+        // Verify confirmation box is visible
+        if (confirmationBox) {
+          console.log('Confirmation box computed display:', window.getComputedStyle(confirmationBox).display);
+          console.log('Confirmation box offsetHeight:', confirmationBox.offsetHeight);
+          console.log('Confirmation box offsetWidth:', confirmationBox.offsetWidth);
+        }
+        
+        console.log('=== OVERLAY SHOULD NOW BE VISIBLE ===');
+        
+        // Force a repaint
+        void overlay.offsetHeight;
+        
+      } catch (error) {
+        console.error('ERROR in showConfirmation:', error);
+        alert('Error showing confirmation: ' + error.message);
+      }
+    }
+    
+    // Go Back button - restore form data (wait for DOM)
+    function attachGoBackListener() {
+      const goBackBtn = document.getElementById('goBackBtn');
+      if (!goBackBtn) {
+        console.error('Go Back button not found!');
+        return;
+      }
+      goBackBtn.addEventListener('click', function() {
+        const overlay = document.getElementById('confirmationOverlay');
+        overlay.classList.remove('active');
+        overlay.style.display = 'none';
+        
+        // Show the form container again
+        const formContainer = document.querySelector('.container');
+        if (formContainer) {
+          formContainer.style.display = 'block';
+        }
+        
+        // Restore form values
+        if (pendingFormData) {
+          document.getElementById('name').value = pendingFormData.name || '';
+          document.getElementById('fatherName').value = pendingFormData.fatherName || '';
+          document.getElementById('category').value = pendingFormData.category || '';
+          document.getElementById('mobile').value = pendingFormData.mobile || '';
+          document.getElementById('jerseyName').value = pendingFormData.jerseyName || '';
+          document.getElementById('jerseyNumber').value = pendingFormData.jerseyNumber || '';
+          document.getElementById('tshirtSize').value = pendingFormData.tshirtSize || '';
+          document.getElementById('trouserSize').value = pendingFormData.trouserSize || '';
+          
+          // Update captaincy and fee based on payment amount
+          updateCaptaincyAndFee();
+          
+          // Restore photo preview if exists
+          if (pendingPhotoPreview) {
+            const preview = document.getElementById('photoPreview');
+            preview.innerHTML = '<img src="' + pendingPhotoPreview + '" alt="Photo Preview">';
+            preview.classList.add('active');
+          }
+        }
+      });
+    }
+    
+    // Attach go back listener when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', attachGoBackListener);
+    } else {
+      attachGoBackListener();
+    }
+    
+    // Helper function to read iframe response with retries
+    function readIframeResponseWithRetries(iframe, confirmBtn, hiddenForm, originalText, maxAttempts = 5) {
+      let processed = false; // Flag to prevent multiple processing
+      
+      function readResponse(attempt = 1) {
+        // Check if postMessage already handled this
+        if (postMessageReceived) {
+          console.log('postMessage already received, skipping iframe reading attempt ' + attempt);
+          return;
+        }
+        
+        if (processed) {
+          console.log('Response already processed, skipping attempt ' + attempt);
+          return;
+        }
+        
+        let responseText = '';
+        let orn = null;
+        let hasError = false;
+        
+        try {
+          // First, check if iframe has loaded by checking its location
+          let iframeLoaded = false;
+          try {
+            const iframeLocation = iframe.contentWindow.location.href;
+            if (iframeLocation && iframeLocation !== 'about:blank') {
+              iframeLoaded = true;
+              console.log('Iframe loaded, location:', iframeLocation);
+            }
+          } catch (e) {
+            // Can't access location - might be CORS, but also might just be loading
+            console.log('Cannot access iframe location (attempt ' + attempt + '):', e.message);
+            // Don't treat this as CORS error yet - might still be loading
+          }
+          
+          let iframeDoc = null;
+          let corsError = false;
+          // Try to get ORN from iframe URL first (sometimes it's in the URL)
+          try {
+            const iframeUrl = iframe.contentWindow.location.href;
+            if (iframeUrl && iframeUrl !== 'about:blank') {
+              console.log('Iframe URL:', iframeUrl);
+              // Try to extract ORN from URL
+              const urlOrnMatch = iframeUrl.match(/ORN[-\s]?(\d{8})[-\s]?(\d{4})/i);
+              if (urlOrnMatch) {
+                const urlOrn = 'ORN-' + urlOrnMatch[1] + '-' + urlOrnMatch[2];
+                console.log('🎯 Found ORN in iframe URL:', urlOrn);
+                if (!orn && !postMessageReceived) {
+                  orn = urlOrn;
+                }
+              }
+            }
+          } catch (urlError) {
+            // Can't access URL - that's okay, try document
+          }
+          
+          try {
+            iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+          } catch (e) {
+            // CORS error - cannot access iframe document
+            corsError = true;
+            console.log('CORS error accessing iframe document (attempt ' + attempt + '):', e.message);
+            
+            // If we found ORN in URL, use it even with CORS error
+            if (orn && !postMessageReceived) {
+              console.log('✅ Using ORN from URL despite CORS error:', orn);
+              processed = true;
+              const formDataToUse = pendingFormData || backupFormData || {};
+              const successData = {
+                name: formDataToUse.name || '',
+                fatherName: formDataToUse.fatherName || '',
+                category: formDataToUse.category || '',
+                mobile: formDataToUse.mobile || '',
+                captaincy: formDataToUse.captaincy || '',
+                registrationFee: formDataToUse.registrationFee || '500',
+                jerseyName: formDataToUse.jerseyName || '',
+                jerseyNumber: formDataToUse.jerseyNumber || '',
+                tshirtSize: formDataToUse.tshirtSize || '',
+                trouserSize: formDataToUse.trouserSize || '',
+                photoPreview: pendingPhotoPreview || null
+              };
+              document.getElementById('confirmationOverlay').classList.remove('active');
+              confirmBtn.textContent = originalText;
+              confirmBtn.disabled = false;
+              if (document.body.contains(hiddenForm)) {
+                document.body.removeChild(hiddenForm);
+              }
+              document.getElementById('registrationForm').reset();
+              document.getElementById('photoPreview').classList.remove('active');
+              document.getElementById('photoPreview').innerHTML = '';
+              document.getElementById('registrationFeeGroup').style.display = 'none';
+              showSuccessPage(successData);
+              pendingFormData = null;
+              pendingPhotoBase64 = null;
+              pendingPhotoName = null;
+              pendingPhotoType = null;
+              pendingPhotoPreview = null;
+              return;
+            }
+            
+            // Only show CORS message after many attempts AND if postMessage hasn't been received
+            // Wait longer to give postMessage time to arrive
+            if (attempt >= maxAttempts && !postMessageReceived) {
+              // Wait a bit more to see if postMessage arrives
+              if (attempt === maxAttempts) {
+                console.log('CORS blocking iframe access. Waiting 2 more seconds for postMessage...');
+                setTimeout(() => readResponse(attempt + 1), 2000);
+                return;
+              }
+              
+              // After extra wait, if we still can't access and no postMessage, assume success
+              console.log('CORS blocking iframe access after all attempts. Registration likely successful but cannot read ORN.');
+              console.log('postMessage received:', postMessageReceived);
+              
+              // Double-check if postMessage was received while we were waiting
+              if (postMessageReceived) {
+                console.log('postMessage received during wait, aborting CORS handling');
+                return;
+              }
+              
+              processed = true;
+              
+              // Don't show alert - just show success page with note
+              document.getElementById('confirmationOverlay').classList.remove('active');
+              confirmBtn.textContent = originalText;
+              confirmBtn.disabled = false;
+              if (document.body.contains(hiddenForm)) {
+                document.body.removeChild(hiddenForm);
+              }
+              
+          // Show success page with pending ORN and note
+          // Use backupFormData if pendingFormData is null
+          const formDataToUse = pendingFormData || backupFormData || {};
+          // Determine captaincy from payment amount
+          const paymentAmount = sessionStorage.getItem('spl2026_paymentAmount') || '';
+          const amount = parseInt(paymentAmount) || 0;
+          const captaincy = spl2026Context().captaincy;
+          
+          const successData = {
+            name: formDataToUse.name || '',
+            fatherName: formDataToUse.fatherName || '',
+            category: formDataToUse.category || '',
+            mobile: formDataToUse.mobile || '',
+            captaincy: captaincy,
+            registrationFee: amount.toString() || '0',
+            jerseyName: formDataToUse.jerseyName || '',
+            jerseyNumber: formDataToUse.jerseyNumber || '',
+            tshirtSize: formDataToUse.tshirtSize || '',
+            trouserSize: formDataToUse.trouserSize || '',
+            photoPreview: pendingPhotoPreview || null
+          };
+              document.getElementById('registrationForm').reset();
+              document.getElementById('photoPreview').classList.remove('active');
+              document.getElementById('photoPreview').innerHTML = '';
+              document.getElementById('registrationFeeGroup').style.display = 'none';
+              showSuccessPage(successData);
+              
+              
+              pendingFormData = null;
+              pendingPhotoBase64 = null;
+              pendingPhotoName = null;
+              pendingPhotoType = null;
+              pendingPhotoPreview = null;
+              return;
+            }
+            // Retry on CORS error (but wait longer)
+            setTimeout(() => readResponse(attempt + 1), 800);
+            return;
+          }
+          
+          // If we got CORS error but haven't exhausted attempts, retry
+          if (corsError && attempt < maxAttempts) {
+            setTimeout(() => readResponse(attempt + 1), 800);
+            return;
+          }
+          
+          if (iframeDoc) {
+            // Try different ways to get the response
+            if (iframeDoc.body) {
+              responseText = iframeDoc.body.textContent || iframeDoc.body.innerText || '';
+            }
+            if (!responseText && iframeDoc.documentElement) {
+              responseText = iframeDoc.documentElement.textContent || iframeDoc.documentElement.innerText || '';
+            }
+            if (!responseText && iframeDoc.all) {
+              responseText = iframeDoc.all[0] ? iframeDoc.all[0].textContent || iframeDoc.all[0].innerText : '';
+            }
+            
+            // Also try to get from pre tag (common for JSON responses)
+            if (!responseText) {
+              const preTag = iframeDoc.querySelector('pre');
+              if (preTag) {
+                responseText = preTag.textContent || preTag.innerText || '';
+              }
+            }
+          }
+          
+          // Clean up response - remove HTML tags if present
+          if (responseText) {
+            // Remove common HTML tags but keep the content
+            responseText = responseText.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
+            responseText = responseText.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+            responseText = responseText.replace(/<[^>]+>/g, ' '); // Remove remaining HTML tags
+            responseText = responseText.replace(/\s+/g, ' ').trim(); // Normalize whitespace
+          }
+          
+          console.log('Attempt ' + attempt + ' - Full iframe response:', responseText);
+          console.log('Response length:', responseText.length);
+          console.log('Response preview (first 500 chars):', responseText.substring(0, 500));
+          
+          if (responseText && responseText.trim().length > 0) {
+            // FIRST: Check for error messages (before trying to extract ORN)
+            const lowerResponse = responseText.toLowerCase();
+            if (responseText.includes('Error:') || lowerResponse.includes('error') || responseText.includes('already registered')) {
+              hasError = true;
+              let errorMessage = '';
+              
+              // Check for duplicate mobile number error
+              if (responseText.includes('already registered') || responseText.includes('mobile number is already')) {
+                errorMessage = 'This mobile number is already registered. Please use a different mobile number or contact the organizers.';
+              } else {
+                // Try to extract error message
+                const errorMatch = responseText.match(/Error: ([^\n|]+)/i);
+                if (errorMatch) {
+                  errorMessage = errorMatch[1].trim();
+                } else {
+                  errorMessage = responseText.substring(0, 200); // First 200 chars
+                }
+              }
+              
+              console.log('Error detected:', errorMessage);
+              
+              // Show error alert with clear message
+              alert('Registration Error:\n\n' + errorMessage + '\n\nPlease correct the issue and try again.');
+              
+              // Close overlay and re-enable button
+              document.getElementById('confirmationOverlay').classList.remove('active');
+              confirmBtn.textContent = originalText;
+              confirmBtn.disabled = false;
+              
+              // Remove form
+              if (document.body.contains(hiddenForm)) {
+                document.body.removeChild(hiddenForm);
+              }
+              
+              return; // Stop processing - don't show success page
+            }
+            
+            // Check if response is JSON
+            try {
+              const response = JSON.parse(responseText);
+              if (response.success === false || response.error) {
+                hasError = true;
+                const errorMsg = response.error || response.message || 'Registration failed';
+                alert('Registration Error:\n\n' + errorMsg + '\n\nPlease correct the issue and try again.');
+                document.getElementById('confirmationOverlay').classList.remove('active');
+                confirmBtn.textContent = originalText;
+                confirmBtn.disabled = false;
+                if (document.body.contains(hiddenForm)) {
+                  document.body.removeChild(hiddenForm);
+                }
+                return;
+              } else if (response.success === true) {
+                // Success response
+                console.log('Registration successful (from JSON)');
+              }
+            } catch (e) {
+              // Not JSON, that's okay
+              console.log('Response is not JSON, checking for success message');
+            }
+            
+            // If we got a response and no error, process it
+            if (!hasError && responseText.length > 0) {
+              // Check if response indicates success
+              if (responseText.includes('success') || responseText.includes('Registration successful') || responseText.includes('saved')) {
+                console.log('✅ Registration successful');
+                processed = true;
+                processSuccess(hasError);
+                return;
+              }
+            }
+          }
+        } catch (e) {
+          console.log('Error reading iframe (attempt ' + attempt + '):', e);
+        }
+        
+        // If no response yet and we have more attempts, retry
+        if (attempt < maxAttempts && (!responseText || responseText.trim().length === 0)) {
+          console.log('No response yet, retrying in 500ms... (attempt ' + attempt + '/' + maxAttempts + ')');
+          setTimeout(() => readResponse(attempt + 1), 500);
+          return;
+        }
+        
+        // If we exhausted attempts and still no response, assume success
+        if (attempt >= maxAttempts && !processed) {
+          console.log('Max attempts reached, assuming registration successful');
+          processed = true; // Mark as processed
+          processSuccess(false);
+        }
+      }
+      
+      // Start with a longer delay to give postMessage time to arrive first
+      // postMessage is faster and doesn't have CORS issues
+      setTimeout(() => {
+        // Check if postMessage already handled it
+        if (!postMessageReceived) {
+          readResponse(1);
+        } else {
+          console.log('postMessage already received, skipping iframe reading');
+        }
+      }, 1000); // Wait 1 second for postMessage
+      
+      // Function to process successful registration
+      function processSuccess(hasError) {
+        if (hasError) {
+          return; // Already handled above
+        }
+        
+        // Prepare data for success page - use actual form data
+        // Use backupFormData if pendingFormData is null
+        const formDataToUse = pendingFormData || backupFormData || {};
+        const successData = {
+          name: formDataToUse.name || '',
+          fatherName: formDataToUse.fatherName || '',
+          category: formDataToUse.category || '',
+          mobile: formDataToUse.mobile || '',
+          captaincy: formDataToUse.captaincy || '',
+          registrationFee: formDataToUse.registrationFee || '500',
+          jerseyName: formDataToUse.jerseyName || '',
+          jerseyNumber: formDataToUse.jerseyNumber || '',
+          tshirtSize: formDataToUse.tshirtSize || '',
+          trouserSize: formDataToUse.trouserSize || '',
+          photoPreview: pendingPhotoPreview || null
+        };
+        
+        console.log('Success data prepared:', successData);
+        
+        // Close overlay
+        document.getElementById('confirmationOverlay').classList.remove('active');
+        
+        // Reset form
+        document.getElementById('registrationForm').reset();
+        document.getElementById('photoPreview').classList.remove('active');
+        document.getElementById('photoPreview').innerHTML = '';
+        document.getElementById('registrationFeeGroup').style.display = 'none';
+        
+        // Show success page
+        showSuccessPage(successData);
+    
+        // Clear pending data
+        pendingFormData = null;
+        pendingPhotoBase64 = null;
+        pendingPhotoName = null;
+        pendingPhotoType = null;
+        pendingPhotoPreview = null;
+        
+        // Remove form
+        if (document.body.contains(hiddenForm)) {
+          document.body.removeChild(hiddenForm);
+        }
+        
+        confirmBtn.textContent = originalText;
+        confirmBtn.disabled = false;
+      }
+      
+      // Note: readResponse is called with delay in the function above
+    }
+    
+    // Wait for DOM to be ready, then attach event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM loaded, attaching event listeners...');
+      
+      const confirmBtn = document.getElementById('confirmBtn');
+      if (!confirmBtn) {
+        console.error('Confirm button not found!');
+        return;
+      }
+      console.log('Confirm button found, attaching click handler...');
+      
+      confirmBtn.addEventListener('click', function() {
+      console.log('Confirm button clicked!');
+      console.log('Pending form data:', pendingFormData);
+      
+      if (!pendingFormData) {
+        console.error('No pending form data!');
+        alert('Error: No form data to submit. Please fill out the form again.');
+        return;
+      }
+      
+      const confirmBtn = this;
+      const originalText = confirmBtn.textContent;
+      confirmBtn.textContent = 'Submitting...';
+      confirmBtn.disabled = true;
+      
+      console.log('Starting submission process...');
+      
+      // Prepare submission data
+      const submissionData = {
+        name: pendingFormData.name || '',
+        fatherName: pendingFormData.fatherName || '',
+        category: pendingFormData.category || '',
+        email: pendingFormData.email || '',
+        serialNumber: pendingFormData.serialNumber || '',
+        mobile: pendingFormData.mobile || '',
+        captaincy: pendingFormData.captaincy || '',
+        registrationFee: pendingFormData.registrationFee || '',
+        feeType: pendingFormData.feeType || '',
+        syMember: pendingFormData.syMember || '',
+        syNumber: pendingFormData.syNumber || '',
+        jerseyName: pendingFormData.jerseyName || '',
+        jerseyNumber: pendingFormData.jerseyNumber || '',
+        tshirtSize: pendingFormData.tshirtSize || '',
+        trouserSize: pendingFormData.trouserSize || '',
+        photo: pendingPhotoBase64 || '',
+        photoName: pendingPhotoName || '',
+        photoType: pendingPhotoType || ''
+      };
+      
+      // Log what we're sending (for debugging)
+      console.log('=== FORM SUBMISSION START ===');
+      console.log('Submitting data:', {
+        name: submissionData.name,
+        mobile: submissionData.mobile,
+        category: submissionData.category,
+        photoSize: submissionData.photo ? submissionData.photo.length + ' chars' : 'no photo'
+      });
+      console.log('Google Script URL:', GOOGLE_SCRIPT_URL);
+      
+      // Check if photo is too large (base64 can be very long)
+      const photoSize = submissionData.photo ? submissionData.photo.length : 0;
+      if (photoSize > 5000000) { // ~5MB base64 = ~3.75MB actual file
+        alert('Photo is too large. Please use a smaller image (under 5MB).');
+        confirmBtn.textContent = originalText;
+        confirmBtn.disabled = false;
+        return;
+      }
+      
+      // Submit to Google Apps Script
+      // Use traditional form submission instead of fetch with no-cors
+      // This ensures POST data is sent properly to Google Apps Script
+      console.log('Sending form submission to:', GOOGLE_SCRIPT_URL);
+      console.log('Submitting data:', {
+        name: submissionData.name,
+        mobile: submissionData.mobile,
+        category: submissionData.category,
+        photoSize: submissionData.photo ? submissionData.photo.length + ' chars' : 'no photo'
+      });
+      
+      const hiddenForm = document.createElement('form');
+      hiddenForm.method = 'POST';
+      hiddenForm.action = GOOGLE_SCRIPT_URL;
+      hiddenForm.target = 'hiddenIframe';
+      hiddenForm.style.display = 'none';
+      
+      // Add all form fields as hidden inputs
+      Object.keys(submissionData).forEach(key => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = submissionData[key];
+        hiddenForm.appendChild(input);
+      });
+      
+      // Create hidden iframe to receive response
+      let iframe = document.getElementById('hiddenIframe');
+      if (!iframe) {
+        iframe = document.createElement('iframe');
+        iframe.id = 'hiddenIframe';
+        iframe.name = 'hiddenIframe';
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+      }
+      
+      // Add form to body and submit
+      document.body.appendChild(hiddenForm);
+      
+      console.log('Hidden form created with', Object.keys(submissionData).length, 'fields');
+      console.log('Form action:', hiddenForm.action);
+      console.log('Submitting form now...');
+      
+          // Handle iframe load (response received)
+          iframe.onload = function() {
+            console.log('=== FORM SUBMISSION COMPLETED ===');
+            console.log('Iframe loaded - response received from server');
+            console.log('Form submitted, waiting for processing...');
+            
+            // Use helper function to read response with retries
+            readIframeResponseWithRetries(iframe, confirmBtn, hiddenForm, originalText);
+          };
+      
+      // Submit form
+      hiddenForm.submit();
+      
+      // Fallback timeout in case iframe doesn't load
+      setTimeout(function() {
+        if (confirmBtn.disabled) {
+          console.log('Submission timeout, assuming success...');
+          
+          // Prepare data for success page
+          const successData = pendingFormData || {
+            name: '',
+            fatherName: '',
+            category: '',
+            mobile: '',
+            captaincy: '',
+            registrationFee: '500',
+            jerseyName: '',
+            jerseyNumber: '',
+            tshirtSize: '',
+            trouserSize: '',
+            photoPreview: pendingPhotoPreview || null
+          };
+          
+          document.getElementById('confirmationOverlay').classList.remove('active');
+          document.getElementById('registrationForm').reset();
+          document.getElementById('photoPreview').classList.remove('active');
+          document.getElementById('photoPreview').innerHTML = '';
+          document.getElementById('registrationFeeGroup').style.display = 'none';
+          
+          // Show success page (without ORN since we couldn't get it)
+          showSuccessPage(successData);
+          
+          pendingFormData = null;
+          pendingPhotoBase64 = null;
+          pendingPhotoName = null;
+          pendingPhotoType = null;
+          pendingPhotoPreview = null;
+          
+          if (document.body.contains(hiddenForm)) {
+            document.body.removeChild(hiddenForm);
+          }
+          
+          confirmBtn.textContent = originalText;
+          confirmBtn.disabled = false;
+        }
+      }, 5000);
+      });
+    });
+    
+    // Also attach immediately if DOM is already loaded
+    if (document.readyState === 'loading') {
+      // DOM is still loading, wait for DOMContentLoaded (handled above)
+    } else {
+      // DOM is already loaded, attach immediately
+      console.log('DOM already loaded, attaching event listeners immediately...');
+      const confirmBtn = document.getElementById('confirmBtn');
+      if (confirmBtn) {
+        console.log('Confirm button found, attaching click handler...');
+        confirmBtn.addEventListener('click', function() {
+          console.log('Confirm button clicked!');
+          console.log('Pending form data:', pendingFormData);
+          
+          if (!pendingFormData) {
+            console.error('No pending form data!');
+            alert('Error: No form data to submit. Please fill out the form again.');
+            return;
+          }
+          
+          const confirmBtn = this;
+          const originalText = confirmBtn.textContent;
+          confirmBtn.textContent = 'Submitting...';
+          confirmBtn.disabled = true;
+          
+          console.log('Starting submission process...');
+          
+          // Prepare submission data
+          const submissionData = {
+            name: pendingFormData.name || '',
+            fatherName: pendingFormData.fatherName || '',
+            category: pendingFormData.category || '',
+            email: pendingFormData.email || '',
+            serialNumber: pendingFormData.serialNumber || '',
+            mobile: pendingFormData.mobile || '',
+            captaincy: pendingFormData.captaincy || '',
+            registrationFee: pendingFormData.registrationFee || '',
+            feeType: pendingFormData.feeType || '',
+            syMember: pendingFormData.syMember || '',
+            syNumber: pendingFormData.syNumber || '',
+            jerseyName: pendingFormData.jerseyName || '',
+            jerseyNumber: pendingFormData.jerseyNumber || '',
+            tshirtSize: pendingFormData.tshirtSize || '',
+            trouserSize: pendingFormData.trouserSize || '',
+            photo: pendingPhotoBase64 || '',
+            photoName: pendingPhotoName || '',
+            photoType: pendingPhotoType || ''
+          };
+          
+          // Log what we're sending (for debugging)
+          console.log('=== FORM SUBMISSION START ===');
+          console.log('Submitting data:', {
+            name: submissionData.name,
+            mobile: submissionData.mobile,
+            category: submissionData.category,
+            photoSize: submissionData.photo ? submissionData.photo.length + ' chars' : 'no photo'
+          });
+          console.log('Google Script URL:', GOOGLE_SCRIPT_URL);
+          
+          // Check if photo is too large (base64 can be very long)
+          const photoSize = submissionData.photo ? submissionData.photo.length : 0;
+          if (photoSize > 5000000) { // ~5MB base64 = ~3.75MB actual file
+            alert('Photo is too large. Please use a smaller image (under 5MB).');
+            confirmBtn.textContent = originalText;
+            confirmBtn.disabled = false;
+            return;
+          }
+          
+          // Submit to Google Apps Script
+          // Use FormData for better handling of large data
+          const formDataToSend = new URLSearchParams();
+          Object.keys(submissionData).forEach(key => {
+            formDataToSend.append(key, submissionData[key]);
+          });
+          
+          console.log('Sending form submission to:', GOOGLE_SCRIPT_URL);
+          console.log('Request body length:', formDataToSend.toString().length);
+          console.log('Request body preview (first 200 chars):', formDataToSend.toString().substring(0, 200));
+          
+          // Use traditional form submission instead of fetch with no-cors
+          // This ensures POST data is sent properly to Google Apps Script
+          const hiddenForm = document.createElement('form');
+          hiddenForm.method = 'POST';
+          hiddenForm.action = GOOGLE_SCRIPT_URL;
+          hiddenForm.target = 'hiddenIframe';
+          hiddenForm.style.display = 'none';
+          
+          // Add all form fields as hidden inputs
+          Object.keys(submissionData).forEach(key => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = key;
+            input.value = submissionData[key];
+            hiddenForm.appendChild(input);
+          });
+          
+          // Create hidden iframe to receive response
+          let iframe = document.getElementById('hiddenIframe');
+          if (!iframe) {
+            iframe = document.createElement('iframe');
+            iframe.id = 'hiddenIframe';
+            iframe.name = 'hiddenIframe';
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
+          }
+          
+          // Add form to body and submit
+          document.body.appendChild(hiddenForm);
+          
+          console.log('Hidden form created with', Object.keys(submissionData).length, 'fields');
+          console.log('Form action:', hiddenForm.action);
+          console.log('Submitting form now...');
+          
+          // Handle iframe load (response received)
+          iframe.onload = function() {
+            console.log('=== FORM SUBMISSION COMPLETED ===');
+            console.log('Iframe loaded - response received from server');
+            console.log('Form submitted, waiting for processing...');
+            
+            // Use helper function to read response with retries
+            readIframeResponseWithRetries(iframe, confirmBtn, hiddenForm, originalText);
+          };
+          
+          // Submit form
+          hiddenForm.submit();
+          
+          // Fallback timeout in case iframe doesn't load
+          setTimeout(function() {
+            if (confirmBtn.disabled) {
+              console.log('Submission timeout, assuming success...');
+              
+              // Prepare data for success page
+              const successData = pendingFormData || {
+                name: '',
+                fatherName: '',
+                category: '',
+                mobile: '',
+                captaincy: '',
+                registrationFee: '500',
+                jerseyName: '',
+                jerseyNumber: '',
+                tshirtSize: '',
+                trouserSize: '',
+                photoPreview: pendingPhotoPreview || null
+              };
+              
+              document.getElementById('confirmationOverlay').classList.remove('active');
+              document.getElementById('registrationForm').reset();
+              document.getElementById('photoPreview').classList.remove('active');
+              document.getElementById('photoPreview').innerHTML = '';
+              document.getElementById('registrationFeeGroup').style.display = 'none';
+              
+              // Show success page (without ORN since we couldn't get it)
+              showSuccessPage(successData);
+              
+              pendingFormData = null;
+              pendingPhotoBase64 = null;
+              pendingPhotoName = null;
+              pendingPhotoType = null;
+              pendingPhotoPreview = null;
+              
+              if (document.body.contains(hiddenForm)) {
+                document.body.removeChild(hiddenForm);
+              }
+              
+              confirmBtn.textContent = originalText;
+              confirmBtn.disabled = false;
+            }
+          }, 5000);
+        });
+      } else {
+        console.error('Confirm button not found when trying to attach handler!');
+      }
+    }
+  </script>
+</body>
+</html>
+

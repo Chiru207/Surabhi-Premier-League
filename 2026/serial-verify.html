@@ -1,0 +1,992 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"/>
+  <title>Serial Number Verification - Surabhi Premier League 2026</title>
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    /* Logo in top-right corner - Always visible */
+    .page-logo {
+      position: fixed !important;
+      top: clamp(10px, 2vh, 20px) !important;
+      right: clamp(10px, 2vw, 20px) !important;
+      width: clamp(60px, 8vw, 120px) !important;
+      height: auto !important;
+      z-index: 9999 !important;
+      opacity: 0.9 !important;
+      transition: opacity 0.3s;
+      display: block !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+    }
+    
+    .page-logo:hover {
+      opacity: 1 !important;
+    }
+    
+    @media (max-width: 768px) {
+      .page-logo {
+        width: clamp(50px, 10vw, 80px) !important;
+        top: clamp(8px, 1.5vh, 15px) !important;
+        right: clamp(8px, 2vw, 15px) !important;
+      }
+    }
+    
+    body {
+      background: #0f172a;
+      color: #e2e8f0;
+      font-family: system-ui, Arial, Helvetica, sans-serif;
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .container {
+      max-width: 500px;
+      width: 100%;
+      background: #111827;
+      border: 2px solid #334155;
+      border-radius: 16px;
+      padding: clamp(20px, 4vw, 40px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+    
+    h1 {
+      font-size: clamp(24px, 5vw, 32px);
+      margin-bottom: 10px;
+      color: #60a5fa;
+      font-weight: 700;
+      text-align: center;
+    }
+    
+    .subtitle {
+      text-align: center;
+      color: #94a3b8;
+      margin-bottom: 30px;
+      font-size: clamp(14px, 2.5vw, 16px);
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #e2e8f0;
+      font-weight: 500;
+      font-size: clamp(14px, 2.5vw, 16px);
+    }
+    
+    input[type="text"],
+    input[type="email"],
+    input[type="number"] {
+      width: 100%;
+      padding: 12px 16px;
+      background: #1e293b;
+      border: 2px solid #334155;
+      border-radius: 8px;
+      color: #e2e8f0;
+      font-size: clamp(14px, 2.5vw, 16px);
+      box-sizing: border-box;
+      transition: border-color 0.3s;
+    }
+    
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="number"]:focus {
+      outline: none;
+      border-color: #60a5fa;
+    }
+    
+    .help-text {
+      display: block;
+      margin-top: 6px;
+      font-size: clamp(12px, 2vw, 14px);
+      color: #64748b;
+    }
+    
+    .submit-btn {
+      width: 100%;
+      padding: clamp(12px, 2vh, 16px) clamp(24px, 4vw, 32px);
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: clamp(14px, 3vw, 18px);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 10px;
+    }
+    
+    .submit-btn:hover {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+    }
+    
+    .submit-btn:active {
+      transform: translateY(0);
+    }
+    
+    .submit-btn:disabled {
+      background: #475569;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .status-message {
+      margin-top: 20px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: clamp(14px, 2.5vw, 16px);
+      text-align: center;
+      display: none;
+    }
+    
+    .status-message.success {
+      background: #065f46;
+      color: #6ee7b7;
+      border: 1px solid #10b981;
+      display: block;
+    }
+    
+    .status-message.error {
+      background: #7f1d1d;
+      color: #fca5a5;
+      border: 1px solid #ef4444;
+      display: block;
+    }
+    
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      color: #60a5fa;
+      text-decoration: none;
+      font-size: clamp(14px, 2.5vw, 16px);
+    }
+    
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <!-- Logo in top-right corner -->
+  <img src="../Surabhi_Yuvasena_Logo.png" alt="Surabhi Yuvasena Logo" class="page-logo" onerror="console.error('Logo failed to load, but keeping it visible');">
+  <div class="container">
+    <h1>Serial Number Verification</h1>
+    <p class="subtitle">Enter your serial number and email to continue registration</p>
+    
+    <form id="serialForm">
+      <div class="form-group">
+        <label for="serialNumber">Serial Number *</label>
+        <input type="number" id="serialNumber" name="serialNumber" required min="1" autocomplete="off">
+        <small class="help-text">Enter the serial number provided by organizers</small>
+      </div>
+      
+      <div class="form-group">
+        <label for="email">Email Address *</label>
+        <input type="email" id="email" name="email" required autocomplete="email">
+        <small class="help-text">Enter the email address used during payment</small>
+      </div>
+      
+      <button type="submit" id="verifyBtn" class="submit-btn">Verify Serial Number</button>
+      
+      <div id="statusMessage" class="status-message"></div>
+    </form>
+    
+    <a href="../2026.html" class="back-link">← Back to Home</a>
+  </div>
+  
+  <script src="config.js"></script>
+  <script>
+    const GOOGLE_SCRIPT_URL = window.SPL2026_SCRIPT_URL;
+
+    function storeSpl2026Session(serialNumber, email, details) {
+      details = details || {};
+      sessionStorage.setItem('spl2026_verifiedSerial', serialNumber);
+      sessionStorage.setItem('spl2026_verifiedEmail', email);
+      sessionStorage.setItem('spl2026_paymentAmount', details.amount != null ? String(details.amount) : '');
+      sessionStorage.setItem('spl2026_paymentToWhom', details.toWhom || '');
+      sessionStorage.setItem('spl2026_feeType', details.feeType != null ? String(details.feeType) : '');
+      sessionStorage.setItem('spl2026_syMember', details.syMember || '');
+      sessionStorage.setItem('spl2026_syNumber', details.syNumber || '');
+    }
+    
+    function showStatus(message, isError = false) {
+      const statusDiv = document.getElementById('statusMessage');
+      statusDiv.textContent = message;
+      statusDiv.className = 'status-message ' + (isError ? 'error' : 'success');
+      statusDiv.style.display = 'block';
+    }
+    
+    function hideStatus() {
+      const statusDiv = document.getElementById('statusMessage');
+      statusDiv.style.display = 'none';
+      statusDiv.className = 'status-message';
+    }
+    
+    document.getElementById('serialForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const serialNumber = document.getElementById('serialNumber').value.trim();
+      const email = document.getElementById('email').value.trim().toLowerCase();
+      const verifyBtn = document.getElementById('verifyBtn');
+      
+      if (!serialNumber || !email) {
+        showStatus('Please enter both serial number and email address.', true);
+        return;
+      }
+      
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        showStatus('Please enter a valid email address.', true);
+        return;
+      }
+      
+      verifyBtn.disabled = true;
+      verifyBtn.textContent = 'Verifying...';
+      hideStatus();
+      
+      // Show a message that verification is in progress and may take up to a minute
+      showStatus('Verification in progress. Please wait... This may take up to a minute.', false);
+      
+      try {
+        // Since we're using no-cors, we can't read the response directly
+        // We'll use a hidden iframe to get the response
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.name = 'hiddenFrame';
+        iframe.id = 'serialCheckIframe';
+        
+        document.body.appendChild(iframe);
+        console.log('Iframe created and appended to DOM');
+        
+        // Set up iframe load handler - will be set after src is assigned
+        // This prevents the initial about:blank load from triggering our handler
+        
+        const form = document.createElement('form');
+        form.method = 'GET';
+        form.action = GOOGLE_SCRIPT_URL;
+        form.target = 'hiddenFrame';
+        
+        // Create form inputs with correct names
+        const actionInput = document.createElement('input');
+        actionInput.type = 'hidden';
+        actionInput.name = 'action';
+        actionInput.value = 'checkSerial';
+        form.appendChild(actionInput);
+        
+        const serialInput = document.createElement('input');
+        serialInput.type = 'hidden';
+        serialInput.name = 'serialNumber';
+        serialInput.value = serialNumber;
+        form.appendChild(serialInput);
+        
+        const emailInput = document.createElement('input');
+        emailInput.type = 'hidden';
+        emailInput.name = 'email';
+        emailInput.value = email;
+        form.appendChild(emailInput);
+        
+        // Log the form data being sent
+        console.log('Form data being sent:', {
+          action: 'checkSerial',
+          serialNumber: serialNumber,
+          email: email
+        });
+        
+        document.body.appendChild(form);
+        
+        // Instead of form submission, let's try loading the iframe directly
+        // Build the URL directly using GOOGLE_SCRIPT_URL
+        const fullUrl = new URL(GOOGLE_SCRIPT_URL);
+        fullUrl.searchParams.append('action', 'checkSerial');
+        fullUrl.searchParams.append('serialNumber', serialNumber);
+        fullUrl.searchParams.append('email', email);
+        const fullUrlString = fullUrl.toString();
+        console.log('🔗 Full URL to load in iframe:', fullUrlString);
+        
+        // Set up postMessage listener BEFORE loading iframe
+        let postMessageReceived = false;
+        let messageHandler = null;
+        
+        messageHandler = function(event) {
+          // Log all messages for debugging
+          console.log('🔍 MessageHandler received:', {
+            origin: event.origin,
+            data: event.data,
+            dataType: typeof event.data,
+            hasType: event.data && event.data.type,
+            typeValue: event.data && event.data.type
+          });
+          
+          // Filter out browser extension messages (they have different origins)
+          // Only process messages that look like our serial check response
+          if (!event.data || typeof event.data !== 'object') {
+            console.log('⏭️ Ignoring non-object message');
+            return; // Ignore non-object messages (likely from extensions)
+          }
+          
+          // Check if this is our serial check message
+          // Accept from any origin (since Google Apps Script might use different origins)
+          if (event.data && event.data.type === 'serialCheck') {
+            postMessageReceived = true;
+            console.log('✅✅✅ RECEIVED postMessage from Google Apps Script!', event.data);
+            console.log('Origin:', event.origin);
+            
+            // Clear JSON fallback timeout since postMessage worked
+            if (window.jsonFallbackTimeout) {
+              clearTimeout(window.jsonFallbackTimeout);
+              console.log('✅ Cleared JSON fallback timeout');
+              window.jsonFallbackTimeout = null;
+            }
+            
+            // Clear the 5-second fallback timeout as well
+            if (window.fallbackTimeout) {
+              clearTimeout(window.fallbackTimeout);
+              console.log('✅ Cleared 5-second fallback timeout');
+              window.fallbackTimeout = null;
+            }
+            
+            // Remove listener immediately to prevent duplicate processing
+            if (messageHandler) {
+              window.removeEventListener('message', messageHandler);
+            }
+            if (debugMessageHandler) {
+              window.removeEventListener('message', debugMessageHandler);
+            }
+            
+            if (event.data.success) {
+              // Store data in sessionStorage
+              storeSpl2026Session(serialNumber, email, event.data);
+              
+              console.log('✅ Stored in sessionStorage:', {
+                serial: serialNumber,
+                email: email,
+                amount: event.data.amount,
+                toWhom: event.data.toWhom
+              });
+              
+              // Clean up
+              if (document.body.contains(form)) document.body.removeChild(form);
+              if (document.body.contains(iframe)) document.body.removeChild(iframe);
+              
+              // Redirect to email verification page
+              setTimeout(() => {
+                window.location.href = 'email-verify.html';
+              }, 100);
+            } else {
+              // Error received - handle it and prevent all fallbacks
+              const errorMsg = event.data.error || 'Verification failed. Please try again.';
+              console.error('❌ Verification failed:', errorMsg);
+              
+              // Clear ALL timeouts to prevent fallback messages
+              if (window.jsonFallbackTimeout) {
+                clearTimeout(window.jsonFallbackTimeout);
+                window.jsonFallbackTimeout = null;
+                console.log('✅ Cleared JSON fallback timeout (error case)');
+              }
+              if (window.fallbackTimeout) {
+                clearTimeout(window.fallbackTimeout);
+                window.fallbackTimeout = null;
+                console.log('✅ Cleared 5-second fallback timeout (error case)');
+              }
+              
+              // Show error message
+              showStatus(errorMsg, true);
+              verifyBtn.disabled = false;
+              verifyBtn.textContent = 'Verify Serial Number';
+              
+              // Clean up
+              if (document.body.contains(form)) document.body.removeChild(form);
+              if (document.body.contains(iframe)) document.body.removeChild(iframe);
+              
+              // Mark that we've handled the error, so no fallback messages appear
+              // postMessageReceived is already true, so fallbacks won't fire
+              return; // Exit early to prevent any further processing
+            }
+          } else {
+            console.log('⏭️ Ignoring message - not a serialCheck type. Type:', event.data && event.data.type);
+          }
+        };
+        
+        // Add message listener
+        window.addEventListener('message', messageHandler);
+        console.log('📡 PostMessage listener added, waiting for response...');
+        console.log('Submitting form to:', GOOGLE_SCRIPT_URL);
+        console.log('Serial Number:', serialNumber);
+        console.log('Email:', email);
+        
+        // Also log ALL postMessages received (for debugging)
+        const debugMessageHandler = function(event) {
+          console.log('🔍 DEBUG: Received postMessage from:', event.origin);
+          console.log('🔍 DEBUG: Message data:', event.data);
+          console.log('🔍 DEBUG: Message type:', typeof event.data);
+        };
+        window.addEventListener('message', debugMessageHandler);
+        
+        // Fallback timeout in case postMessage doesn't arrive
+        window.fallbackTimeout = setTimeout(function() {
+          // Double-check postMessageReceived status before showing fallback
+          if (!postMessageReceived) {
+            console.log('⏰ PostMessage timeout after 5 seconds - trying to read iframe response as fallback');
+            console.log('This might be a CORS issue. Checking iframe...');
+            
+            try {
+              const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+              const responseText = iframeDoc.body ? iframeDoc.body.textContent || iframeDoc.body.innerText : '';
+              
+              console.log('Fallback response from server:', responseText);
+              
+              // Check again if postMessage was received while we were reading iframe
+              if (postMessageReceived) {
+                console.log('PostMessage received while reading iframe - aborting fallback');
+                return;
+              }
+              
+              if (responseText && (responseText.includes('success:') || responseText.includes('verified'))) {
+                // Extract amount and to whom from response
+                const amountMatch = responseText.match(/amount[:\s]+₹?(\d+)/i);
+                const amount = amountMatch ? amountMatch[1] : '';
+                const toWhomMatch = responseText.match(/to whom[:\s]+([^,\n]+)/i);
+                const toWhom = toWhomMatch ? toWhomMatch[1].trim() : '';
+                const feeTypeMatch = responseText.match(/fee type[:\s]+(\d+)/i);
+                const syMemberMatch = responseText.match(/sy member[:\s]+(Yes|No)/i);
+                const syNumberMatch = responseText.match(/sy number[:\s]+([^,\n]*)/i);
+                
+                storeSpl2026Session(serialNumber, email, {
+                  amount: amount,
+                  toWhom: toWhom,
+                  feeType: feeTypeMatch ? feeTypeMatch[1] : '',
+                  syMember: syMemberMatch ? syMemberMatch[1] : '',
+                  syNumber: syNumberMatch ? syNumberMatch[1].trim() : ''
+                });
+                
+                // Clean up
+                window.removeEventListener('message', messageHandler);
+                if (document.body.contains(form)) document.body.removeChild(form);
+                if (document.body.contains(iframe)) document.body.removeChild(iframe);
+                
+                // Redirect to email verification page
+                window.location.href = 'email-verify.html';
+                return;
+              } else if (responseText && (responseText.includes('error:') || responseText.includes('not found') || responseText.includes('mismatch') || responseText.includes('already registered'))) {
+                // Check again if postMessage was received
+                if (postMessageReceived) {
+                  console.log('PostMessage received while processing iframe error - aborting fallback');
+                  return;
+                }
+                
+                const errorMsg = responseText.includes('already registered')
+                  ? responseText.match(/error:\s*([^\n]+)/i) ? responseText.match(/error:\s*([^\n]+)/i)[1] : 'This serial number or email is already registered.'
+                  : responseText.includes('mismatch') 
+                  ? 'Email address does not match the serial number. Please check and try again.'
+                  : responseText.includes('not found')
+                  ? 'Serial number not found. Please check your serial number or contact organizers.'
+                  : 'Verification failed: ' + responseText;
+                console.error('Error from server:', errorMsg);
+                showStatus(errorMsg, true);
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = 'Verify Serial Number';
+                window.removeEventListener('message', messageHandler);
+                if (document.body.contains(form)) document.body.removeChild(form);
+                if (document.body.contains(iframe)) document.body.removeChild(iframe);
+                return;
+              } else {
+                // No response text or empty response
+                console.log('No response text found in iframe');
+              }
+            } catch (error) {
+              // CORS error - this is expected when trying to read cross-origin iframe
+              console.log('CORS error reading iframe (expected for cross-origin):', error.message);
+            }
+            
+            // Final check - only show generic error for unexpected technical issues
+            // This timeout is now 60 seconds, so we've waited long enough
+            if (!postMessageReceived) {
+              console.error('Verification timeout after 60 seconds. Serial:', serialNumber, 'Email:', email);
+              // This is an unexpected technical issue (network, server error, payment sheet missing, etc.)
+              // Not a validation error - those should have been caught earlier
+              showStatus('Could not verify serial number due to a technical issue. The verification process timed out after 1 minute. Please try refreshing the page and try again. If the problem persists, contact organizers.', true);
+              verifyBtn.disabled = false;
+              verifyBtn.textContent = 'Verify Serial Number';
+              window.removeEventListener('message', messageHandler);
+              if (document.body.contains(form)) document.body.removeChild(form);
+              if (document.body.contains(iframe)) document.body.removeChild(iframe);
+            } else {
+              console.log('PostMessage was received during fallback processing - not showing generic error');
+            }
+          } else {
+            console.log('PostMessage was received, no fallback needed');
+          }
+        }, 60000); // Wait 60 seconds (1 minute) for postMessage before showing fallback error
+        
+        // Load the iframe directly instead of using form submission
+        console.log('🚀 Loading iframe directly with URL...');
+        console.log('Iframe name:', iframe.name);
+        console.log('Iframe id:', iframe.id);
+        console.log('Iframe in DOM:', document.body.contains(iframe));
+        
+        // Set up iframe load handler AFTER iframe is in DOM but BEFORE setting src
+        const iframeLoadHandler = function() {
+          console.log('✅✅✅ IFRAME LOAD EVENT TRIGGERED!');
+          console.log('Iframe src:', iframe.src);
+          console.log('Iframe name:', iframe.name);
+          console.log('Iframe id:', iframe.id);
+          
+          // Check iframe content after a short delay to allow script to execute
+          setTimeout(function() {
+            console.log('=== Checking iframe after load event ===');
+            try {
+              const iframeUrl = iframe.contentWindow.location.href;
+              console.log('✅ Iframe URL:', iframeUrl);
+              
+              if (iframeUrl.includes('script.google.com')) {
+                console.log('✅ Iframe loaded from Google Apps Script');
+              } else if (iframeUrl === 'about:blank') {
+                console.log('⚠️ Iframe is still at about:blank - load may have been blocked');
+                console.log('This could be due to X-Frame-Options header from Google Apps Script');
+              } else {
+                console.log('⚠️ Iframe URL does not contain script.google.com');
+              }
+              
+              try {
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                if (iframeDoc && iframeDoc.body) {
+                  const bodyText = iframeDoc.body.textContent || iframeDoc.body.innerText || '';
+                  console.log('Iframe body text length:', bodyText.length);
+                  if (bodyText.length > 0) {
+                    console.log('Iframe body text:', bodyText.substring(0, 500));
+                  } else {
+                    console.log('⚠️ Iframe body is empty!');
+                  }
+                } else {
+                  console.log('⚠️ Iframe document or body not found');
+                }
+              } catch (docError) {
+                console.log('Cannot access iframe document (CORS - expected):', docError.message);
+                console.log('But postMessage should still work from the iframe script');
+              }
+            } catch (e) {
+              console.log('Cannot read iframe URL (CORS - expected):', e.message);
+            }
+          }, 1000);
+        };
+        
+        iframe.addEventListener('load', iframeLoadHandler, { once: true });
+        iframe.addEventListener('error', function() {
+          console.error('❌ Iframe error event triggered');
+        });
+        
+        // Also set onload property as backup
+        iframe.onload = iframeLoadHandler;
+        
+        // Try iframe first, then fallback to JSON with CORS proxy if needed
+        console.log('🚀 Attempting to load Google Apps Script...');
+        console.log('URL:', fullUrlString);
+        
+        // Try JSON format with CORS proxy immediately (more reliable than iframe)
+        const jsonUrl = fullUrlString + '&format=json';
+        console.log('💡 JSON URL:', jsonUrl);
+        console.log('🚀 Starting JSON fetch immediately (primary method)...');
+        
+        const corsProxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(jsonUrl);
+        console.log('CORS Proxy URL:', corsProxyUrl);
+        
+        // Start JSON fetch immediately
+        fetch(corsProxyUrl)
+          .then(response => {
+            // Check if postMessage was received while fetching
+            if (postMessageReceived) {
+              console.log('PostMessage received during JSON fetch - aborting');
+              return Promise.reject(new Error('PostMessage received, aborting'));
+            }
+            
+            console.log('✅ JSON Fetch response received, status:', response.status);
+            
+            if (!response.ok) {
+              return response.text().then(text => {
+                console.error('Response not OK, text:', text.substring(0, 500));
+                throw new Error('Network response was not ok: ' + response.status + '. Response: ' + text.substring(0, 200));
+              });
+            }
+            return response.text();
+          })
+          .then(text => {
+            // Check again before parsing
+            if (postMessageReceived) {
+              console.log('PostMessage received while parsing JSON - aborting');
+              return;
+            }
+            
+            console.log('Raw JSON response text (first 1000 chars):', text.substring(0, 1000));
+            console.log('Response text length:', text.length);
+            
+            // Check if response looks like HTML (error page)
+            if (text.trim().startsWith('<!DOCTYPE') || text.trim().startsWith('<html')) {
+              console.error('❌ Received HTML instead of JSON. Response might be an error page.');
+              const errorMatch = text.match(/error:\s*([^\n<]+)/i) || text.match(/<pre[^>]*>([^<]+)<\/pre>/i);
+              if (errorMatch) {
+                throw new Error(errorMatch[1].trim());
+              }
+              throw new Error('Received HTML response instead of JSON. The server may be returning an error page.');
+            }
+            
+            try {
+              const data = JSON.parse(text);
+              console.log('✅✅✅ JSON response parsed successfully:', data);
+              
+              // Final check before processing
+              if (postMessageReceived) {
+                console.log('PostMessage received after parsing JSON - aborting');
+                return;
+              }
+              
+              if (data.success) {
+                // Mark as received to prevent other fallbacks
+                postMessageReceived = true;
+                
+                // Clear all timeouts
+                if (window.fallbackTimeout) {
+                  clearTimeout(window.fallbackTimeout);
+                  window.fallbackTimeout = null;
+                }
+                if (window.jsonFallbackTimeout) {
+                  clearTimeout(window.jsonFallbackTimeout);
+                  window.jsonFallbackTimeout = null;
+                }
+                
+                // Store data in sessionStorage
+                storeSpl2026Session(data.serialNumber || serialNumber, data.email || email, data);
+                
+                console.log('✅✅✅ Stored in sessionStorage via JSON');
+                console.log('Redirecting to email-verify.html...');
+                
+                // Clean up
+                window.removeEventListener('message', messageHandler);
+                if (document.body.contains(form)) document.body.removeChild(form);
+                if (document.body.contains(iframe)) document.body.removeChild(iframe);
+                
+                // Redirect to email verification page
+                window.location.href = 'email-verify.html';
+              } else {
+                // Error received - mark as received to prevent other fallbacks
+                postMessageReceived = true;
+                
+                // Clear all timeouts
+                if (window.fallbackTimeout) {
+                  clearTimeout(window.fallbackTimeout);
+                  window.fallbackTimeout = null;
+                }
+                if (window.jsonFallbackTimeout) {
+                  clearTimeout(window.jsonFallbackTimeout);
+                  window.jsonFallbackTimeout = null;
+                }
+                
+                const errorMsg = data.error || 'Verification failed. Please try again.';
+                console.error('❌ Verification failed via JSON:', errorMsg);
+                showStatus(errorMsg, true);
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = 'Verify Serial Number';
+                
+                // Clean up
+                window.removeEventListener('message', messageHandler);
+                if (document.body.contains(form)) document.body.removeChild(form);
+                if (document.body.contains(iframe)) document.body.removeChild(iframe);
+              }
+            } catch (parseError) {
+              console.error('❌ Error parsing JSON:', parseError);
+              console.error('Response text was:', text.substring(0, 500));
+              console.error('Parse error details:', parseError.message);
+              const errorMatch = text.match(/error[:\s]+([^\n<]+)/i);
+              if (errorMatch) {
+                throw new Error(errorMatch[1].trim());
+              }
+              throw new Error('Invalid JSON response: ' + parseError.message + '. Response: ' + text.substring(0, 200));
+            }
+          })
+          .catch(error => {
+            // Only show error if postMessage wasn't received
+            if (!postMessageReceived) {
+              console.error('❌ JSON fetch error:', error);
+              console.error('Error details:', error.message);
+              console.error('Error stack:', error.stack);
+              
+              // Extract specific error message if available
+              let errorMsg = error.message || '';
+              
+              // Check for specific defined error scenarios first
+              if (errorMsg.includes('Serial number not found') || errorMsg.includes('not found')) {
+                errorMsg = 'Serial number not found. Please check your serial number or contact organizers.';
+                showStatus(errorMsg, true);
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = 'Verify Serial Number';
+                return;
+              } else if (errorMsg.includes('Email') && (errorMsg.includes('match') || errorMsg.includes('mismatch'))) {
+                errorMsg = 'Email address does not match the serial number. Please check your email address or contact organizers.';
+                showStatus(errorMsg, true);
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = 'Verify Serial Number';
+                return;
+              } else if (errorMsg.includes('already registered')) {
+                showStatus(errorMsg, true);
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = 'Verify Serial Number';
+                return;
+              }
+              
+              // For unexpected errors (network, server, etc.), try iframe as fallback
+              console.log('Unexpected error occurred, trying iframe approach as fallback...');
+              try {
+                console.log('Setting iframe src to:', fullUrlString);
+                iframe.src = fullUrlString;
+                console.log('✅ Iframe src set as fallback');
+                // Don't show error yet - let iframe try
+                // The 5-second fallback timeout will show generic error if iframe also fails
+                return;
+              } catch (iframeError) {
+                console.error('Iframe fallback also failed:', iframeError);
+                // Both methods failed - show generic error only for unexpected scenarios
+                errorMsg = 'Could not verify serial number due to a technical issue. Please try refreshing the page and try again. If the problem persists, contact organizers.';
+                showStatus(errorMsg, true);
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = 'Verify Serial Number';
+              }
+            } else {
+              console.log('PostMessage was received, not showing JSON error');
+            }
+          });
+        
+        // Also try iframe approach as backup (in parallel)
+        setTimeout(() => {
+          try {
+            console.log('Setting iframe src to:', fullUrlString);
+            iframe.src = fullUrlString;
+            console.log('✅ Iframe src set (backup method)');
+            
+            // Also set up a delayed JSON fallback in case iframe works but JSON didn't
+            const jsonFallbackTimeout = setTimeout(() => {
+              console.log('⏰ Delayed JSON Fallback timeout triggered');
+              console.log('postMessageReceived status:', postMessageReceived);
+              
+              // Double-check before proceeding
+              if (!postMessageReceived) {
+                console.log('💡💡💡 BOTH METHODS FAILED - TRYING JSON WITH CORS PROXY AGAIN...');
+                const corsProxyUrl2 = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(jsonUrl);
+                console.log('CORS Proxy URL (retry):', corsProxyUrl2);
+                
+                fetch(corsProxyUrl2)
+                  .then(response => {
+                    // Check again before processing
+                    if (postMessageReceived) {
+                      console.log('PostMessage received during fetch - aborting JSON fallback');
+                      return Promise.reject(new Error('PostMessage received, aborting'));
+                    }
+                    
+                    console.log('✅ Fetch response received, status:', response.status);
+                    console.log('Response headers:', response.headers);
+                    
+                    if (!response.ok) {
+                      // Try to get error message from response
+                      return response.text().then(text => {
+                        console.error('Response not OK, text:', text.substring(0, 500));
+                        throw new Error('Network response was not ok: ' + response.status + '. Response: ' + text.substring(0, 200));
+                      });
+                    }
+                    return response.text(); // Get as text first to handle potential errors
+                  })
+                  .then(text => {
+                    // Check again before parsing
+                    if (postMessageReceived) {
+                      console.log('PostMessage received while parsing JSON - aborting');
+                      return;
+                    }
+                    
+                    console.log('Raw JSON response text (first 1000 chars):', text.substring(0, 1000));
+                    console.log('Response text length:', text.length);
+                    
+                    // Check if response looks like HTML (error page)
+                    if (text.trim().startsWith('<!DOCTYPE') || text.trim().startsWith('<html')) {
+                      console.error('❌ Received HTML instead of JSON. Response might be an error page.');
+                      // Try to extract error message from HTML
+                      const errorMatch = text.match(/error:\s*([^\n<]+)/i) || text.match(/<pre[^>]*>([^<]+)<\/pre>/i);
+                      if (errorMatch) {
+                        throw new Error(errorMatch[1].trim());
+                      }
+                      throw new Error('Received HTML response instead of JSON. The server may be returning an error page.');
+                    }
+                    
+                    try {
+                      const data = JSON.parse(text);
+                      console.log('✅✅✅ JSON response parsed successfully:', data);
+                      
+                      // Final check before processing
+                      if (postMessageReceived) {
+                        console.log('PostMessage received after parsing JSON - aborting');
+                        return;
+                      }
+                      
+                      if (data.success) {
+                        // Mark as received to prevent other fallbacks
+                        postMessageReceived = true;
+                        
+                        // Clear the 5-second fallback timeout
+                        if (window.fallbackTimeout) {
+                          clearTimeout(window.fallbackTimeout);
+                          window.fallbackTimeout = null;
+                          console.log('✅ Cleared 5-second fallback timeout (JSON success case)');
+                        }
+                        
+                        // Store data in sessionStorage
+                        storeSpl2026Session(data.serialNumber || serialNumber, data.email || email, data);
+                        
+                        console.log('✅✅✅ Stored in sessionStorage via JSON fallback');
+                        console.log('Redirecting to email-verify.html...');
+                        
+                        // Clean up
+                        window.removeEventListener('message', messageHandler);
+                        if (document.body.contains(form)) document.body.removeChild(form);
+                        if (document.body.contains(iframe)) document.body.removeChild(iframe);
+                        
+                        // Redirect to email verification page
+                        window.location.href = 'email-verify.html';
+                      } else {
+                        // Error received - mark as received to prevent other fallbacks
+                        postMessageReceived = true;
+                        
+                        // Clear the 5-second fallback timeout
+                        if (window.fallbackTimeout) {
+                          clearTimeout(window.fallbackTimeout);
+                          window.fallbackTimeout = null;
+                          console.log('✅ Cleared 5-second fallback timeout (JSON error case)');
+                        }
+                        
+                        const errorMsg = data.error || 'Verification failed. Please try again.';
+                        console.error('❌ Verification failed via JSON:', errorMsg);
+                        showStatus(errorMsg, true);
+                        verifyBtn.disabled = false;
+                        verifyBtn.textContent = 'Verify Serial Number';
+                        
+                        // Clean up
+                        window.removeEventListener('message', messageHandler);
+                        if (document.body.contains(form)) document.body.removeChild(form);
+                        if (document.body.contains(iframe)) document.body.removeChild(iframe);
+                      }
+                    } catch (parseError) {
+                      console.error('❌ Error parsing JSON:', parseError);
+                      console.error('Response text was:', text.substring(0, 500));
+                      console.error('Parse error details:', parseError.message);
+                      // Try to extract error from text if it's not valid JSON
+                      const errorMatch = text.match(/error[:\s]+([^\n<]+)/i);
+                      if (errorMatch) {
+                        throw new Error(errorMatch[1].trim());
+                      }
+                      throw new Error('Invalid JSON response: ' + parseError.message + '. Response: ' + text.substring(0, 200));
+                    }
+                  })
+                  .catch(error => {
+                    // Only show error if postMessage wasn't received
+                    if (!postMessageReceived) {
+                      console.error('❌ JSON fetch error:', error);
+                      console.error('Error details:', error.message);
+                      console.error('Error stack:', error.stack);
+                      
+                      // Extract specific error message if available
+                      let errorMsg = error.message || '';
+                      
+                      // Check for specific defined error scenarios first
+                      if (errorMsg.includes('Serial number not found') || errorMsg.includes('not found')) {
+                        errorMsg = 'Serial number not found. Please check your serial number or contact organizers.';
+                        showStatus(errorMsg, true);
+                        verifyBtn.disabled = false;
+                        verifyBtn.textContent = 'Verify Serial Number';
+                        return;
+                      } else if (errorMsg.includes('Email') && (errorMsg.includes('match') || errorMsg.includes('mismatch'))) {
+                        errorMsg = 'Email address does not match the serial number. Please check your email address or contact organizers.';
+                        showStatus(errorMsg, true);
+                        verifyBtn.disabled = false;
+                        verifyBtn.textContent = 'Verify Serial Number';
+                        return;
+                      } else if (errorMsg.includes('already registered')) {
+                        showStatus(errorMsg, true);
+                        verifyBtn.disabled = false;
+                        verifyBtn.textContent = 'Verify Serial Number';
+                        return;
+                      }
+                      
+                      // Only show generic error for unexpected technical issues (network, server, payment sheet missing, etc.)
+                      // Not for validation errors - those should have been caught above
+                      errorMsg = 'Could not verify serial number due to a technical issue. Please try refreshing the page and try again. If the problem persists, contact organizers.';
+                      showStatus(errorMsg, true);
+                      verifyBtn.disabled = false;
+                      verifyBtn.textContent = 'Verify Serial Number';
+                    } else {
+                      console.log('PostMessage was received, not showing JSON fallback error');
+                    }
+                  });
+              } else {
+                console.log('✅ PostMessage was received, skipping JSON fallback');
+              }
+            }, 15000); // Wait 15 seconds for iframe/postMessage before retrying JSON
+            
+            // Store timeout reference so we can clear it if postMessage arrives
+            window.jsonFallbackTimeout = jsonFallbackTimeout;
+            
+            // Check iframe status periodically
+            const checkIntervals = [1000, 2000, 3000, 4000, 5000];
+            checkIntervals.forEach(delay => {
+              setTimeout(() => {
+                if (!postMessageReceived) {
+                  console.log(`Checking status after ${delay}ms...`);
+                  try {
+                    if (iframe.contentWindow) {
+                      try {
+                        const iframeUrl = iframe.contentWindow.location.href;
+                        console.log('Iframe loaded URL:', iframeUrl);
+                        if (iframeUrl === 'about:blank' && iframe.src.includes('script.google.com')) {
+                          if (delay >= 5000) {
+                            console.log('⚠️⚠️⚠️ IFRAME IS BLOCKED BY GOOGLE APPS SCRIPT');
+                            console.log('💡 Will try JSON fallback with CORS proxy...');
+                          }
+                        }
+                      } catch (urlError) {
+                        console.log('Cannot read iframe URL (CORS):', urlError.message);
+                      }
+                    }
+                  } catch (e) {
+                    console.log('Cannot access iframe:', e.message);
+                  }
+                } else {
+                  console.log('✅ PostMessage was received!');
+                }
+              }, delay);
+            });
+          } catch (loadError) {
+            console.error('❌ Error:', loadError);
+            showStatus('Error loading verification. Please try again.', true);
+            verifyBtn.disabled = false;
+            verifyBtn.textContent = 'Verify Serial Number';
+          }
+        }, 100);
+        
+      } catch (error) {
+        console.error('Error:', error);
+        showStatus('Error verifying serial number. Please try again.', true);
+        verifyBtn.disabled = false;
+        verifyBtn.textContent = 'Verify Serial Number';
+      }
+    });
+  </script>
+</body>
+</html>
+
