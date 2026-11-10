@@ -849,6 +849,64 @@
         paidTo: sessionStorage.getItem('spl2026_paymentToWhom') || ''
       };
     }
+
+    function lookupSyMemberJsonp(syNumber) {
+      return new Promise(function (resolve, reject) {
+        const callbackName = 'spl2026_sy_' + Date.now();
+        const script = document.createElement('script');
+        let finished = false;
+        const timer = setTimeout(function () {
+          finish(new Error('Member lookup timed out.'));
+        }, 20000);
+        function finish(error, data) {
+          if (finished) return;
+          finished = true;
+          clearTimeout(timer);
+          try { delete window[callbackName]; } catch (ignored) {}
+          if (script.parentNode) script.parentNode.removeChild(script);
+          if (error) reject(error);
+          else resolve(data);
+        }
+        window[callbackName] = function (data) { finish(null, data); };
+        script.onerror = function () { finish(new Error('Could not reach the registration service.')); };
+        const url = new URL(GOOGLE_SCRIPT_URL);
+        url.searchParams.set('action', 'lookupSyMember');
+        url.searchParams.set('format', 'json');
+        url.searchParams.set('callback', callbackName);
+        url.searchParams.set('syNumber', syNumber);
+        script.src = url.toString();
+        document.body.appendChild(script);
+      });
+    }
+
+    function lettersOnly(value) {
+      return String(value || '').replace(/[^A-Za-z\s]/g, '').replace(/\s+/g, ' ').trim();
+    }
+
+    function prefillSyMember() {
+      const ctx = spl2026Context();
+      const note = document.getElementById('syNumberStatus');
+      if (ctx.syMember !== 'Yes' || !ctx.syNumber) return;
+      if (note) note.textContent = 'SY number: ' + ctx.syNumber + '. Loading name, father name, and mobile from the member list...';
+      lookupSyMemberJsonp(ctx.syNumber).then(function (data) {
+        if (!data || !data.found) {
+          if (note) note.textContent = 'SY number: ' + ctx.syNumber + '. Member details could not be loaded. Type your name, father name, and mobile.';
+          return;
+        }
+        const name = document.getElementById('name');
+        const fatherName = document.getElementById('fatherName');
+        const mobile = document.getElementById('mobile');
+        if (name && !name.value) name.value = lettersOnly(data.name);
+        if (fatherName && !fatherName.value) fatherName.value = lettersOnly(data.fatherName);
+        if (mobile && !mobile.value) {
+          const digits = String(data.mobile || '').replace(/[^0-9]/g, '');
+          mobile.value = digits.length > 10 ? digits.slice(-10) : digits;
+        }
+        if (note) note.textContent = 'SY number: ' + ctx.syNumber + '. Name, father name, and mobile were filled from the member list. You can edit them.';
+      }).catch(function () {
+        if (note) note.textContent = 'SY number: ' + ctx.syNumber + '. Member details could not be loaded. Type your name, father name, and mobile.';
+      });
+    }
     
     // Store registration data for success page
     let registrationData = null;
@@ -1510,6 +1568,7 @@
     
     // Update on page load
     updateCaptaincyAndFee();
+    prefillSyMember();
     
     // Photo upload validation and preview
     document.getElementById('photo').addEventListener('change', function(e) {

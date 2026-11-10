@@ -138,6 +138,21 @@
       btn.disabled = true;
       btn.textContent = 'Checking email...';
       try {
+        if (member) {
+          btn.textContent = 'Checking SY number...';
+          const memberCheck = await fetch(window.SPL2026_SCRIPT_URL + '?action=lookupSyMember&syNumber=' + encodeURIComponent(syNumber));
+          const memberText = await memberCheck.text();
+          if (memberText.indexOf('SY member found') === -1) {
+            const message = memberText.indexOf('Error:') !== -1
+              ? memberText.replace(/^Error:\s*/i, '')
+              : 'SY number ' + syNumber + ' was not found in the SY Memberlist. Update the Apps Script and deploy a new version, then try again.';
+            showStatus(message, 'error');
+            btn.disabled = false;
+            btn.textContent = 'Send OTP for verification';
+            return;
+          }
+          btn.textContent = 'Checking email...';
+        }
         const check = await fetch(window.SPL2026_SCRIPT_URL + '?action=checkEmailInPaymentSheet&email=' + encodeURIComponent(playerEmail));
         const checkText = await check.text();
         if (checkText.toLowerCase().indexOf('error') !== -1 || checkText.toLowerCase().indexOf('already') !== -1) {
