@@ -31,8 +31,11 @@
     .sy-row { display: flex; gap: 8px; align-items: center; }
     .sy-row input { width: 140px; flex: 0 0 140px; }
     #checkSyBtn { width: auto; margin-top: 0; padding: 12px 18px; white-space: nowrap; }
-    .member-preview { display: none; margin-top: 10px; padding: 10px 12px; border-radius: 8px; background: #0f172a; border: 1px solid #334155; line-height: 1.7; }
-    .member-preview span { color: #94a3b8; display: inline-block; width: 110px; }
+    .member-preview { display: none; }
+    .sy-check-result { display: none; margin-top: 10px; padding: 10px 12px; border-radius: 8px; line-height: 1.6; }
+    .sy-check-result.success { display: block; background: #065f46; color: #6ee7b7; }
+    .sy-check-result.error { display: block; background: #7f1d1d; color: #fecaca; }
+    .sy-check-result span { color: #d1fae5; display: inline-block; width: 110px; }
   </style>
 </head>
 <body>
@@ -63,7 +66,7 @@
           <input type="text" id="syNumber" maxlength="30" autocomplete="off">
           <button type="button" id="checkSyBtn">Check</button>
         </div>
-        <div id="syMemberPreview" class="member-preview"></div>
+        <div id="syCheckResult" class="sy-check-result"></div>
       </div>
       <div class="form-group">
         <label>Amount to collect</label>
@@ -135,11 +138,21 @@
         return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch];
       });
     }
+    function hideStatus() {
+      const el = document.getElementById('statusMessage');
+      el.textContent = '';
+      el.className = 'status';
+    }
+    function showSyResult(message, type) {
+      const el = document.getElementById('syCheckResult');
+      el.innerHTML = message;
+      el.className = 'sy-check-result ' + type;
+    }
     function clearSyCheck() {
       checkedSyNumber = '';
-      const preview = document.getElementById('syMemberPreview');
-      preview.style.display = 'none';
-      preview.innerHTML = '';
+      const el = document.getElementById('syCheckResult');
+      el.className = 'sy-check-result';
+      el.innerHTML = '';
     }
     document.getElementById('feeType').addEventListener('change', updateDue);
     document.getElementById('syMember').addEventListener('change', function () {
@@ -152,13 +165,14 @@
       if (!scriptReady()) return;
       const syNumber = document.getElementById('syNumber').value.trim();
       if (!syNumber) {
-        showStatus('Enter the SY number.', 'error');
+        showSyResult('Enter the SY number.', 'error');
         return;
       }
       const btn = this;
       btn.disabled = true;
       btn.textContent = 'Checking...';
       clearSyCheck();
+      hideStatus();
       try {
         const response = await fetch(window.SPL2026_SCRIPT_URL + '?action=lookupSyMember&format=json&syNumber=' + encodeURIComponent(syNumber));
         const body = await response.text();
@@ -167,18 +181,15 @@
         if (!data || !data.found) {
           const details = (data && data.error) || body;
           const notOnList = String(details).indexOf('was not found in the SY Memberlist') !== -1;
-          showStatus(notOnList ? 'Ask the player to check SY number again.' : (data && data.error ? data.error : 'Could not check the SY number. Try again.'), 'error');
+          showSyResult(notOnList ? 'Ask the player to check SY number again.' : escapeHtml((data && data.error) || 'Could not check the SY number. Try again.'), 'error');
           btn.disabled = false;
           btn.textContent = 'Check';
           return;
         }
         checkedSyNumber = syNumber;
-        const preview = document.getElementById('syMemberPreview');
-        preview.style.display = 'block';
-        preview.innerHTML = '<div><span>Name</span>' + escapeHtml(data.name) + '</div><div><span>Father name</span>' + escapeHtml(data.fatherName) + '</div>';
-        showStatus('SY number ' + syNumber + ' is on the member list.', 'success');
+        showSyResult('<div><span>Name</span>' + escapeHtml(data.name) + '</div><div><span>Father name</span>' + escapeHtml(data.fatherName) + '</div>', 'success');
       } catch (error) {
-        showStatus('Could not check the SY number. ' + error.message, 'error');
+        showSyResult('Could not check the SY number. ' + escapeHtml(error.message), 'error');
       }
       btn.disabled = false;
       btn.textContent = 'Check';
