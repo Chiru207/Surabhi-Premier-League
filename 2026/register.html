@@ -1208,25 +1208,43 @@
       });
     }
     
-    // Helper function to add logo to a specific page
-    function addLogoToPage(doc, logoDataUrl, pageNumber) {
-      if (!logoDataUrl) {
-        console.log('No logo data available, skipping logo on page ' + pageNumber);
-        return;
-      }
-      
+    function addLogoBesideHeading(doc, logoDataUrl) {
+      const logoWidth = 120 * 25.4 / 96;
+      const logoHeight = logoWidth * (370 / 674);
+      const logoX = 16;
+      const logoY = 8;
+      if (!logoDataUrl) return { x: 20, bottom: logoY + logoHeight };
       try {
-        const logoWidth = 30;
-        const logoHeight = 30;
-        const pageWidth = doc.internal.pageSize.getWidth();
-        const logoX = pageWidth - logoWidth - 5;
-        const logoY = 5;
-        
         doc.addImage(logoDataUrl, 'PNG', logoX, logoY, logoWidth, logoHeight);
-        console.log('✓ Logo added to page ' + pageNumber);
+        return { x: logoX + logoWidth + 6, bottom: logoY + logoHeight };
       } catch (error) {
-        console.error('Error adding logo to page ' + pageNumber + ':', error);
+        console.error('Error adding logo beside the heading:', error);
+        return { x: 20, bottom: logoY + logoHeight };
       }
+    }
+
+    function fitPhotoForPdf(dataUrl) {
+      return new Promise(function (resolve) {
+        if (!dataUrl) {
+          resolve(null);
+          return;
+        }
+        const img = new Image();
+        img.onload = function () {
+          try {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            canvas.getContext('2d').drawImage(img, 0, 0);
+            resolve({ dataUrl: canvas.toDataURL('image/jpeg', 0.85), width: img.width, height: img.height });
+          } catch (error) {
+            console.error('Error preparing the player photo for the PDF:', error);
+            resolve(null);
+          }
+        };
+        img.onerror = function () { resolve(null); };
+        img.src = dataUrl;
+      });
     }
     
     // Function to generate PDF and save it to Drive automatically
@@ -1252,23 +1270,42 @@
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
         
-        // Load logo once for reuse across all pages
         const logoDataUrl = await loadLogoForPDF();
+        const playerPhoto = await fitPhotoForPdf(registrationData.photoPreview);
+        const photoBox = playerPhoto ? { x: 150, y: 42, w: 42, h: 54 } : null;
+        let pageIndex = 1;
+
+        function contentRight(y) {
+          if (photoBox && pageIndex === 1 && y < photoBox.y + photoBox.h) return photoBox.x - 4;
+          return 190;
+        }
         
-        // Set font
-        doc.setFontSize(20);
         doc.setTextColor(0, 0, 0);
-        doc.text('Surabhi Premier League 2026', 105, 20, { align: 'center' });
+        const heading = addLogoBesideHeading(doc, logoDataUrl);
+        doc.setFontSize(18);
+        doc.text('Surabhi Premier League 2026', heading.x, 16);
+        doc.setFontSize(13);
+        doc.text('Registration Confirmation', heading.x, 24);
         
-        doc.setFontSize(16);
-        doc.text('Registration Confirmation', 105, 30, { align: 'center' });
-        
-        // Draw line
         doc.setLineWidth(0.5);
-        doc.line(20, 35, 190, 35);
+        doc.line(16, 34, 194, 34);
+
+        if (photoBox) {
+          const scale = Math.min(photoBox.w / playerPhoto.width, photoBox.h / playerPhoto.height);
+          const drawW = playerPhoto.width * scale;
+          const drawH = playerPhoto.height * scale;
+          doc.addImage(
+            playerPhoto.dataUrl,
+            'JPEG',
+            photoBox.x + (photoBox.w - drawW) / 2,
+            photoBox.y + (photoBox.h - drawH) / 2,
+            drawW,
+            drawH
+          );
+        }
         
         // Registration details
-        let yPos = 45;
+        let yPos = 42;
         doc.setFontSize(12);
         doc.setTextColor(0, 0, 0);
         
@@ -1277,13 +1314,13 @@
         doc.setTextColor(0, 100, 200);
         doc.setFont(undefined, 'bold');
         doc.text('Mobile Number:', 20, yPos);
-        doc.text(registrationData.mobile || '', 120, yPos);
+        doc.text(registrationData.mobile || '', 80, yPos);
         yPos += 10;
         
         doc.setFontSize(12);
         doc.setTextColor(0, 0, 0);
         doc.setFont(undefined, 'normal');
-        doc.line(20, yPos, 190, yPos);
+        doc.line(20, yPos, contentRight(yPos), yPos);
         yPos += 10;
         
         // Other details
@@ -1322,13 +1359,13 @@
         details.forEach(([label, value]) => {
           if (yPos > 270) {
             doc.addPage();
+            pageIndex += 1;
             yPos = 20;
           }
           doc.setFont(undefined, 'bold');
           doc.text(label, 20, yPos);
           doc.setFont(undefined, 'normal');
-          // Wrap long text if needed
-          const maxWidth = 100;
+          const maxWidth = Math.max(40, contentRight(yPos) - 80);
           const lines = doc.splitTextToSize(value || '', maxWidth);
           doc.text(lines, 80, yPos);
           yPos += Math.max(8, lines.length * 6);
@@ -1337,6 +1374,7 @@
         // Thank you message and contact information
         if (yPos > 250) {
           doc.addPage();
+          pageIndex += 1;
           yPos = 20;
         } else {
           yPos += 10;
@@ -1369,13 +1407,10 @@
         }
         yPos += Math.max(8, organizersLines.length * 6);
         
-        // Footer and logo on all pages
+        // Footer on all pages
         const pageCount = doc.internal.pages.length - 1;
         for (let i = 1; i <= pageCount; i++) {
           doc.setPage(i);
-          
-          // Add logo to each page (using pre-loaded logo data)
-          addLogoToPage(doc, logoDataUrl, i);
           
           doc.setFontSize(10);
           doc.setTextColor(128, 128, 128);
