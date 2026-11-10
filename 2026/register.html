@@ -1884,6 +1884,8 @@
               pendingPhotoName = file.name;
               pendingPhotoType = file.type;
               pendingPhotoPreview = e.target.result; // Full data URL for preview
+              if (pendingFormData) pendingFormData.photoPreview = pendingPhotoPreview;
+              if (backupFormData) backupFormData.photoPreview = pendingPhotoPreview;
               
               // Show confirmation
               console.log('Calling showConfirmation with photo...');
@@ -1926,6 +1928,8 @@
               pendingPhotoName = file.name;
               pendingPhotoType = file.type;
               pendingPhotoPreview = e.target.result; // Full data URL for preview
+              if (pendingFormData) pendingFormData.photoPreview = pendingPhotoPreview;
+              if (backupFormData) backupFormData.photoPreview = pendingPhotoPreview;
               
               // Show confirmation
               console.log('Calling showConfirmation with photo...');
@@ -2662,8 +2666,9 @@
             jerseyNumber: '',
             tshirtSize: '',
             trouserSize: '',
-            photoPreview: pendingPhotoPreview || null
+            photoPreview: null
           };
+          successData.photoPreview = successData.photoPreview || pendingPhotoPreview || null;
           
           document.getElementById('confirmationOverlay').classList.remove('active');
           document.getElementById('registrationForm').reset();
@@ -2833,8 +2838,9 @@
                 jerseyNumber: '',
                 tshirtSize: '',
                 trouserSize: '',
-                photoPreview: pendingPhotoPreview || null
+                photoPreview: null
               };
+              successData.photoPreview = successData.photoPreview || pendingPhotoPreview || null;
               
               document.getElementById('confirmationOverlay').classList.remove('active');
               document.getElementById('registrationForm').reset();
