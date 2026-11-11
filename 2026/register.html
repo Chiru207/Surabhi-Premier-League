@@ -802,7 +802,7 @@
       </div>
     </div>
     
-    <a href="../2026.html" class="back-link">← Back to Home</a>
+    <a href="../2026.html" class="back-link">SPL 2026 home</a>
   </div>
   
   <!-- Success Page (hidden initially, outside container) -->
@@ -819,6 +819,7 @@
       
       <div class="success-actions">
         <button id="emailPdfBtn" class="download-btn">📧 Email Registration Details (PDF)</button>
+        <a class="home-btn" href="../2026.html">SPL 2026 home</a>
       </div>
     </div>
   </div>
@@ -1467,10 +1468,11 @@
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: new URLSearchParams({
+              body: new URLSearchParams({
               action: 'savePdfToDrive',
               pdfData: pdfBase64,
-              serialNumber: serialNum
+              serialNumber: serialNum,
+              overwrite: overwriteDriveFiles
             })
           });
           
@@ -1682,6 +1684,47 @@
     let pendingPhotoName = null;
     let pendingPhotoType = null;
     let pendingPhotoPreview = null;
+    let overwriteDriveFiles = '';
+
+    function driveFilesForSerial(serialNumber) {
+      return new Promise(function (resolve) {
+        const callbackName = 'spl2026_files_' + Date.now();
+        const script = document.createElement('script');
+        let finished = false;
+        const timer = setTimeout(function () { finish(null); }, 15000);
+        function finish(data) {
+          if (finished) return;
+          finished = true;
+          clearTimeout(timer);
+          try { delete window[callbackName]; } catch (ignored) {}
+          if (script.parentNode) script.parentNode.removeChild(script);
+          resolve(data);
+        }
+        window[callbackName] = function (data) { finish(data); };
+        script.onerror = function () { finish(null); };
+        try {
+          const url = new URL(GOOGLE_SCRIPT_URL);
+          url.searchParams.set('action', 'driveFiles');
+          url.searchParams.set('serialNumber', serialNumber);
+          url.searchParams.set('callback', callbackName);
+          script.src = url.toString();
+          document.body.appendChild(script);
+        } catch (error) {
+          finish(null);
+        }
+      });
+    }
+
+    async function confirmDriveOverwrite(serialNumber) {
+      const files = await driveFilesForSerial(serialNumber);
+      if (files && files.photo && files.pdf) {
+        const allowed = confirm('A photo and a PDF are already stored for serial number ' + serialNumber + '. Overwrite them?');
+        overwriteDriveFiles = allowed ? 'yes' : '';
+        return allowed;
+      }
+      overwriteDriveFiles = files && files.pdf ? 'yes' : '';
+      return true;
+    }
     
     // Initialize registration page
     function initRegistrationPage() {
@@ -2561,13 +2604,16 @@
       }
       console.log('Confirm button found, attaching click handler...');
       
-      confirmBtn.addEventListener('click', function() {
+      confirmBtn.addEventListener('click', async function() {
       console.log('Confirm button clicked!');
       console.log('Pending form data:', pendingFormData);
       
       if (!pendingFormData) {
         console.error('No pending form data!');
         alert('Error: No form data to submit. Please fill out the form again.');
+        return;
+      }
+      if (!await confirmDriveOverwrite(pendingFormData.serialNumber || '')) {
         return;
       }
       
@@ -2597,7 +2643,8 @@
         trouserSize: pendingFormData.trouserSize || '',
         photo: pendingPhotoBase64 || '',
         photoName: pendingPhotoName || '',
-        photoType: pendingPhotoType || ''
+        photoType: pendingPhotoType || '',
+        overwrite: overwriteDriveFiles
       };
       
       // Log what we're sending (for debugging)
@@ -2731,13 +2778,16 @@
       const confirmBtn = document.getElementById('confirmBtn');
       if (confirmBtn) {
         console.log('Confirm button found, attaching click handler...');
-        confirmBtn.addEventListener('click', function() {
+        confirmBtn.addEventListener('click', async function() {
           console.log('Confirm button clicked!');
           console.log('Pending form data:', pendingFormData);
           
           if (!pendingFormData) {
             console.error('No pending form data!');
             alert('Error: No form data to submit. Please fill out the form again.');
+            return;
+          }
+          if (!await confirmDriveOverwrite(pendingFormData.serialNumber || '')) {
             return;
           }
           
@@ -2767,7 +2817,8 @@
             trouserSize: pendingFormData.trouserSize || '',
             photo: pendingPhotoBase64 || '',
             photoName: pendingPhotoName || '',
-            photoType: pendingPhotoType || ''
+            photoType: pendingPhotoType || '',
+            overwrite: overwriteDriveFiles
           };
           
           // Log what we're sending (for debugging)

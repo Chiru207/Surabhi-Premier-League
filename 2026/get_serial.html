@@ -96,7 +96,7 @@
       <div class="serial" id="serialNumberDisplay"></div>
       <a class="back-link" href="get_serial.html">Enter another payment</a>
     </div>
-    <a class="back-link" id="backLink" href="../2026.html">← Back to SPL 2026</a>
+    <a class="back-link" id="backLink" href="../2026.html">SPL 2026 home</a>
   </div>
   <script>
     let ORGANIZERS = {
@@ -309,7 +309,6 @@
         const serialMatch = submitText.match(/Serial Number:\s*(\d+)/i);
         if (serialMatch) {
           document.getElementById('paymentForm').style.display = 'none';
-          document.getElementById('backLink').style.display = 'none';
           document.getElementById('successPage').style.display = 'block';
           document.getElementById('serialNumberDisplay').textContent = serialMatch[1];
         } else {
