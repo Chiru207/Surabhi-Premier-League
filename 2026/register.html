@@ -481,6 +481,10 @@
     }
     
     .download-btn {
+      display: block;
+      box-sizing: border-box;
+      text-align: center;
+      text-decoration: none;
       width: 100%;
       padding: 16px;
       background: #ef6a2f;
@@ -818,7 +822,7 @@
       
       
       <div class="success-actions">
-        <button id="emailPdfBtn" class="download-btn">📧 Email Registration Details (PDF)</button>
+        <a id="downloadPdfBtn" class="download-btn" href="#">Download registration PDF</a>
         <a class="home-btn" href="../2026.html">SPL 2026 home</a>
       </div>
     </div>
@@ -905,6 +909,7 @@
     // Store registration data for success page
     let registrationData = null;
     let generatedPdfBase64 = null; // Store PDF locally after generation
+    let registrationPdfUrl = '';
     
     // Flag to track if we've received postMessage (to prevent duplicate processing)
     let postMessageReceived = false;
@@ -1481,6 +1486,16 @@
           if (result.includes('success') || result.includes('saved')) {
             console.log('✓ PDF saved to Drive successfully with filename: ' + serialNum + '.pdf');
             pdfSavedToDrive = true; // Mark as saved
+            const link = result.match(/https:\/\/\S+/);
+            if (link) {
+              registrationPdfUrl = link[0];
+              const downloadBtn = document.getElementById('downloadPdfBtn');
+              if (downloadBtn) {
+                downloadBtn.href = registrationPdfUrl;
+                downloadBtn.target = '_blank';
+                downloadBtn.rel = 'noopener';
+              }
+            }
           } else {
             console.error('Error saving PDF to Drive: ' + result);
             // Reset flag on error so it can be retried
@@ -1498,82 +1513,31 @@
       }
     }
     
-    // Function to email PDF (use locally stored PDF)
-    async function emailPDF() {
-      if (!registrationData) {
-        alert('No registration data available to email.');
+    function downloadRegistrationPdf(event) {
+      if (registrationPdfUrl) {
         return;
       }
-      
-      const btn = document.getElementById('emailPdfBtn');
-      if (btn) {
-        btn.disabled = true;
-        btn.textContent = 'Sending PDF...';
-      }
-      
-      const email = registrationData.email || sessionStorage.getItem('spl2026_verifiedEmail') || '';
-      
-      if (!email) {
-        alert('Email address not found. Cannot send PDF.');
-        if (btn) {
-          btn.disabled = false;
-          btn.textContent = '📧 Email Registration Details (PDF)';
-        }
-        return;
-      }
-      
-      // Check if PDF is available locally
+      event.preventDefault();
       if (!generatedPdfBase64) {
-        alert('PDF not available. Please wait for PDF generation to complete or contact organizers.');
-        if (btn) {
-          btn.disabled = false;
-          btn.textContent = '📧 Email Registration Details (PDF)';
-        }
+        alert('The PDF is still being saved. Wait a moment and try again.');
         return;
       }
-      
-      console.log('Sending locally stored PDF to email:', email);
-      
-      // Send locally stored PDF to Google Apps Script for emailing
-      try {
-        const response = await fetch(GOOGLE_SCRIPT_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: new URLSearchParams({
-            action: 'emailPdf',
-            email: email,
-            pdfData: generatedPdfBase64,
-            name: registrationData.name || '',
-            mobile: registrationData.mobile || ''
-          })
-        });
-        
-        const result = await response.text();
-        
-        if (result.includes('success') || result.includes('sent')) {
-          alert('✓ PDF has been sent to your email address: ' + email);
-        } else {
-          alert('Error sending PDF: ' + result);
-        }
-      } catch (error) {
-        alert('Error sending PDF. Please try again.');
-        console.error('PDF email error:', error);
-      } finally {
-        if (btn) {
-          btn.disabled = false;
-          btn.textContent = '📧 Email Registration Details (PDF)';
-        }
-      }
+      const bytes = atob(generatedPdfBase64);
+      const buffer = new Uint8Array(bytes.length);
+      for (let i = 0; i < bytes.length; i++) buffer[i] = bytes.charCodeAt(i);
+      const url = URL.createObjectURL(new Blob([buffer], { type: 'application/pdf' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = (sessionStorage.getItem('spl2026_verifiedSerial') || 'registration') + '.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
     }
     
-    // Attach PDF email button handler
     document.addEventListener('DOMContentLoaded', function() {
-      const emailBtn = document.getElementById('emailPdfBtn');
-      if (emailBtn) {
-        emailBtn.addEventListener('click', emailPDF);
-      }
+      const downloadBtn = document.getElementById('downloadPdfBtn');
+      if (downloadBtn) downloadBtn.addEventListener('click', downloadRegistrationPdf);
     });
     // Name validation - only alphabets
     document.getElementById('name').addEventListener('input', function(e) {
