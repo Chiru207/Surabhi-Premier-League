@@ -8,28 +8,6 @@
   <style>
     body { margin: 0; min-height: 100vh; background: #f8f4fb; color: #3c2460; }
     .page-logo { position: fixed; top: 16px; right: 16px; width: clamp(60px, 8vw, 110px); z-index: 20; }
-    .menu-toggle, .sidebar, .sidebar-backdrop { z-index: 30; }
-    .menu-toggle {
-      position: fixed; top: 16px; left: 16px; width: 46px; height: 46px;
-      border: 2px solid #eadff5; border-radius: 8px; background: #ffffff;
-      display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 5px; cursor: pointer;
-    }
-    .menu-toggle span { width: 22px; height: 3px; background: #6a35a8; border-radius: 2px; }
-    .sidebar {
-      position: fixed; top: 0; left: 0; height: 100vh; width: min(280px, 82vw);
-      background: #ffffff; border-right: 2px solid #eadff5;
-      padding: 84px 18px 24px; transform: translateX(-105%); transition: transform 0.25s ease;
-      display: flex; flex-direction: column; gap: 8px;
-    }
-    .sidebar.open { transform: translateX(0); }
-    .sidebar-title { color: #5b2d91; font-weight: 700; margin-bottom: 8px; }
-    .menu-item, .menu-link {
-      color: #3c2460; background: transparent; border: 0; text-align: left;
-      padding: 12px 14px; border-radius: 10px; cursor: pointer; font-size: 16px; text-decoration: none;
-    }
-    .menu-item.active, .menu-item:hover, .menu-link:hover { background: #f3eafb; }
-    .sidebar-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); }
-    .sidebar-backdrop.open { display: block; }
     .content { padding: 96px 20px 40px; max-width: 1120px; margin: 0 auto; }
     .view { display: none; }
     .view.active { display: block; }
@@ -53,16 +31,18 @@
     .organiser-note { margin: 8px 0 0; color: #7d6d8c; font-size: 14px; }
     .blank { color: #7d6d8c; }
     .year-link { color: #6a35a8; }
-    .home-layout { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: clamp(20px, 3vw, 40px); }
-    .flyer-frame { flex: 1 1 300px; min-width: 0; display: flex; justify-content: center; }
+    .home-layout { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: clamp(24px, 4vw, 48px); }
+    .flyer-frame { flex: 1 1 280px; min-width: 0; display: flex; justify-content: center; align-items: center; }
     .home-flyer {
-      display: block; width: auto; height: auto; max-width: 100%; max-height: 80vh;
+      display: block; width: auto; height: auto; max-width: 100%;
+      max-height: min(80vh, calc(100vh - 160px));
       object-fit: contain; margin: 0; border: 1px solid #eadff5; border-radius: 16px; background: #ffffff;
     }
-    .home-copy { flex: 1 1 280px; max-width: 420px; min-width: min(100%, 260px); text-align: center; }
-    .home-copy .actions { margin-top: 24px; gap: 22px; }
+    .home-copy { flex: 1 1 280px; max-width: 440px; min-width: min(100%, 260px); text-align: center; }
+    .home-copy .actions { margin-top: 20px; gap: 18px; }
     @media (max-width: 720px) {
-      .home-flyer { max-height: 68vh; }
+      .home-layout { align-items: center; }
+      .home-flyer { max-height: min(62vh, calc(100vh - 150px)); }
     }
     #sponsors > h2 { font-size: clamp(24px, 4vw, 36px); font-weight: 700; text-align: center; margin-bottom: clamp(20px, 3vh, 30px); }
     .sponsors-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: clamp(20px, 3vw, 30px); margin-top: clamp(20px, 3vh, 30px); }
@@ -148,7 +128,7 @@
         </div>
         <div class="sponsor-card">
           <h3 class="sponsor-name">కీ.శే. శ్రీమతి & శ్రీ V. రాజేశ్వరి - సత్యనారాయణ గార్ల </h3>
-          <p class="sponsor-desc">జ్ఞాపకార్థం వారి తనయుడు V. చెన్నకేశవ గారు <br> <strong>3 రోజులకు సరిపడా డ్రింకింగ్ వాటర్</strong></p>
+          <p class="sponsor-desc">జ్ఞాపకార్థం వారి తనయుడు <br> V. చెన్నకేశవ గారు <br> <strong>3 రోజులకు సరిపడా డ్రింకింగ్ వాటర్</strong></p>
         </div>
         <div class="sponsor-card">
           <h3 class="sponsor-name">కీ.శే. V. రాజులమ్మ గారి జ్ఞాపకార్థం</h3>
@@ -561,6 +541,6 @@ End section: Closing note -->
       </div>
     </section>
   </main>
-  <script src="2026/menu.js"></script>
+  <script src="2026/menu.js?v=7"></script>
 </body>
 </html>
