@@ -4,4 +4,4 @@
 // and raise the config.js?v= number in the 2026 pages by one.
 var SPL2026_URL_1 = 'https://script.google.com/macros/s/AKfycbySAf1rruBqW80e8TlXwMgYXCrfbxl10K2UAMO5HvWI1lPZEK_6MlffDA4vZlba8c82/exec';
 var SPL2026_URL_2 = 'https://script.google.com/macros/s/AKfycbwcglJ9EHiuQntXfG2iQieq9-rn6P0eeJvEY3Y2eH1pxENm-mT9pJH30hOpmb9rZKddqQ/exec';
-window.SPL2026_SCRIPT_URL = SPL2026_URL_2;
+window.SPL2026_SCRIPT_URL = SPL2026_URL_1;
