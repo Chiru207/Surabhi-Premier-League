@@ -34,7 +34,9 @@
     '.menu-link{color:#3c2460;background:transparent;border:0;text-align:left;padding:12px 14px;border-radius:10px;cursor:pointer;font-size:16px;text-decoration:none;font-family:inherit;}',
     '.menu-link.active,.menu-link:hover{background:#f3eafb;}',
     '.sidebar-backdrop{display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.45);}',
-    '.sidebar-backdrop.open{display:block;}'
+    '.sidebar-backdrop.open{display:block;}',
+    '.visitor-count{position:fixed;right:16px;bottom:16px;z-index:10002;max-width:calc(100vw - 32px);box-sizing:border-box;background:#fff;color:#5b2d91;border:2px solid #eadff5;border-radius:999px;padding:8px 14px;font:700 14px/1.3 inherit;box-shadow:0 8px 20px rgba(106,53,168,.18);pointer-events:none;}',
+    '.home-copy{padding-bottom:120px;}'
   ].join('');
   document.head.appendChild(style);
 
@@ -66,6 +68,45 @@
   document.body.insertBefore(backdrop, document.body.firstChild);
   document.body.insertBefore(nav, document.body.firstChild);
   document.body.insertBefore(toggle, document.body.firstChild);
+
+  var badge = document.createElement('div');
+  badge.className = 'visitor-count';
+  badge.textContent = '2026 Visitors count';
+  document.body.appendChild(badge);
+
+  function showVisitCount() {
+    if (!window.SPL2026_SCRIPT_URL) return;
+    var callbackName = 'spl2026_visit_' + Date.now();
+    var script = document.createElement('script');
+    var finished = false;
+    function finish(data) {
+      if (finished) return;
+      finished = true;
+      clearTimeout(timer);
+      try { delete window[callbackName]; } catch (ignored) {}
+      if (script.parentNode) script.parentNode.removeChild(script);
+      if (data && data.success && typeof data.count === 'number') {
+        badge.textContent = '2026 Visitors count: ' + data.count;
+      }
+    }
+    var timer = setTimeout(function () { finish(null); }, 20000);
+    window[callbackName] = function (data) { finish(data); };
+    script.onerror = function () { finish(null); };
+    var url = new URL(window.SPL2026_SCRIPT_URL);
+    url.searchParams.set('action', 'visit');
+    url.searchParams.set('callback', callbackName);
+    script.src = url.toString();
+    document.body.appendChild(script);
+  }
+
+  if (window.SPL2026_SCRIPT_URL) {
+    showVisitCount();
+  } else {
+    var configScript = document.createElement('script');
+    configScript.src = (inFolder ? '' : '2026/') + 'config.js?v=4';
+    configScript.onload = showVisitCount;
+    document.body.appendChild(configScript);
+  }
 
   var sections = document.querySelectorAll('.view');
   if (!sections.length) return;
