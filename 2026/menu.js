@@ -13,9 +13,9 @@
     { id: 'sponsors', label: 'Sponsors', href: root + '2026.html?view=sponsors' },
     { id: 'playing-conditions', label: 'Playing Conditions', href: root + '2026.html?view=playing-conditions' },
     { id: 'organizing-team', label: 'Organizing Team', href: root + '2026.html?view=organizing-team' },
-    { id: 'teams', label: 'Teams', href: root + '2026.html?view=teams' },
-    { id: 'schedule', label: 'Schedule', href: root + '2026.html?view=schedule' },
-    { id: 'points', label: 'Points Table', href: root + '2026.html?view=points' },
+    { id: 'teams', label: 'Teams', href: root + '2026.html?view=teams', hidden: true },
+    { id: 'schedule', label: 'Schedule', href: root + '2026.html?view=schedule', hidden: true },
+    { id: 'points', label: 'Points Table', href: root + '2026.html?view=points', hidden: true },
     { id: 'year', label: 'SPL-2025', href: root + '2025.html' }
   ];
 
@@ -26,17 +26,20 @@
 
   var style = document.createElement('style');
   style.textContent = [
-    '.menu-toggle{position:fixed;top:16px;left:16px;z-index:10002;width:46px;height:46px;border:2px solid #eadff5;border-radius:8px;background:#fff;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;cursor:pointer;}',
-    '.menu-toggle span{width:22px;height:3px;background:#6a35a8;border-radius:2px;}',
-    '.sidebar{position:fixed;top:0;left:0;z-index:10001;height:100vh;width:min(280px,82vw);box-sizing:border-box;background:#fff;border-right:2px solid #eadff5;padding:84px 18px 24px;transform:translateX(-105%);transition:transform .25s ease;display:flex;flex-direction:column;gap:8px;overflow-y:auto;}',
-    '.sidebar.open{transform:translateX(0);}',
-    '.sidebar-title{color:#5b2d91;font-weight:700;margin-bottom:8px;}',
-    '.menu-link{color:#3c2460;background:transparent;border:0;text-align:left;padding:12px 14px;border-radius:10px;cursor:pointer;font-size:16px;text-decoration:none;font-family:inherit;}',
-    '.menu-link.active,.menu-link:hover{background:#f3eafb;}',
-    '.sidebar-backdrop{display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.45);}',
-    '.sidebar-backdrop.open{display:block;}',
-    '.visitor-count{position:fixed;right:16px;bottom:16px;z-index:10002;max-width:calc(100vw - 32px);box-sizing:border-box;background:#fff;color:#5b2d91;border:2px solid #eadff5;border-radius:999px;padding:8px 14px;font:700 14px/1.3 inherit;box-shadow:0 8px 20px rgba(106,53,168,.18);pointer-events:none;}',
-    '.home-copy{padding-bottom:120px;}'
+    '.menu-toggle{position:fixed;top:clamp(10px,2vh,20px);left:clamp(10px,2vw,20px);z-index:10002;width:clamp(40px,6vw,50px);height:clamp(40px,6vw,50px);box-sizing:border-box;padding:8px;border:2px solid #eadff5;border-radius:8px;background:linear-gradient(135deg,#ffffff 0%,#f8f4fb 100%);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;cursor:pointer;transition:all .3s ease;}',
+    '.menu-toggle:hover{border-color:#6a35a8;background:linear-gradient(135deg,#f3eafb 0%,#ffffff 100%);}',
+    '.menu-toggle span{width:70%;height:3px;background:#6a35a8;border-radius:2px;transition:all .3s ease;}',
+    '.menu-toggle:hover span{background:#5b2d91;}',
+    '.sidebar{position:fixed;top:0;left:0;z-index:10001;height:100vh;width:clamp(240px,22vw,300px);box-sizing:border-box;background:linear-gradient(180deg,#ffffff 0%,#f8f4fb 100%);border-right:2px solid #eadff5;padding:clamp(10px,2vh,20px) clamp(15px,2vw,25px) clamp(20px,3vh,40px);transform:translateX(-100%);transition:transform .3s ease;display:flex;flex-direction:column;gap:clamp(15px,2vh,25px);overflow-y:auto;overflow-x:hidden;}',
+    '.menu-toggle:hover ~ .sidebar,.sidebar:hover,.sidebar.open{transform:translateX(0);}',
+    '.sidebar-title{color:#5b2d91;font-size:clamp(18px,2.5vw,24px);font-weight:700;margin:0 0 clamp(12px,2vh,18px);min-height:clamp(40px,6vw,50px);padding-left:calc(clamp(40px,6vw,50px) + 10px);box-sizing:border-box;display:flex;align-items:center;justify-content:center;text-align:center;border-bottom:2px solid #eadff5;}',
+    '.menu-link{display:block;box-sizing:border-box;color:#3c2460;background:linear-gradient(135deg,#ffffff 0%,#f8f4fb 100%);border:2px solid #eadff5;text-align:center;padding:clamp(12px,2vh,18px) clamp(15px,2vw,25px);border-radius:12px;cursor:pointer;font-size:clamp(14px,2vw,18px);font-weight:600;text-decoration:none;font-family:inherit;transition:all .3s ease;}',
+    '.menu-link:hover{background:linear-gradient(135deg,#f3eafb 0%,#ffffff 100%);border-color:#6a35a8;color:#5b2d91;transform:translateX(5px);}',
+    '.menu-link.active{background:linear-gradient(135deg,#f3eafb 0%,#ffffff 100%);border-color:#6a35a8;color:#5b2d91;box-shadow:0 4px 12px rgba(106,53,168,.3);}',
+    '.sidebar-backdrop{display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.5);opacity:0;transition:opacity .3s ease;}',
+    '.sidebar-backdrop.open{display:block;opacity:1;}',
+    '@media (max-width:768px){.menu-toggle:hover ~ .sidebar,.sidebar:hover{transform:translateX(-100%);}.sidebar.open{transform:translateX(0);}.menu-toggle{width:clamp(35px,6vw,45px);height:clamp(35px,6vw,45px);top:clamp(5px,1vh,10px);left:clamp(5px,1vw,10px);}.sidebar{width:80%;max-width:300px;padding-top:clamp(5px,1vh,10px);}.sidebar-title{min-height:clamp(35px,6vw,45px);padding-left:calc(clamp(35px,6vw,45px) + 8px);}}',
+    '.visitor-count{position:fixed;right:16px;bottom:16px;z-index:10002;max-width:calc(100vw - 32px);box-sizing:border-box;background:#fff;color:#5b2d91;border:2px solid #eadff5;border-radius:999px;padding:8px 14px;font:700 14px/1.3 inherit;box-shadow:0 8px 20px rgba(106,53,168,.18);pointer-events:none;}'
   ].join('');
   document.head.appendChild(style);
 
@@ -50,7 +53,7 @@
 
   var nav = document.createElement('nav');
   nav.className = 'sidebar';
-  nav.innerHTML = '<div class="sidebar-title">SPL 2026</div>' + items.map(function (item) {
+  nav.innerHTML = '<div class="sidebar-title">SPL 2026</div>' + items.filter(function (item) { return !item.hidden; }).map(function (item) {
     var current = item.id === active ? ' active' : '';
     return '<a class="menu-link' + current + '" href="' + item.href + '">' + item.label + '</a>';
   }).join('');
