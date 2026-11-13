@@ -30,11 +30,12 @@
     .menu-item.active, .menu-item:hover, .menu-link:hover { background: #f3eafb; }
     .sidebar-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); }
     .sidebar-backdrop.open { display: block; }
-    .content { padding: 96px 20px 40px; max-width: 980px; margin: 0 auto; }
+    .content { padding: 96px 20px 40px; max-width: 1120px; margin: 0 auto; }
     .view { display: none; }
     .view.active { display: block; }
     h1 { margin: 0 0 8px; color: #5b2d91; font-size: clamp(28px, 5vw, 42px); }
     h2 { margin: 0 0 12px; color: #6a35a8; }
+    .title-note { font-size: 15px; font-weight: 500; color: #7d6d8c; margin-left: 8px; }
     .card {
       background: #ffffff; border: 1px solid #eadff5; border-radius: 16px; padding: 22px; margin-top: 18px;
     }
@@ -52,73 +53,488 @@
     .organiser-note { margin: 8px 0 0; color: #7d6d8c; font-size: 14px; }
     .blank { color: #7d6d8c; }
     .year-link { color: #6a35a8; }
+    .home-layout { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: clamp(20px, 3vw, 40px); }
+    .flyer-frame { flex: 1 1 300px; min-width: 0; display: flex; justify-content: center; }
+    .home-flyer {
+      display: block; width: auto; height: auto; max-width: 100%; max-height: 80vh;
+      object-fit: contain; margin: 0; border: 1px solid #eadff5; border-radius: 16px; background: #ffffff;
+    }
+    .home-copy { flex: 1 1 280px; max-width: 420px; min-width: min(100%, 260px); text-align: center; }
+    .home-copy .actions { margin-top: 24px; gap: 22px; }
+    @media (max-width: 720px) {
+      .home-flyer { max-height: 68vh; }
+    }
+    .sponsors-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 16px; }
+    .sponsor-card { background: #ffffff; border: 1px solid #eadff5; border-radius: 16px; padding: 18px; text-align: center; }
+    .sponsor-name { margin: 0 0 8px; color: #5b2d91; font-size: 18px; line-height: 1.4; }
+    .sponsor-desc { margin: 0; color: #3c2460; line-height: 1.6; }
+    .conditions-table-container { overflow-x: auto; margin-top: 16px; }
+    .conditions-table { width: 100%; border-collapse: collapse; background: #ffffff; border: 1px solid #eadff5; border-radius: 16px; overflow: hidden; }
+    .conditions-table th { padding: 12px; background: #5b2d91; color: #ffffff; text-align: center; }
+    .conditions-table td { padding: 12px; text-align: center; color: #3c2460; border-top: 1px solid #eadff5; }
+    .conditions-table td:first-child { text-align: left; font-weight: 700; color: #5b2d91; }
+    .rules-container { margin-top: 28px; background: #ffffff; border: 1px solid #eadff5; border-radius: 16px; padding: 22px; }
+    .rules-greeting, .rules-closing { text-align: center; }
+    .rules-list { color: #3c2460; line-height: 1.8; padding-left: 22px; }
+    .rules-list li { margin-bottom: 16px; }
+    .organizing-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 16px; }
+    .organizing-section, .organizing-footer { background: #ffffff; border: 1px solid #eadff5; border-radius: 16px; padding: 18px; }
+    .organizing-footer { grid-column: 1 / -1; }
+    .organizing-section-title { margin: 0 0 12px; color: #5b2d91; border-bottom: 2px solid #eadff5; padding-bottom: 8px; }
+    .organizing-list { list-style: none; margin: 0; padding: 0; }
+    .organizing-list li { margin: 0 0 8px; padding-left: 16px; position: relative; }
+    .organizing-list li::before { content: "•"; position: absolute; left: 0; color: #ef6a2f; }
+    .organizing-note, .organizing-footer-text, .organizing-footer-note { color: #3c2460; line-height: 1.6; }
   </style>
 </head>
 <body>
-  <button class="menu-toggle" id="menuToggle" aria-label="Open menu"><span></span><span></span><span></span></button>
   <img src="Surabhi_Yuvasena_Logo.png" alt="Surabhi Yuvasena" class="page-logo">
-  <div class="sidebar-backdrop" id="backdrop"></div>
-  <nav class="sidebar" id="sidebar">
-    <div class="sidebar-title">SPL 2026</div>
-    <button class="menu-item active" data-view="home">Home</button>
-    <button class="menu-item" data-view="teams">Teams</button>
-    <button class="menu-item" data-view="schedule">Schedule</button>
-    <button class="menu-item" data-view="points">Points Table</button>
-    <button class="menu-item" data-view="sponsors">Sponsors</button>
-    <button class="menu-item" data-view="playing-conditions">Playing Conditions</button>
-    <button class="menu-item" data-view="organizing-team">Organizing Team</button>
-    <a class="menu-link" href="2026/serial-verify.html">Register</a>
-    <a class="menu-link" href="2026/get_serial.html">Get Serial Number</a>
-    <a class="menu-link" href="2026/players.html">Registered Players</a>
-    <a class="menu-link" href="index.html">Choose year</a>
-  </nav>
   <main class="content">
     <section class="view active" id="home">
-      <h1>SURABHI YUVASENA SPL - 2026</h1>
-      <p class="blank">Tournament details will be updated here. Player registration is open till <strong style="color: red;">2pm, 15-11-2026</strong>.</p>
-      <p class="blank">Pay registration fee and provide your email to <strong style="color: green;">SA Manohar(9966382042)</strong>, to get your serial number.</p>
-      <div class="actions">
-        <div class="organiser-action">
-          <a href="2026/serial-verify.html">Register</a>
-          <p class="organiser-note">For players with serial number</p>
+      <div class="home-layout">
+        <div class="flyer-frame">
+          <img class="home-flyer" src="2026/SPL-2026%20flyer.png" alt="Surabhi Premier League 2026 flyer">
         </div>
-        <div class="organiser-action">
-          <a class="alt" href="2026/get_serial.html">Get Serial Number</a>
-          <p class="organiser-note">For organisers only</p>
-        </div>
-        <div class="organiser-action">
-          <a href="2026/players.html">Registered Players</a>
+        <div class="home-copy">
+          <h1>SURABHI YUVASENA<br>SPL-2026</h1>
+          <p class="blank">Tournament details will be updated here. Player registration is open till <strong style="color: red;">2pm, 15-11-2026</strong>.</p>
+          <p class="blank">Pay registration fee and provide your email to <strong style="color: green;">SA Manohar(9966382042)</strong>, to get your serial number.</p>
+          <div class="actions">
+            <div class="organiser-action">
+              <a href="2026/serial-verify.html">Register</a>
+              <p class="organiser-note">For players with serial number</p>
+            </div>
+            <div class="organiser-action">
+              <a class="alt" href="2026/get_serial.html">Get Serial Number</a>
+              <p class="organiser-note">For organisers only</p>
+            </div>
+            <div class="organiser-action">
+              <a href="2026/players.html">Registered Players</a>
+            </div>
+          </div>
         </div>
       </div>
     </section>
     <section class="view" id="teams"><div class="card"><h2>Teams</h2><p class="blank">Details will be updated.</p></div></section>
     <section class="view" id="schedule"><div class="card"><h2>Schedule</h2><p class="blank">Details will be updated.</p></div></section>
     <section class="view" id="points"><div class="card"><h2>Points Table</h2><p class="blank">Details will be updated.</p></div></section>
-    <section class="view" id="sponsors"><div class="card"><h2>Sponsors</h2><p class="blank">Details will be updated.</p></div></section>
-    <section class="view" id="playing-conditions"><div class="card"><h2>Playing Conditions</h2><p class="blank">Details will be updated.</p></div></section>
-    <section class="view" id="organizing-team"><div class="card"><h2>Organizing Team</h2><p class="blank">Details will be updated.</p></div></section>
+    <section class="view" id="sponsors">
+      <h2>Sponsors</h2>
+      <p class="blank">Details will be updated.</p>
+      <!-- Each sponsor below is hidden. When a donor confirms, delete the "Sponsor:" line and the "End sponsor" line for that donor only. Then delete the "Details will be updated" line above if a sponsor is now visible. -->
+      <div class="sponsors-grid">
+<!-- Sponsor: VJR Transport
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">VJR Transport</h3>
+          <p class="sponsor-desc"><strong>Owner:</strong> V. జితేందర్ రెడ్డి — మూడు రోజుల రవాణా సౌకర్యం</p>
+        </div>
+End sponsor: VJR Transport -->
+<!-- Sponsor: వనారస వేణుగోపాల్ రావు
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">కీ.శే. వనారస వేణుగోపాల్ రావు గారి జ్ఞాపకార్థం</h3>
+          <p class="sponsor-desc">వారి మనవడు V. మోహన్ గారు — మొత్తం టోర్నమెంట్ కప్స్</p>
+        </div>
+End sponsor: వనారస వేణుగోపాల్ రావు -->
+<!-- Sponsor: C. V. భాను గారు
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">C. V. భాను గారు</h3>
+          <p class="sponsor-desc">Rs. 5000/-</p>
+        </div>
+End sponsor: C. V. భాను గారు -->
+<!-- Sponsor: C. V. పుష్ప గారు
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">C. V. పుష్ప గారు</h3>
+          <p class="sponsor-desc">Rs. 1000/-</p>
+        </div>
+End sponsor: C. V. పుష్ప గారు -->
+<!-- Sponsor: R. సుధాకర్
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">కీ. శే. R. సుధాకర్ గారి జ్ఞాపకార్థం — R. శ్రీనివాస్ గారు, భూపాలపల్లి</h3>
+          <p class="sponsor-desc">Rs. 5016/-</p>
+        </div>
+End sponsor: R. సుధాకర్ -->
+<!-- Sponsor: C. V. రవి గారు
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">C. V. రవి గారు</h3>
+          <p class="sponsor-desc">టోర్నమెంట్‌కు సరిపడా బాల్స్</p>
+        </div>
+End sponsor: C. V. రవి గారు -->
+<!-- Sponsor: SK ఈవెంట్స్
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">SK ఈవెంట్స్ (A.కరుణాకర్ గారు) — సిద్దిపేట</h3>
+          <p class="sponsor-desc">మొదటి రోజు భోజనం</p>
+        </div>
+End sponsor: SK ఈవెంట్స్ -->
+<!-- Sponsor: V. చెన్నకేశవ గారు
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">V. చెన్నకేశవ గారు</h3>
+          <p class="sponsor-desc">3 రోజులకు సరిపడా డ్రింకింగ్ వాటర్</p>
+        </div>
+End sponsor: V. చెన్నకేశవ గారు -->
+<!-- Sponsor: T. పూర్ణ
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">కీ. శే. T. పూర్ణ గారి జ్ఞాపకార్థం</h3>
+          <p class="sponsor-desc">వారి కుమారులు T. రాము గారు, T. గోపికృష్ణ గారు — కూల్ డ్రింక్స్</p>
+        </div>
+End sponsor: T. పూర్ణ -->
+<!-- Sponsor: V. రాజులమ్మ
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">కీ. శే. V. రాజులమ్మ గారి జ్ఞాపకార్థం</h3>
+          <p class="sponsor-desc">వారి కుమారులు V. వినోద్ గారు, V. జయవర్ధన్ గారు — Eggs (3 days)</p>
+        </div>
+End sponsor: V. రాజులమ్మ -->
+<!-- Sponsor: V. ధనలక్ష్మి - ప్రసాదరావు
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">శ్రీమతి &amp; శ్రీ V. ధనలక్ష్మి - ప్రసాదరావు గార్ల జ్ఞాపకార్థం</h3>
+          <p class="sponsor-desc">వారి కుటుంబ సభ్యులు a. Man of the Series: Rs. 5000 నగదు బహుమతి.<br>b. For Organising the Tournament: Rs. 5000.</p>
+        </div>
+End sponsor: V. ధనలక్ష్మి - ప్రసాదరావు -->
+<!-- Sponsor: R. శ్రీను (సునీల్) గారు
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">R. శ్రీను (సునీల్) గారు</h3>
+          <p class="sponsor-desc">Rs. 2000/-</p>
+        </div>
+End sponsor: R. శ్రీను (సునీల్) గారు -->
+<!-- Sponsor: Oreo
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">Oreo జ్ఞాపకార్థం — V. లోచన సాయి గారు</h3>
+          <p class="sponsor-desc">Rs. 2000/-</p>
+        </div>
+End sponsor: Oreo -->
+<!-- Sponsor: భానోదయ నాట్యమండలి
+        <div class="sponsor-card">
+          <h3 class="sponsor-name"> భానోదయ నాట్యమండలి (సురభి)</h3>
+          <p class="sponsor-desc">3 రోజుల సౌండ్ సిస్టమ్</p>
+        </div>
+End sponsor: భానోదయ నాట్యమండలి -->
+<!-- Sponsor: వనారస మధుసూదన్
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">కీ. శే. శ్రీ వనారస మధుసూదన్ గారి జ్ఞాపకార్థం</h3>
+          <p class="sponsor-desc">వారి కుమారులు V. రాఘవ సాయి గారు, V. ఉదయ్ శంకర్ గారు — చికెన్ for one day</p>
+        </div>
+End sponsor: వనారస మధుసూదన్ -->
+<!-- Sponsor: సింధూరి ఉన్నత్
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">సింధూరి ఉన్నత్ గారి జ్ఞాపకార్థం</h3>
+          <p class="sponsor-desc">వారి అత్తగారు V. కవిత — 3 రోజులు అరటిపండ్లు</p>
+        </div>
+End sponsor: సింధూరి ఉన్నత్ -->
+<!-- Sponsor: వనారస కుమార్ బాబు
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">కీ.శే. శ్రీ వనారస కుమార్ బాబు గారి జ్ఞాపకార్థం</h3>
+          <p class="sponsor-desc">వారి సతీమణి V.కళ్యాణి గారు, రామ్ నగర్ Rs. 2000/-</p>
+        </div>
+End sponsor: వనారస కుమార్ బాబు -->
+<!-- Sponsor: నార్మల్ మదర్ డైరీ
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">నార్మల్ మదర్ డైరీ, వనస్థలిపురం</h3>
+          <p class="sponsor-desc">శ్రీ అశోక్ రెడ్డి గారు — బాదం పాలు</p>
+        </div>
+End sponsor: నార్మల్ మదర్ డైరీ -->
+<!-- Sponsor: సింధూరి సుబ్బారావు
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">సింధూరి సుబ్బారావు గారి జ్ఞాపకార్థం</h3>
+          <p class="sponsor-desc">వారి కుటుంబ సభ్యులు — జ్ఞాపికలు</p>
+        </div>
+End sponsor: సింధూరి సుబ్బారావు -->
+<!-- Sponsor: రేకందార్ భాస్కర్ గారు
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">రేకందార్ భాస్కర్ గారు</h3>
+          <p class="sponsor-desc">Rs. 2000/-</p>
+        </div>
+End sponsor: రేకందార్ భాస్కర్ గారు -->
+<!-- Sponsor: రేకందార్ మురళీకృష్ణ
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">రేకందార్ మురళీకృష్ణ గారి జ్ఞాపకార్థం</h3>
+          <p class="sponsor-desc">వారి కుమారుడు రేకందార్ వెంకటేశ్ గారు: ఒక రోజు భోజనాలు</p>
+        </div>
+End sponsor: రేకందార్ మురళీకృష్ణ -->
+<!-- Sponsor: వనారస దాశరధి
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">వనారస దాశరధి గారి జ్ఞాపకార్థం</h3>
+          <p class="sponsor-desc">వారి కుమారుడు వనారస కార్తీక్ గారు — Rs. 1116/-</p>
+        </div>
+End sponsor: వనారస దాశరధి -->
+<!-- Sponsor: నల్లపాటి రాజారాం గారు
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">నల్లపాటి రాజారాం గారు</h3>
+          <p class="sponsor-desc">ఆయిల్, నిత్యావసరాల కోసం — Rs. 3000/-</p>
+        </div>
+End sponsor: నల్లపాటి రాజారాం గారు -->
+<!-- Sponsor: S.A వెంకటేష్ ప్రసాద్ గారు
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">S.A వెంకటేష్ ప్రసాద్ గారు</h3>
+          <p class="sponsor-desc">మూడు రోజులకు టిఫిన్స్ స్పాన్సర్</p>
+        </div>
+End sponsor: S.A వెంకటేష్ ప్రసాద్ గారు -->
+<!-- Sponsor: S. పవన్ కుమార్ గారు
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">S. పవన్ కుమార్ గారు</h3>
+          <p class="sponsor-desc">Rs. 2000/-</p>
+        </div>
+End sponsor: S. పవన్ కుమార్ గారు -->
+<!-- Sponsor: S. హిమ కుమార్ గారు
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">S. హిమ కుమార్ గారు</h3>
+          <p class="sponsor-desc">Rs. 2000/-</p>
+        </div>
+End sponsor: S. హిమ కుమార్ గారు -->
+<!-- Sponsor: V. ఉదయకృష్ణ మోహన్ గారు
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">V. ఉదయకృష్ణ మోహన్ గారు, మణుగూరు</h3>
+          <p class="sponsor-desc">Rs. 2000/-</p>
+        </div>
+End sponsor: V. ఉదయకృష్ణ మోహన్ గారు -->
+<!-- Sponsor: M. నాగరాజు గారు
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">M. నాగరాజు గారు</h3>
+          <p class="sponsor-desc">ఉత్తమ క్రీడాస్ఫూర్థి కలిగిన జట్టు  — Fair Play Award</p>
+        </div>
+End sponsor: M. నాగరాజు గారు -->
+<!-- Sponsor: రేకందార్ పుల్లారెడ్డి
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">కీ.శే. శ్రీ రేకందార్ పుల్లారెడ్డి గారి జ్ఞాపకార్థం</h3>
+          <p class="sponsor-desc">వారి మనవడు R. అజయ్ బాబు గారు — Rs. 500 each for all MoMs &amp; Rs. 1000 for Man of the Final</p>
+        </div>
+End sponsor: రేకందార్ పుల్లారెడ్డి -->
+<!-- Sponsor: మాధవ ఈవెంట్స్
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">మాధవ ఈవెంట్స్, కొత్తపేట</h3>
+          <p class="sponsor-desc">చైర్స్ &amp; టేబుల్స్ మూడు రోజులకు</p>
+        </div>
+End sponsor: మాధవ ఈవెంట్స్ -->
+<!-- Sponsor: S.A. వేణుమాధవ గారు
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">S.A. వేణుమాధవ గారు</h3>
+          <p class="sponsor-desc">ఒక రైస్ బ్యాగ్</p>
+        </div>
+End sponsor: S.A. వేణుమాధవ గారు -->
+<!-- Sponsor: శ్రీకాంత్ గారు
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">శ్రీకాంత్ గారు</h3>
+          <p class="sponsor-desc">టెంట్ హౌస్ డబరాలు, గిన్నెలు</p>
+        </div>
+End sponsor: శ్రీకాంత్ గారు -->
+<!-- Sponsor: GGS వారు
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">GGS వారు</h3>
+          <p class="sponsor-desc">ప్లేట్స్ &amp; గ్లాసెస్</p>
+        </div>
+End sponsor: GGS వారు -->
+      </div>
+    </section>
+    <section class="view" id="playing-conditions">
+      <h2>Playing Conditions <span class="title-note">(subject to change after bidding on 15-11-2026)</span></h2>
+      <div class="conditions-table-container">
+        <table class="conditions-table">
+          <thead>
+            <tr>
+              <th>Match Type</th>
+              <th>Total Overs</th>
+              <th>Max Overs</th>
+              <th>Powerplay</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Group Matches</td>
+              <td>16</td>
+              <td>4 for one and 3 for rest</td>
+              <td>5 overs</td>
+            </tr>
+            <tr>
+              <td>Final</td>
+              <td>20</td>
+              <td>4 for each</td>
+              <td>6 overs</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="rules-container">
+        <div class="rules-greeting">
+          <p><strong>Dear all Captains,</strong></p>
+          <p>Please follow these Rules and Conditions during SPL-2026.</p>
+        </div>
+        <ol class="rules-list">
+          <li>ప్రతి match కి 15 నిమిషాల ముందు Toss వేయడం జరుగుతుంది. ఆ సమయానికి ఇద్దరు captains 12 players team తెలియజేయాలి. అందులో ఒకరికి కేవలం Batting లేదా Bowling మాత్రమే అనుమతించబడుతుంది.</li>
+          <li>ప్రతి match మొదటి innings powerplay overs లోపు ఇరు teams యొక్క 12 players ground లో అందుబాటులో ఉండాలి. తరువాత వచ్చే players ని ఆ match కి అనుమతించడం జరగదు. ప్రతి ఆటగాడు సమయపాలనతో వ్యవహరించడం చాలా ముఖ్యం. ఈ విషయంలో కెప్టెన్లు చొరవ తీసుకుని హుందాగా వ్యవహరించాలి.</li>
+          <li>Power play జరిగేటప్పుడు కేవలం ఇద్దరు fielders మాత్రమే outside 30-yard circle లో ఉండవచ్చును. మిగిలిన overs లో కనీసం నలుగురు fielders తప్పనిసరిగా inside 30-yard circle లో ఉండవలెను.<br>Bowler తో సంబంధం లేకుండా maximum 5 fielders ను మాత్రమే leg side లో అనుమతిస్తారు.</li>
+          <li>LBW outs ఉండవు. Leg-byes ఉన్నాయి. Batsman action ని బట్టి leg-byes ఇవ్వాలా లేదా అనేది umpire నిర్ణయిస్తారు.</li>
+          <li>No-ball తరువాత ball కు free-hit ఉంటుంది.</li>
+          <li>By-Runner ని అనుమతించరు. ఆడలేని పక్షంలో retired hurt తీసుకొని మళ్ళీ wicket పడినప్పుడు batting కొనసాగించవచ్చును.</li>
+          <li>Throw Bowling అనుమతించరు. Throw Bowling అవునా/కాదా అనేది umpires నిర్ణయిస్తారు.</li>
+          <li>ఒక bowler 2 beamers వేసిన వెంటనే ఆ innings లో అతను bowling నుంచి తొలగించబడతాడు.</li>
+          <li>ముఖ్యంగా ఆటగాళ్ళందరూ వారివారి కెప్టెన్ సందేశాలను అనుసరించి ఆడాలి.<br>ఎటువంటి విషయంలోనైనా కెప్టెన్లను మాత్రమే umpires మరియు organizers తో చర్చించడానికి అనుమతిస్తాము.</li>
+          <li>ప్రతి Team, వారికి వచ్చిన ఆటగాళ్ళను మాత్రమే వారి Team లో ఆడించాలి. Substitute fielder గా కూడా బయటి వారిని అనుమతించము. Players అందరూ, organizers ఇచ్చిన Sports Dress తో మాత్రమే ఆడటానికి రావాలి. ప్రత్యేక కారణాలు ఉంటే తప్ప uniform మినహాయింపు ఉండదు. Players అందరికీ Shoes తప్పనిసరిగా ఉండాలి.</li>
+        </ol>
+        <div class="rules-closing">
+          <p><strong>ALL THE BEST to all the teams.</strong></p>
+          <p>Thank you,</p>
+          <p><strong>SPL-2026 Organisers,<br>Surabhi Yuvasena.</strong></p>
+        </div>
+      </div>
+    </section>
+    <section class="view" id="organizing-team">
+      <h2>SPL - 2026 Organisers and their responsibilities</h2>
+      <p class="blank">Details will be updated.</p>
+      <!-- Each section below is hidden. To show one, delete its "Section:" line and its "End section" line. Edit the names inside before opening it. Delete the "Details will be updated" line above once a section is visible. -->
+      <div class="organizing-container">
+<!-- Section: Umpires
+        <div class="organizing-section">
+          <h3 class="organizing-section-title">Umpires</h3>
+          <ul class="organizing-list">
+            <li>S A వేణుమాధవ్ గారు</li>
+            <li>V ఉమా శంకర్ గారు</li>
+            <li>C V శ్రీనివాస్ గారు</li>
+            <li>R రాజేష్ గారు</li>
+            <li>R పూజిత్ సాయి గారు</li>
+            <li>R రోజానంద్ గారు</li>
+          </ul>
+        </div>
+End section: Umpires -->
+<!-- Section: అతిథులకు ఆహ్వానాలు
+        <div class="organizing-section">
+          <h3 class="organizing-section-title">అతిథులకు ఆహ్వానాలు</h3>
+          <ul class="organizing-list">
+            <li>R వెంకట్ రెడ్డి గారు</li>
+            <li>C V భాను గారు</li>
+            <li>V జితేందర్ గారు</li>
+            <li>R పూజిత్ సాయి గారు</li>
+            <li>R చంద్రమోహన్ గారు</li>
+            <li>R మహేష్ గారు</li>
+          </ul>
+        </div>
+End section: అతిథులకు ఆహ్వానాలు -->
+<!-- Section: బాల్స్
+        <div class="organizing-section">
+          <h3 class="organizing-section-title">బాల్స్</h3>
+          <ul class="organizing-list">
+            <li>R జయానంద్ గారు</li>
+          </ul>
+        </div>
+End section: బాల్స్ -->
+<!-- Section: పబ్లిసిటీ
+        <div class="organizing-section">
+          <h3 class="organizing-section-title">పబ్లిసిటీ, ప్రింట్ &amp; ఎలక్ట్రానిక్ మీడియా</h3>
+          <ul class="organizing-list">
+            <li>R జయానంద్ గారు</li>
+            <li>R లక్ష్మణ్ గారు</li>
+          </ul>
+        </div>
+End section: పబ్లిసిటీ -->
+<!-- Section: భోజన సదుపాయ విభాగము
+        <div class="organizing-section">
+          <h3 class="organizing-section-title">భోజన సదుపాయ విభాగము</h3>
+          <ul class="organizing-list">
+            <li>R పూజిత్ సాయి గారు</li>
+            <li>C V భాను గారు</li>
+            <li>R మహేష్ గారు</li>
+            <li>R లక్ష్మణ్ గారు</li>
+            <li>V ఉదయ్ గారు</li>
+            <li>R యోగేష్ గారు</li>
+            <li>V జితేందర్ రెడ్డి గారు</li>
+            <li>R శుభకర్ గారు (వంటల వద్ద)</li>
+          </ul>
+          <p class="organizing-note">అవసరాన్ని బట్టి ఇతరులు కూడా సహాయ సహకారాలు అందించగలరు.</p>
+        </div>
+End section: భోజన సదుపాయ విభాగము -->
+<!-- Section: Scorers
+        <div class="organizing-section">
+          <h3 class="organizing-section-title">Scorers</h3>
+          <ul class="organizing-list">
+            <li>V దుర్గాప్రసాద్ గారు</li>
+            <li>V శ్రీనివాసరావు గారు</li>
+            <li>V చిరంజీవి గారు</li>
+            <li>V సాయి శుభకర్ గారు</li>
+          </ul>
+        </div>
+End section: Scorers -->
+<!-- Section: Sound System
+        <div class="organizing-section">
+          <h3 class="organizing-section-title">Sound System</h3>
+          <ul class="organizing-list">
+            <li>R గిరీష్ భాను గారు</li>
+            <li>R హరీష్ భాను గారు</li>
+          </ul>
+        </div>
+End section: Sound System -->
+<!-- Section: క్రికెట్ కిట్
+        <div class="organizing-section">
+          <h3 class="organizing-section-title">క్రికెట్ కిట్ ఇంచార్జ్, మ్యాట్స్ &amp; పట్టాలు</h3>
+          <ul class="organizing-list">
+            <li>V సూర్య గారు</li>
+            <li>R యోగేష్ గారు</li>
+            <li>R వెంకటేష్ గారు</li>
+            <li>V బన్నీ గారు</li>
+            <li>R గిరీష్ భాను గారు</li>
+          </ul>
+        </div>
+End section: క్రికెట్ కిట్ -->
+<!-- Section: వాటర్ అండ్ ఐస్
+        <div class="organizing-section">
+          <h3 class="organizing-section-title">వాటర్ అండ్ ఐస్ ఇంచార్జ్</h3>
+          <ul class="organizing-list">
+            <li>R మహేష్ గారు</li>
+            <li>R పూర్ణేష్ భాను గారు</li>
+            <li>R యోగేష్ గారు</li>
+          </ul>
+        </div>
+End section: వాటర్ అండ్ ఐస్ -->
+<!-- Section: Ground Incharges
+        <div class="organizing-section">
+          <h3 class="organizing-section-title">Ground Incharges</h3>
+          <ul class="organizing-list">
+            <li>V చిరంజీవి గారు</li>
+            <li>R జయానంద్ గారు</li>
+            <li>R చరణ్ గారు</li>
+            <li>R పూజిత్ సాయి గారు</li>
+            <li>R చంద్రమోహన్ గారు</li>
+            <li>C V భాను గారు</li>
+          </ul>
+        </div>
+End section: Ground Incharges -->
+<!-- Section: రవాణా విభాగము
+        <div class="organizing-section">
+          <h3 class="organizing-section-title">రవాణా విభాగము</h3>
+          <ul class="organizing-list">
+            <li>V జితేందర్ గారు</li>
+            <li>R శివ (భువనగిరి) గారు</li>
+            <li>R వెంకట్రావు (నాని)గారు</li>
+            <li>V ఉదయ్ గారు</li>
+            <li>T గోపికృష్ణ గారు</li>
+          </ul>
+        </div>
+End section: రవాణా విభాగము -->
+<!-- Section: ప్రత్యక్ష వ్యాఖ్యాన విభాగము
+        <div class="organizing-section">
+          <h3 class="organizing-section-title">ప్రత్యక్ష వ్యాఖ్యాన విభాగము</h3>
+          <ul class="organizing-list">
+            <li>S రమేష్ గారు</li>
+            <li>M నాగరాజు గారు</li>
+          </ul>
+        </div>
+End section: ప్రత్యక్ష వ్యాఖ్యాన విభాగము -->
+<!-- Section: స్నాక్స్
+        <div class="organizing-section">
+          <h3 class="organizing-section-title">స్నాక్స్ ఇంచార్జ్ అండ్ కూల్ డ్రింక్స్</h3>
+          <ul class="organizing-list">
+            <li>R చంద్రమోహన్ గారు</li>
+            <li>R లక్ష్మణ్ గారు</li>
+            <li>R యోగేష్ గారు</li>
+            <li>R పూర్ణేష్ గారు</li>
+          </ul>
+        </div>
+End section: స్నాక్స్ -->
+<!-- Section: Closing note
+        <div class="organizing-footer">
+          <p class="organizing-footer-text">ఎవరూ ఖాళీగా ఉండకుండా ఇతర విభాగాల వాళ్ళకి కూడా వారి వంతు సహాయ సహకారాలు అందించాలని కమిటీ తరపున కోరుకుంటున్నాము 🙏</p>
+          <p class="organizing-footer-note"><strong>గమనిక:</strong> ఆటగాళ్లు ఎవరైనా మ్యాచుల సమయంలో ఏదైనా మాట్లాడవలసివస్తే గ్రౌండ్ ఇన్ ఛార్జ్ లతో మాత్రమే మాట్లాడాలి.</p>
+        </div>
+End section: Closing note -->
+      </div>
+    </section>
   </main>
-  <script>
-    const sidebar = document.getElementById('sidebar');
-    const backdrop = document.getElementById('backdrop');
-    function closeMenu() {
-      sidebar.classList.remove('open');
-      backdrop.classList.remove('open');
-    }
-    document.getElementById('menuToggle').addEventListener('click', function () {
-      sidebar.classList.toggle('open');
-      backdrop.classList.toggle('open');
-    });
-    backdrop.addEventListener('click', closeMenu);
-    document.querySelectorAll('.menu-item').forEach(function (item) {
-      item.addEventListener('click', function () {
-        document.querySelectorAll('.menu-item').forEach(function (el) { el.classList.remove('active'); });
-        document.querySelectorAll('.view').forEach(function (el) { el.classList.remove('active'); });
-        item.classList.add('active');
-        document.getElementById(item.getAttribute('data-view')).classList.add('active');
-        closeMenu();
-      });
-    });
-  </script>
+  <script src="2026/menu.js"></script>
 </body>
 </html>
