@@ -27,17 +27,20 @@
       border-radius: 12px; padding: 14px 18px; font-weight: 700;
     }
     .actions a.alt { background: #ffffff; color: #5b2d91; border: 1px solid #6a35a8; }
-    .actions .action-disabled {
-      display: block; width: 100%; box-sizing: border-box; text-align: center;
-      border-radius: 12px; padding: 14px 18px; font-weight: 700;
-      background: #e7dfef; color: #8d7aa3; border: 1px solid #eadff5;
-      cursor: not-allowed;
-    }
     .registration-banner {
       margin: 16px 0 0; padding: 14px 16px; background: #ffffff;
       border: 2px solid #6a35a8; border-radius: 12px; color: #3c2460;
       font-weight: 700; line-height: 1.5;
     }
+    .captain-heading { margin: 18px 0 10px; color: #5b2d91; font-size: clamp(18px, 2.5vw, 22px); }
+    .captain-list { list-style: none; margin: 0; padding: 0; text-align: left; }
+    .captain-list li {
+      display: flex; justify-content: flex-start; align-items: center; gap: 12px;
+      margin: 0 0 8px; padding: 8px 12px; background: #ffffff;
+      border: 1px solid #eadff5; border-radius: 10px; color: #0f8fa6; font-weight: 700;
+    }
+    .captain-serial { min-width: 2.2ch; color: #5b2d91; font-weight: 700; }
+    .home-copy { padding-bottom: 72px; }
     .organiser-action { width: 100%; text-align: center; }
     .organiser-note { margin: 8px 0 0; color: #7d6d8c; font-size: 14px; }
     .blank { color: #7d6d8c; }
@@ -96,16 +99,17 @@
         </div>
         <div class="home-copy">
           <h1>SURABHI YUVASENA<br>SPL-2026</h1>
-          <p class="registration-banner">Registrations are closed.<br>Captaincy draw will be held at 3pm and <br>Bidding at 7pm at Surabhi Yuvasena building</p>
+          <p class="registration-banner">Bidding will be held at 7pm today at Surabhi Yuvasena building</p>
+          <h2 class="captain-heading">Captains</h2>
+          <ol class="captain-list">
+            <li><span class="captain-serial">11</span><span>Nallapati Rajaram</span></li>
+            <li><span class="captain-serial">18</span><span>SA GNANA SAI MOHAN</span></li>
+            <li><span class="captain-serial">26</span><span>R Charan</span></li>
+            <li><span class="captain-serial">32</span><span>V Sai Subhakar</span></li>
+            <li><span class="captain-serial">47</span><span>V Sairam</span></li>
+            <li><span class="captain-serial">59</span><span>CV BHANU</span></li>
+          </ol>
           <div class="actions">
-            <div class="organiser-action">
-              <span class="action-disabled" aria-disabled="true">Register</span>
-              <p class="organiser-note">For players with serial number</p>
-            </div>
-            <div class="organiser-action">
-              <span class="action-disabled" aria-disabled="true">Get Serial Number</span>
-              <p class="organiser-note">For organisers only</p>
-            </div>
             <div class="organiser-action">
               <a href="2026/players.html">Registered Players</a>
             </div>
