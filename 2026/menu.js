@@ -8,7 +8,7 @@
 
   var items = [
     { id: 'home', label: 'Home', href: root + '2026.html' },
-    { id: 'register', label: 'Register', href: sub + 'serial-verify.html' },
+    { id: 'register', label: 'Register', href: sub + 'serial-verify.html', hidden: true },
     { id: 'players', label: 'Registered Players', href: sub + 'players.html' },
     { id: 'sponsors', label: 'Sponsors', href: root + '2026.html?view=sponsors' },
     { id: 'playing-conditions', label: 'Playing Conditions', href: root + '2026.html?view=playing-conditions' },
