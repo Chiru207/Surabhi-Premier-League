@@ -27,6 +27,17 @@
       border-radius: 12px; padding: 14px 18px; font-weight: 700;
     }
     .actions a.alt { background: #ffffff; color: #5b2d91; border: 1px solid #6a35a8; }
+    .actions .action-disabled {
+      display: block; width: 100%; box-sizing: border-box; text-align: center;
+      border-radius: 12px; padding: 14px 18px; font-weight: 700;
+      background: #e7dfef; color: #8d7aa3; border: 1px solid #eadff5;
+      cursor: not-allowed;
+    }
+    .registration-banner {
+      margin: 16px 0 0; padding: 14px 16px; background: #ffffff;
+      border: 2px solid #6a35a8; border-radius: 12px; color: #3c2460;
+      font-weight: 700; line-height: 1.5;
+    }
     .organiser-action { width: 100%; text-align: center; }
     .organiser-note { margin: 8px 0 0; color: #7d6d8c; font-size: 14px; }
     .blank { color: #7d6d8c; }
@@ -85,15 +96,14 @@
         </div>
         <div class="home-copy">
           <h1>SURABHI YUVASENA<br>SPL-2026</h1>
-          <p class="blank">Player registration is open till <strong style="color: red;">2pm, 15-11-2026</strong>.</p>
-          <p class="blank">Pay registration fee and provide your email to <strong style="color: green;">SA Manohar(9966382042)</strong>, to get your serial number.</p>
+          <p class="registration-banner">Registrations are over. Captaincy draw will be held at 3pm and Bidding at 7pm at Surabhi Yuvasena building</p>
           <div class="actions">
             <div class="organiser-action">
-              <a href="2026/serial-verify.html">Register</a>
+              <span class="action-disabled" aria-disabled="true">Register</span>
               <p class="organiser-note">For players with serial number</p>
             </div>
             <div class="organiser-action">
-              <a class="alt" href="2026/get_serial.html">Get Serial Number</a>
+              <span class="action-disabled" aria-disabled="true">Get Serial Number</span>
               <p class="organiser-note">For organisers only</p>
             </div>
             <div class="organiser-action">
@@ -549,6 +559,6 @@ End section: Closing note -->
       </div>
     </section>
   </main>
-  <script src="2026/menu.js?v=8"></script>
+  <script src="2026/menu.js?v=9"></script>
 </body>
 </html>
