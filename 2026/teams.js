@@ -3,7 +3,7 @@
   var LOGO = "2026/logos/";
 
   // Roster from spreadsheet tab "SPL - 2026 2026-11-15 2326".
-  // teamName matches the captain for now and can be renamed later.
+  // teamName is the squad name. Rajaram and Mohan still use the captain name.
   var teams = [
     {
       teamName: "Nallapati Rajaram",
@@ -49,10 +49,11 @@
       ]
     },
     {
-      teamName: "R Charan",
+      teamName: "RBR Returns",
       captain: "R Charan",
       serial: 26,
       photo: "26.jpg",
+      logo: "Charan_logo.jpeg",
       category: "All-Rounder",
       players: [
         { serial: 2, name: "V MANJUNAATH", photo: "2.jpg", category: "Batsman" },
@@ -71,10 +72,11 @@
       ]
     },
     {
-      teamName: "V Sai Subhakar",
+      teamName: "Rising Warriors",
       captain: "V Sai Subhakar",
       serial: 32,
       photo: "32.jpg",
+      logo: "Subhakar_logo.jpeg",
       category: "Bowler",
       players: [
         { serial: 4, name: "Rekandar Yashwanth", photo: "04.jpg", category: "Batsman" },
@@ -92,10 +94,11 @@
       ]
     },
     {
-      teamName: "V Sairam",
+      teamName: "BULLS",
       captain: "V Sairam",
       serial: 47,
       photo: "47.jpg",
+      logo: "Sairam_logo.jpeg",
       category: "All-Rounder",
       players: [
         { serial: 17, name: "R Venkatreddy", photo: "17.jpg", category: "All-Rounder" },
@@ -114,10 +117,11 @@
       ]
     },
     {
-      teamName: "CV BHANU",
+      teamName: "Bakaabeka Strikers",
       captain: "CV BHANU",
       serial: 59,
       photo: "59.jpg",
+      logo: "Bhanu_logo.jpeg",
       category: "All-Rounder",
       players: [
         { serial: 6, name: "V Ajay Kumar", photo: "6.jpeg", category: "All-Rounder" },
@@ -147,8 +151,10 @@
     return '<img class="' + className + '" src="' + PHOTO + file + '" alt="' + esc(alt) + '" onerror="this.onerror=null;this.classList.add(\'photo-missing\');this.removeAttribute(\'src\');">';
   }
 
-  function logoSlot(serial) {
-    return '<div class="team-logo-slot"><img class="team-logo" src="' + LOGO + serial + '.png" alt="" onerror="this.remove()"></div>';
+  function logoSlot(team) {
+    var file = team.logo ? PHOTO + team.logo : LOGO + team.serial + ".png";
+    var tone = team.logo && team.logo.indexOf("Charan") === 0 ? " light" : "";
+    return '<div class="team-logo-slot' + (team.logo ? " has-logo" + tone : "") + '"><img class="team-logo" src="' + file + '" alt="" onerror="this.remove()"></div>';
   }
 
   var SHEET = "https://docs.google.com/spreadsheets/d/1V9QfdJGwysPZUPXXQzIjvGHF4Ve1bCqTM_DjyqTo1ys/gviz/tq?tqx=out:json&sheet=";
@@ -207,7 +213,7 @@
     grid.innerHTML = teams.map(function (team) {
       var count = team.players.length + 1;
       return '<button type="button" class="captain-card" data-serial="' + team.serial + '">' +
-        logoSlot(team.serial) +
+        logoSlot(team) +
         image(team.photo, team.captain, "captain-photo") +
         '<div class="captain-name">' + esc(team.captain) + '</div>' +
         '<div class="team-name">' + esc(team.teamName) + '</div>' +
@@ -229,7 +235,7 @@
     if (!team) return;
     document.getElementById("teams-list").hidden = true;
     document.getElementById("team-detail").hidden = false;
-    document.getElementById("team-detail-logo").innerHTML = logoSlot(team.serial);
+    document.getElementById("team-detail-logo").innerHTML = logoSlot(team);
     document.getElementById("team-detail-title").textContent = team.teamName;
     var request = ++sheetRequest;
     var sheetBox = document.getElementById("team-sheet");
