@@ -76,6 +76,13 @@
     .back-button:hover { background: #f3eafb; }
     .team-detail-title { font-size: clamp(24px, 4vw, 36px); margin: 0; }
     #team-detail-logo { margin-left: auto; margin-right: auto; }
+    .team-sheet-wrap { overflow-x: auto; margin: 0 auto 28px; background: #ffffff; border: 1px solid #eadff5; border-radius: 16px; }
+    .team-sheet { width: 100%; border-collapse: collapse; min-width: 860px; }
+    .team-sheet th, .team-sheet td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #eadff5; white-space: nowrap; }
+    .team-sheet th { background: #5b2d91; color: #ffffff; font-size: 14px; }
+    .team-sheet td { color: #3c2460; font-size: 14px; }
+    .team-sheet tbody tr:first-child td { font-weight: 700; color: #5b2d91; }
+    .team-sheet-status { margin: 0 0 20px; color: #7d6d8c; }
     .schedule-title { text-align: center; font-size: clamp(24px, 4vw, 36px); margin-bottom: 8px; }
     .tournament-dates { text-align: center; color: #7d6d8c; font-size: clamp(16px, 2.5vw, 20px); font-weight: 600; margin: 0 0 28px; }
     .day-schedule {
@@ -244,6 +251,7 @@
           <div id="team-detail-logo"></div>
           <h2 class="team-detail-title" id="team-detail-title"></h2>
         </div>
+        <div class="team-sheet-wrap" id="team-sheet"></div>
         <div class="players-grid" id="players-grid"></div>
       </div>
     </section>
@@ -756,7 +764,7 @@ End section: Closing note -->
       });
     });
   </script>
-  <script src="2026/teams.js?v=3"></script>
+  <script src="2026/teams.js?v=5"></script>
   <script src="2026/menu.js?v=15"></script>
 </body>
 </html>
