@@ -13,9 +13,9 @@
     { id: 'sponsors', label: 'Sponsors', href: root + '2026.html?view=sponsors' },
     { id: 'teams', label: 'Teams', href: root + '2026.html?view=teams' },
     { id: 'schedule', label: 'Schedule', href: root + '2026.html?view=schedule' },
+    { id: 'points', label: 'Points Table', href: root + '2026.html?view=points' },
     { id: 'playing-conditions', label: 'Playing Conditions', href: root + '2026.html?view=playing-conditions' },
     { id: 'organizing-team', label: 'Organizing Team', href: root + '2026.html?view=organizing-team' },
-    { id: 'points', label: 'Points Table', href: root + '2026.html?view=points', hidden: true },
     { id: 'year', label: 'SPL-2025', href: root + '2025.html' }
   ];
 
@@ -39,7 +39,8 @@
     '.sidebar-backdrop{display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.5);opacity:0;transition:opacity .3s ease;}',
     '.sidebar-backdrop.open{display:block;opacity:1;}',
     '@media (max-width:768px){.menu-toggle:hover ~ .sidebar,.sidebar:hover{transform:translateX(-100%);}.sidebar.open,.menu-toggle:hover ~ .sidebar.open,.sidebar.open:hover{transform:translateX(0);z-index:10001;}.menu-toggle{width:clamp(35px,6vw,45px);height:clamp(35px,6vw,45px);top:clamp(5px,1vh,10px);left:clamp(5px,1vw,10px);z-index:10002;pointer-events:auto;}.sidebar{width:80%;max-width:280px;height:100vh;height:100dvh;max-height:100dvh;padding:clamp(20px,3vh,30px) clamp(15px,2vw,20px);}.sidebar-title{display:block;min-height:0;margin:0 0 clamp(10px,2vh,20px);padding:0 0 clamp(10px,2vh,20px);text-align:center;}.menu-link{white-space:normal;}}',
-    '.visitor-count{position:fixed;right:16px;bottom:16px;z-index:10002;max-width:calc(100vw - 32px);box-sizing:border-box;background:#fff;color:#5b2d91;border:2px solid #eadff5;border-radius:999px;padding:8px 14px;font:700 14px/1.3 inherit;box-shadow:0 8px 20px rgba(106,53,168,.18);pointer-events:none;}'
+    '.visitor-count{position:fixed;right:16px;bottom:16px;z-index:10002;max-width:calc(100vw - 32px);box-sizing:border-box;background:#fff;color:#5b2d91;border:2px solid #eadff5;border-radius:999px;padding:8px 14px;font:700 14px/1.3 inherit;box-shadow:0 8px 20px rgba(106,53,168,.18);pointer-events:none;}',
+    '.spl-page-heading{position:fixed;top:clamp(14px,2vh,22px);left:50%;transform:translateX(-50%);z-index:30;margin:0;padding:4px 14px;border-radius:10px;background:#f8f4fb;color:#5b2d91;font-size:clamp(20px,3.4vw,32px);font-weight:800;line-height:1.1;letter-spacing:.3px;text-align:center;white-space:nowrap;pointer-events:none;}'
   ].join('');
   document.head.appendChild(style);
 
@@ -90,6 +91,10 @@
   document.body.insertBefore(backdrop, document.body.firstChild);
   document.body.insertBefore(nav, document.body.firstChild);
   document.body.insertBefore(toggle, document.body.firstChild);
+  var pageHeading = document.createElement('h1');
+  pageHeading.className = 'spl-page-heading';
+  pageHeading.textContent = 'SPL-2026';
+  document.body.insertBefore(pageHeading, document.body.firstChild);
 
   var badge = document.createElement('div');
   badge.className = 'visitor-count';

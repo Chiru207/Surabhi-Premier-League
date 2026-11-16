@@ -207,6 +207,21 @@
     return '<table class="team-sheet"><thead>' + head + "</thead><tbody>" + body + "</tbody></table>";
   }
 
+  function renderPoints() {
+    var body = document.getElementById("points-table-body");
+    if (!body) return;
+    body.innerHTML = teams.map(function (team) {
+      var named = !!team.logo;
+      var label = named ? team.teamName : team.captain;
+      var src = named ? PHOTO + team.logo : PHOTO + team.photo;
+      return "<tr><td><div class=\"team-cell\">" +
+        "<img class=\"points-mark " + (named ? "logo" : "photo") + "\" src=\"" + src + "\" alt=\"" + esc(label) + "\" onerror=\"this.remove()\">" +
+        "<span class=\"team-name-cell\">" + esc(label) + "</span></div></td>" +
+        "<td>0</td><td>0</td><td>0</td><td class=\"points-highlight\">0</td>" +
+        "<td>0 (0)</td><td>0 (0)</td><td class=\"nrr-neutral\">0.000</td></tr>";
+    }).join("");
+  }
+
   function renderList() {
     var grid = document.getElementById("teams-grid");
     if (!grid) return;
@@ -270,4 +285,5 @@
     });
   }
   renderList();
+  renderPoints();
 })();
