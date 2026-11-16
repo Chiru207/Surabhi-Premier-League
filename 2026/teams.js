@@ -3,13 +3,14 @@
   var LOGO = "2026/logos/";
 
   // Roster from spreadsheet tab "SPL - 2026 2026-11-15 2326".
-  // teamName is the squad name. Rajaram and Mohan still use the captain name.
+  // teamName is the squad name. Mohan still uses the captain name.
   var teams = [
     {
-      teamName: "Nallapati Rajaram",
+      teamName: "King Fighters 2.0",
       captain: "Nallapati Rajaram",
       serial: 11,
       photo: "11.jpg",
+      logo: "Rajaram_logo.jpeg",
       category: "Bowler",
       players: [
         { serial: 1, name: "VANARASA SAI SREEKAR", photo: "1.png", category: "All-Rounder" },
@@ -153,7 +154,7 @@
 
   function logoSlot(team) {
     var file = team.logo ? PHOTO + team.logo : LOGO + team.serial + ".png";
-    var tone = team.logo && team.logo.indexOf("Charan") === 0 ? " light" : "";
+    var tone = team.logo && (team.logo.indexOf("Charan") === 0 || team.logo.indexOf("Rajaram") === 0) ? " light" : "";
     return '<div class="team-logo-slot' + (team.logo ? " has-logo" + tone : "") + '"><img class="team-logo" src="' + file + '" alt="" onerror="this.remove()"></div>';
   }
 
