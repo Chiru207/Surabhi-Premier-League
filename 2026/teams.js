@@ -151,6 +151,56 @@
     return '<div class="team-logo-slot"><img class="team-logo" src="' + LOGO + serial + '.png" alt="" onerror="this.remove()"></div>';
   }
 
+  var SHEET = "https://docs.google.com/spreadsheets/d/1V9QfdJGwysPZUPXXQzIjvGHF4Ve1bCqTM_DjyqTo1ys/gviz/tq?tqx=out:json&sheet=";
+  var sheetCache = {};
+  var sheetRequest = 0;
+
+  function cellText(cell) {
+    if (!cell) return "";
+    if (cell.f != null && String(cell.f) !== "") return String(cell.f);
+    if (cell.v == null) return "";
+    return String(cell.v);
+  }
+
+  function loadSheet(name) {
+    if (sheetCache[name]) return Promise.resolve(sheetCache[name]);
+    return fetch(SHEET + encodeURIComponent(name)).then(function (response) {
+      if (!response.ok) throw new Error("sheet");
+      return response.text();
+    }).then(function (text) {
+      var start = text.indexOf("{");
+      var end = text.lastIndexOf("}");
+      var table = JSON.parse(text.slice(start, end + 1)).table;
+      var rows = (table.rows || []).filter(function (row) {
+        return row.c && row.c.some(function (cell) { return cellText(cell) !== ""; });
+      });
+      var parsed = { cols: table.cols || [], rows: rows };
+      sheetCache[name] = parsed;
+      return parsed;
+    });
+  }
+
+  function visibleColumn(col) {
+    var label = String(col.label || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+    return label !== "sno";
+  }
+
+  function renderSheet(table) {
+    var columns = table.cols.map(function (col, index) {
+      return { col: col, index: index };
+    }).filter(function (item) { return visibleColumn(item.col); });
+    var head = "<tr>" + columns.map(function (item) {
+      return "<th>" + esc(item.col.label || "") + "</th>";
+    }).join("") + "</tr>";
+    var body = table.rows.map(function (row) {
+      var cells = columns.map(function (item) {
+        return "<td>" + esc(cellText(row.c[item.index])) + "</td>";
+      }).join("");
+      return "<tr>" + cells + "</tr>";
+    }).join("");
+    return '<table class="team-sheet"><thead>' + head + "</thead><tbody>" + body + "</tbody></table>";
+  }
+
   function renderList() {
     var grid = document.getElementById("teams-grid");
     if (!grid) return;
@@ -181,6 +231,16 @@
     document.getElementById("team-detail").hidden = false;
     document.getElementById("team-detail-logo").innerHTML = logoSlot(team.serial);
     document.getElementById("team-detail-title").textContent = team.teamName;
+    var request = ++sheetRequest;
+    var sheetBox = document.getElementById("team-sheet");
+    sheetBox.innerHTML = '<p class="team-sheet-status">Loading team list...</p>';
+    loadSheet(team.captain).then(function (table) {
+      if (request !== sheetRequest) return;
+      sheetBox.innerHTML = renderSheet(table);
+    }).catch(function () {
+      if (request !== sheetRequest) return;
+      sheetBox.innerHTML = '<p class="team-sheet-status">The team list could not be loaded.</p>';
+    });
     var people = [{ name: team.captain, photo: team.photo, category: team.category, captain: true }].concat(
       team.players.slice().sort(function (a, b) { return a.serial - b.serial; })
     );
