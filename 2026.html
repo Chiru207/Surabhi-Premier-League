@@ -76,6 +76,8 @@
       font: inherit; font-weight: 700;
     }
     .back-button:hover { background: #f3eafb; }
+    .team-footer { text-align: center; margin-top: 28px; }
+    .team-footer .back-button { margin-bottom: 0; }
     .team-detail-title { font-size: clamp(24px, 4vw, 36px); margin: 0; }
     #team-detail-logo { margin-left: auto; margin-right: auto; }
     .team-sheet-wrap { overflow-x: auto; margin: 0 auto 28px; background: #ffffff; border: 1px solid #eadff5; border-radius: 16px; }
@@ -85,6 +87,23 @@
     .team-sheet td { color: #3c2460; font-size: 14px; }
     .team-sheet tbody tr:first-child td { font-weight: 700; color: #5b2d91; }
     .team-sheet-status { margin: 0 0 20px; color: #7d6d8c; }
+    .points-title { text-align: center; font-size: clamp(24px, 4vw, 36px); color: #5b2d91; margin-bottom: 8px; }
+    .points-table-container { overflow-x: auto; margin-top: 18px; background: #ffffff; border: 1px solid #eadff5; border-radius: 16px; }
+    .points-table { width: 100%; border-collapse: collapse; min-width: 760px; }
+    .points-table th { padding: 12px 10px; background: #5b2d91; color: #ffffff; text-align: center; font-size: 14px; }
+    .points-table th:first-child, .points-table td:first-child { text-align: left; padding-left: 16px; }
+    .points-table td { padding: 12px 10px; text-align: center; color: #3c2460; border-top: 1px solid #eadff5; font-size: 15px; }
+    .points-table tbody tr { transition: background 0.3s ease; }
+    .points-table tbody tr:hover { background: #f8f4fb; }
+    .team-cell { display: flex; align-items: center; gap: 12px; }
+    .points-mark { width: 46px; height: 46px; border-radius: 8px; border: 1px solid #eadff5; background: #ffffff; flex: 0 0 46px; }
+    .points-mark.logo { object-fit: contain; }
+    .points-mark.photo { object-fit: cover; object-position: top; }
+    .team-name-cell { font-weight: 700; color: #5b2d91; }
+    .points-highlight { font-weight: 800; color: #6a35a8; font-size: 18px; }
+    .nrr-positive { color: #0f8f6b; font-weight: 700; }
+    .nrr-negative { color: #b42318; font-weight: 700; }
+    .nrr-neutral { color: #7d6d8c; font-weight: 700; }
     .schedule-title { text-align: center; font-size: clamp(24px, 4vw, 36px); margin-bottom: 8px; }
     .tournament-dates { text-align: center; color: #7d6d8c; font-size: clamp(16px, 2.5vw, 20px); font-weight: 600; margin: 0 0 28px; }
     .day-schedule {
@@ -249,12 +268,14 @@
       </div>
       <div id="team-detail" hidden>
         <div class="team-header">
-          <button type="button" class="back-button" id="teams-back">← Back to Teams</button>
           <div id="team-detail-logo"></div>
           <h2 class="team-detail-title" id="team-detail-title"></h2>
         </div>
         <div class="team-sheet-wrap" id="team-sheet"></div>
         <div class="players-grid" id="players-grid"></div>
+        <div class="team-footer">
+          <button type="button" class="back-button" id="teams-back">← Back to Teams</button>
+        </div>
       </div>
     </section>
     <section class="view" id="schedule">
@@ -314,7 +335,26 @@
         </div>
       </div>
     </section>
-    <section class="view" id="points"><div class="card"><h2>Points Table</h2><p class="blank">Details will be updated when on 16-11-2026.</p></div></section>
+    <section class="view" id="points">
+      <h2 class="points-title">Points Table</h2>
+      <div class="points-table-container">
+        <table class="points-table">
+          <thead>
+            <tr>
+              <th>Team</th>
+              <th>MP</th>
+              <th>Won</th>
+              <th>Lost</th>
+              <th>Points</th>
+              <th>Runs Scored<br>(in total overs)</th>
+              <th>Runs Conceded<br>(in total overs)</th>
+              <th>NRR</th>
+            </tr>
+          </thead>
+          <tbody id="points-table-body"></tbody>
+        </table>
+      </div>
+    </section>
     <section class="view" id="sponsors">
       <h2>Sponsors</h2>
       <p class="blank">Details of the sponsors of SPL-2026 as of now. This list gets updated as soon as we get new sponsors.</p>
@@ -378,14 +418,23 @@
           <h3 class="sponsor-name">కీ.శే. రేకందార్ జయప్రద గారి </h3>
           <p class="sponsor-desc">జ్ఞాపకార్థం వారి తనయుడు R. దినకర్ గారు<br><strong>మూడు రోజుల భోజనానికి సరిపడా బియ్యం</strong>.</p>
         </div>
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">C. V. భాను గారు</h3>
+          <p class="sponsor-desc"><strong>ఒక రోజు టిఫిన్స్</strong>.</p>
+        </div>
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">రసూల్ గారు </h3>
+          <p class="sponsor-desc"><strong>Rs. 3116</strong>.</p>
+        </div>
+        <div class="sponsor-card">
+          <h3 class="sponsor-name">R. విజయ్ గారు </h3>
+          <p class="sponsor-desc"><strong>మూడు రోజులకు డ్రింక్స్</strong>.</p>
+        </div>
       </div>
       <p class="blank"><strong>ప్రతి ఒక్క Sponsor కి Organizers మరియు సురభి యువసేన తరఫున ప్రత్యేక ధన్యవాదాలు.</strong></p>
       
 <!-- Sponsor: C. V. భాను గారు
-        <div class="sponsor-card">
-          <h3 class="sponsor-name">C. V. భాను గారు</h3>
-          <p class="sponsor-desc">Rs. 5000/-</p>
-        </div>
+        
 End sponsor: C. V. భాను గారు -->
 <!-- Sponsor: C. V. పుష్ప గారు
         <div class="sponsor-card">
@@ -766,7 +815,7 @@ End section: Closing note -->
       });
     });
   </script>
-  <script src="2026/teams.js?v=8"></script>
-  <script src="2026/menu.js?v=15"></script>
+  <script src="2026/teams.js?v=9"></script>
+  <script src="2026/menu.js?v=17"></script>
 </body>
 </html>
