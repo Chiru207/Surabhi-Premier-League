@@ -12,9 +12,9 @@
     { id: 'players', label: 'Registered Players', href: sub + 'players.html', hidden: true },
     { id: 'sponsors', label: 'Sponsors', href: root + '2026.html?view=sponsors' },
     { id: 'teams', label: 'Teams', href: root + '2026.html?view=teams' },
+    { id: 'schedule', label: 'Schedule', href: root + '2026.html?view=schedule' },
     { id: 'playing-conditions', label: 'Playing Conditions', href: root + '2026.html?view=playing-conditions' },
     { id: 'organizing-team', label: 'Organizing Team', href: root + '2026.html?view=organizing-team' },
-    { id: 'schedule', label: 'Schedule', href: root + '2026.html?view=schedule', hidden: true },
     { id: 'points', label: 'Points Table', href: root + '2026.html?view=points', hidden: true },
     { id: 'year', label: 'SPL-2025', href: root + '2025.html' }
   ];
