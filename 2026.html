@@ -17,33 +17,6 @@
     .card {
       background: #ffffff; border: 1px solid #eadff5; border-radius: 16px; padding: 22px; margin-top: 18px;
     }
-    .actions {
-      display: flex; flex-direction: column; align-items: center; gap: 36px;
-      margin: 36px auto 0; width: min(280px, 100%);
-    }
-    .actions a {
-      display: block; width: 100%; box-sizing: border-box; text-align: center;
-      text-decoration: none; color: white; background: #ef6a2f;
-      border-radius: 12px; padding: 14px 18px; font-weight: 700;
-    }
-    .actions a.alt { background: #ffffff; color: #5b2d91; border: 1px solid #6a35a8; }
-    .actions a.live { background: #0f9f6e; }
-    .registration-banner {
-      margin: 16px 0 0; padding: 14px 16px; background: #ffffff;
-      border: 2px solid #6a35a8; border-radius: 12px; color: #3c2460;
-      font-weight: 700; line-height: 1.5;
-    }
-    .captain-heading { margin: 18px 0 10px; color: #5b2d91; font-size: clamp(18px, 2.5vw, 22px); }
-    .captain-list { list-style: none; margin: 0; padding: 0; text-align: left; }
-    .captain-list li {
-      display: flex; justify-content: flex-start; align-items: center; gap: 12px;
-      margin: 0 0 8px; padding: 8px 12px; background: #ffffff;
-      border: 1px solid #eadff5; border-radius: 10px; color: #0f8fa6; font-weight: 700;
-    }
-    .captain-serial { min-width: 2.2ch; color: #5b2d91; font-weight: 700; }
-    .home-copy { padding-bottom: 72px; }
-    .organiser-action { width: 100%; text-align: center; }
-    .organiser-note { margin: 8px 0 0; color: #7d6d8c; font-size: 14px; }
     .blank { color: #7d6d8c; }
     .year-link { color: #6a35a8; }
     .home-layout { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: clamp(24px, 4vw, 48px); }
@@ -53,12 +26,47 @@
       max-height: min(80vh, calc(100vh - 160px));
       object-fit: contain; margin: 0; border: 1px solid #eadff5; border-radius: 16px; background: #ffffff;
     }
-    .home-copy { flex: 1 1 280px; max-width: 440px; min-width: min(100%, 260px); text-align: center; }
-    .home-copy .actions { margin-top: 20px; gap: 18px; }
     @media (max-width: 720px) {
       .home-layout { align-items: center; }
-      .home-flyer { max-height: min(62vh, calc(100vh - 150px)); }
+      .home-flyer { max-height: min(78vh, calc(100vh - 140px)); }
     }
+    .teams-title { text-align: center; font-size: clamp(24px, 4vw, 36px); margin-bottom: clamp(16px, 3vh, 28px); }
+    .teams-grid, .players-grid {
+      display: grid; width: 100%; margin: 0 auto; box-sizing: border-box; justify-items: center;
+      gap: clamp(20px, 3vw, 30px);
+    }
+    .teams-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+    .players-grid { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+    .captain-card, .player-card {
+      width: 100%; box-sizing: border-box; text-align: center;
+      background: linear-gradient(135deg, #ffffff 0%, #f8f4fb 100%);
+      border: 2px solid #eadff5; border-radius: 16px; padding: clamp(16px, 2vw, 24px);
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+    button.captain-card { display: block; font: inherit; color: inherit; cursor: pointer; }
+    .captain-card:hover, .player-card:hover {
+      transform: translateY(-6px); border-color: #6a35a8; box-shadow: 0 12px 24px rgba(106, 53, 168, 0.22);
+    }
+    .captain-photo, .player-photo {
+      display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; object-position: top;
+      margin: 0 auto 14px; border: 2px solid #eadff5; background: #ffffff;
+    }
+    .captain-photo { max-width: 200px; border-radius: 12px; }
+    .player-photo { max-width: 150px; border-radius: 8px; }
+    .captain-name, .team-detail-title { color: #5b2d91; font-weight: 700; }
+    .captain-name { font-size: clamp(18px, 2.5vw, 24px); margin-bottom: 6px; }
+    .team-name { color: #6a35a8; font-size: clamp(16px, 2.2vw, 20px); font-weight: 600; font-style: italic; margin-bottom: 8px; }
+    .team-count, .player-role { color: #7d6d8c; font-size: 14px; }
+    .player-name { color: #3c2460; font-size: clamp(14px, 2vw, 17px); font-weight: 600; word-wrap: break-word; }
+    .player-card.captain { border-color: #6a35a8; }
+    .team-header { text-align: center; margin-bottom: 24px; }
+    .back-button {
+      display: inline-block; margin-bottom: 16px; padding: 12px 22px; cursor: pointer;
+      background: #ffffff; color: #5b2d91; border: 2px solid #6a35a8; border-radius: 10px;
+      font: inherit; font-weight: 700;
+    }
+    .back-button:hover { background: #f3eafb; }
+    .team-detail-title { font-size: clamp(24px, 4vw, 36px); margin: 0; }
     #sponsors > h2 { font-size: clamp(24px, 4vw, 36px); font-weight: 700; text-align: center; margin-bottom: clamp(20px, 3vh, 30px); }
     .sponsors-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: clamp(20px, 3vw, 30px); margin-top: clamp(20px, 3vh, 30px); }
     .sponsor-card {
@@ -98,30 +106,21 @@
         <div class="flyer-frame">
           <img class="home-flyer" src="2026/SPL-2026%20flyer.png" alt="Surabhi Premier League 2026 flyer">
         </div>
-        <div class="home-copy">
-          <h1>SURABHI YUVASENA<br>SPL-2026</h1>
-          <p class="registration-banner">Bidding will be held at 7pm today <br>at Surabhi Yuvasena building</p>
-          <h2 class="captain-heading">Captains</h2>
-          <ol class="captain-list">
-            <li><span class="captain-serial">11</span><span>Nallapati Rajaram</span></li>
-            <li><span class="captain-serial">18</span><span>SA GNANA SAI MOHAN</span></li>
-            <li><span class="captain-serial">26</span><span>R Charan</span></li>
-            <li><span class="captain-serial">32</span><span>V Sai Subhakar</span></li>
-            <li><span class="captain-serial">47</span><span>V Sairam</span></li>
-            <li><span class="captain-serial">59</span><span>CV BHANU</span></li>
-          </ol>
-          <div class="actions">
-            <div class="organiser-action">
-              <a class="live" href="https://rectified-annuity-tingly.ngrok-free.dev/live">Live Bidding</a>
-            </div>
-            <div class="organiser-action">
-              <a href="2026/players.html">Registered Players</a>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
-    <section class="view" id="teams"><div class="card"><h2>Teams</h2><p class="blank">Details will be updated on 16-11-2026.</p></div></section>
+    <section class="view" id="teams">
+      <div id="teams-list">
+        <h2 class="teams-title">Teams</h2>
+        <div class="teams-grid" id="teams-grid"></div>
+      </div>
+      <div id="team-detail" hidden>
+        <div class="team-header">
+          <button type="button" class="back-button" id="teams-back">← Back to Teams</button>
+          <h2 class="team-detail-title" id="team-detail-title"></h2>
+        </div>
+        <div class="players-grid" id="players-grid"></div>
+      </div>
+    </section>
     <section class="view" id="schedule"><div class="card"><h2>Schedule</h2><p class="blank">Details will be updated on 16-11-2026.</p></div></section>
     <section class="view" id="points"><div class="card"><h2>Points Table</h2><p class="blank">Details will be updated when on 16-11-2026.</p></div></section>
     <section class="view" id="sponsors">
@@ -567,6 +566,7 @@ End section: Closing note -->
       </div>
     </section>
   </main>
-  <script src="2026/menu.js?v=10"></script>
+  <script src="2026/teams.js?v=1"></script>
+  <script src="2026/menu.js?v=14"></script>
 </body>
 </html>
