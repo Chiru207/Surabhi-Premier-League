@@ -3,7 +3,7 @@
   var LOGO = "2026/logos/";
 
   // Roster from spreadsheet tab "SPL - 2026 2026-11-15 2326".
-  // teamName is the squad name. Mohan still uses the captain name.
+  // teamName is the squad name. Captain stays the sheet tab name.
   var teams = [
     {
       teamName: "King Fighters 2.0",
@@ -29,10 +29,11 @@
       ]
     },
     {
-      teamName: "SA GNANA SAI MOHAN",
+      teamName: "Black Panthers",
       captain: "SA GNANA SAI MOHAN",
       serial: 18,
       photo: "18.jpeg",
+      logo: "gnanasai_logo.jpg",
       category: "Keeper",
       players: [
         { serial: 16, name: "T Gopi krishna", photo: "16.jpg", category: "Batsman" },
