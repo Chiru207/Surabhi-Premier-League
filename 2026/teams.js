@@ -9,7 +9,7 @@
       teamName: "King Fighters 2.0",
       captain: "Nallapati Rajaram",
       serial: 11,
-      photo: "11.jpg",
+      photo: "11.jpeg",
       logo: "Rajaram_logo.jpeg",
       category: "Bowler",
       players: [
