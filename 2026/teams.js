@@ -55,7 +55,7 @@
       captain: "R Charan",
       serial: 26,
       photo: "26.jpg",
-      logo: "Charan_logo.jpeg",
+      logo: "Charan_logo.jpg",
       category: "All-Rounder",
       players: [
         { serial: 2, name: "V MANJUNAATH", photo: "2.jpg", category: "Batsman" },
