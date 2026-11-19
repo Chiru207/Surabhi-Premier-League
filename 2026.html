@@ -222,13 +222,16 @@
       .team-letter { width: 42px; height: 42px; font-size: 18px; }
     }
     #sponsors > h2 { font-size: clamp(24px, 4vw, 36px); font-weight: 700; text-align: center; margin-bottom: clamp(20px, 3vh, 30px); }
+    .sponsors-stage { position: relative; }
     .sponsors-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: clamp(20px, 3vw, 30px); margin-top: clamp(20px, 3vh, 30px); }
-    .sponsors-grid.slideshow { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .sponsor-card.is-off { display: none; }
-    .sponsors-slideshow-bar { display: flex; justify-content: center; gap: 16px; margin-top: 18px; }
+    .sponsors-grid.slideshow { grid-template-columns: repeat(3, minmax(0, 1fr)); align-content: center; margin-left: 58px; margin-right: 58px; }
+    .sponsors-slideshow-bar {
+      position: absolute; inset: 0; display: flex; justify-content: space-between; align-items: center;
+      margin: 0; pointer-events: none; z-index: 2;
+    }
     .sponsors-nav {
       width: 44px; height: 44px; border-radius: 50%; border: 2px solid #eadff5; background: #ffffff;
-      color: #5b2d91; font-size: 28px; line-height: 1; cursor: pointer;
+      color: #5b2d91; font-size: 28px; line-height: 1; cursor: pointer; pointer-events: auto; flex: 0 0 auto;
     }
     .sponsors-nav:hover { border-color: #6a35a8; color: #6a35a8; }
     .sponsors-show-all {
@@ -246,6 +249,7 @@
     .sponsor-card:not(:has(.sponsor-photo)) {
       display: flex; flex-direction: column; justify-content: center;
     }
+    .sponsor-card.is-off { display: none; }
     .sponsor-card:hover { border-color: #6a35a8; transform: translateY(-5px); box-shadow: 0 8px 20px rgba(106, 53, 168, 0.25); }
     .sponsor-photo { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: contain; object-position: center; margin: 0 0 clamp(14px, 2vh, 18px); border: 1px solid #eadff5; border-radius: 10px; background: #ffffff; }
     .sponsor-photo.sheet { aspect-ratio: 11 / 13; }
@@ -379,6 +383,7 @@
       <h2>Sponsors</h2>
       <p class="blank">Details of the sponsors of SPL-2026 as of now. This list gets updated as soon as we get new sponsors.</p>
       <!-- Each sponsor below is hidden. When a donor confirms, delete the "Sponsor:" line and the "End sponsor" line for that donor only. Then delete the "Details will be updated" line above if a sponsor is now visible. -->
+      <div class="sponsors-stage" id="sponsors-stage">
       <div class="sponsors-grid">
         <div class="sponsor-card">
           <img class="sponsor-photo" src="2026/sponsors/vjr-transport.jpg?v=1" alt="VJR Mini Transport">
@@ -510,6 +515,7 @@
       <div class="sponsors-slideshow-bar" id="sponsors-slideshow-bar">
         <button type="button" class="sponsors-nav" id="sponsors-prev" aria-label="Previous sponsors">‹</button>
         <button type="button" class="sponsors-nav" id="sponsors-next" aria-label="Next sponsors">›</button>
+      </div>
       </div>
       <button type="button" class="sponsors-show-all" id="sponsors-show-all">Show all</button>
       <p class="blank sponsors-thanks"><strong>ప్రతి ఒక్క Sponsor కి SPL-2026 Organizers మరియు సురభి యువసేన తరఫున ప్రత్యేక ధన్యవాదాలు.</strong></p>
@@ -901,8 +907,26 @@ End section: Closing note -->
       var index = 0;
       var expanded = false;
       var timer = 0;
+      var resizeTimer = 0;
+      var slotHeight = { wide: 0, narrow: 0 };
 
       function perPage() { return wide.matches ? 3 : 1; }
+
+      function measureSlot() {
+        var key = wide.matches ? "wide" : "narrow";
+        if (slotHeight[key] || !grid.offsetParent) return slotHeight[key];
+        var hidden = cards.map(function (card) { return card.classList.contains("is-off"); });
+        cards.forEach(function (card) { card.classList.remove("is-off"); });
+        grid.classList.add("slideshow");
+        var previous = grid.style.minHeight;
+        grid.style.minHeight = "0px";
+        var max = 0;
+        cards.forEach(function (card) { if (card.offsetHeight > max) max = card.offsetHeight; });
+        grid.style.minHeight = previous;
+        cards.forEach(function (card, i) { if (hidden[i]) card.classList.add("is-off"); });
+        if (max > 0) slotHeight[key] = max;
+        return slotHeight[key];
+      }
 
       function render() {
         var count = perPage();
@@ -911,6 +935,7 @@ End section: Closing note -->
           card.classList.toggle("is-off", !expanded && (i < index || i >= index + count));
         });
         grid.classList.toggle("slideshow", !expanded);
+        grid.style.minHeight = expanded ? "" : (measureSlot() ? measureSlot() + "px" : "");
         bar.hidden = expanded;
         showAll.textContent = expanded ? "Show slideshow" : "Show all";
       }
@@ -934,12 +959,23 @@ End section: Closing note -->
       document.getElementById("sponsors-prev").addEventListener("click", function () { step(-1); restart(); });
       document.getElementById("sponsors-next").addEventListener("click", function () { step(1); restart(); });
       showAll.addEventListener("click", function () { expanded = !expanded; render(); restart(); });
+      function refreshSlot() {
+        slotHeight.wide = 0;
+        slotHeight.narrow = 0;
+        render();
+      }
       if (wide.addEventListener) wide.addEventListener("change", function () { index = 0; render(); });
       else if (wide.addListener) wide.addListener(function () { index = 0; render(); });
+      window.addEventListener("resize", function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(refreshSlot, 150);
+      });
+      window.addEventListener("load", refreshSlot);
       grid.addEventListener("mouseenter", function () { clearInterval(timer); });
       grid.addEventListener("mouseleave", restart);
       render();
       restart();
+      setTimeout(refreshSlot, 0);
     })();
     document.querySelectorAll('.match-link').forEach(function (link) {
       link.addEventListener('click', function (event) {
