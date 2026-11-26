@@ -77,8 +77,9 @@
       font: inherit; font-weight: 700;
     }
     .back-button:hover { background: #f3eafb; }
-    .team-footer { text-align: center; margin-top: 28px; }
+    .team-footer { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; text-align: center; margin-top: 28px; }
     .team-footer .back-button { margin-bottom: 0; }
+    a.back-button { text-decoration: none; }
     .team-detail-title { font-size: clamp(24px, 4vw, 36px); margin: 0; }
     #team-detail-logo { margin-left: auto; margin-right: auto; }
     .team-sheet-wrap { display: none; overflow-x: auto; margin: 0 auto 28px; background: #ffffff; border: 1px solid #eadff5; border-radius: 16px; }
@@ -151,6 +152,7 @@
       background: linear-gradient(135deg, #6a35a8 0%, #8b5cc7 100%);
       min-height: 64px; font-size: clamp(15px, 2.2vw, 18px);
     }
+    a.match-team { text-decoration: none; color: inherit; cursor: pointer; }
     .match-team:hover { transform: scale(1.03); box-shadow: 0 6px 16px rgba(106, 53, 168, 0.28); }
     .match-vs { color: #7d6d8c; font-size: clamp(16px, 2.4vw, 20px); font-weight: 700; }
     .match-label, .match-label-final-label {
@@ -175,6 +177,12 @@
       text-decoration: underline; transition: color 0.3s ease;
     }
     .match-link:hover { color: #5b2d91; }
+    .match-flyer {
+      position: absolute; left: 12px; bottom: 8px; z-index: 3;
+      color: #6a35a8; font-size: clamp(11px, 1.8vw, 14px); font-weight: 700;
+      text-decoration: underline;
+    }
+    .match-flyer:hover { color: #5b2d91; }
     .match-item.final-match {
       border: 2px solid #fbbf24;
       background: linear-gradient(135deg, rgba(251, 191, 36, 0.18) 0%, #ffffff 100%);
@@ -241,7 +249,7 @@
     @media (max-width: 720px) {
       .match-item { flex-direction: column; flex-wrap: wrap; padding: 34px 14px 16px; }
       .match-team { width: min(100%, 320px); }
-      .match-time, .match-link { position: static; }
+      .match-time, .match-link, .match-flyer { position: static; }
       .circle-legend-container { flex-direction: column; }
       .team-letter { width: 42px; height: 42px; font-size: 18px; }
     }
@@ -323,6 +331,7 @@
         <div class="players-grid" id="players-grid"></div>
         <div class="team-footer">
           <button type="button" class="back-button" id="teams-back">← Back to Teams</button>
+          <a class="back-button" href="2026.html?view=schedule">Schedule</a>
         </div>
       </div>
     </section>
@@ -335,9 +344,9 @@
           <div class="day-date">Wednesday, 02-12-2026</div>
         </div>
         <div class="matches-list">
-          <div class="match-item"><span class="match-label">M1</span><span class="match-time">8:00 AM</span><a class="match-link" target="_blank" rel="noopener" href="#">cricheros match page</a><div class="match-team"><img src="2026/photos/Bhanu_logo.jpeg" alt=""><span class="match-team-name">Bakaabeka Strikers</span><span class="match-team-meta">A · CV BHANU</span></div><div class="match-vs">VS</div><div class="match-team light"><img src="2026/photos/Charan_logo.jpg" alt=""><span class="match-team-name">RBR Returns</span><span class="match-team-meta">B · R Charan</span></div></div>
-          <div class="match-item"><span class="match-label">M2</span><span class="match-time">11:00 AM</span><a class="match-link" target="_blank" rel="noopener" href="#">cricheros match page</a><div class="match-team"><img src="2026/photos/Sairam_logo.jpeg" alt=""><span class="match-team-name">BULLS</span><span class="match-team-meta">C · V Sairam</span></div><div class="match-vs">VS</div><div class="match-team light"><img src="2026/photos/Rajaram_logo.jpeg" alt=""><span class="match-team-name">King Fighters 2.0</span><span class="match-team-meta">D · Nallapati Rajaram</span></div></div>
-          <div class="match-item"><span class="match-label">M3</span><span class="match-time">2:00 PM</span><a class="match-link" target="_blank" rel="noopener" href="#">cricheros match page</a><div class="match-team"><img src="2026/photos/gnanasai_logo.jpg" alt=""><span class="match-team-name">Black Panthers</span><span class="match-team-meta">E · SA GNANA SAI MOHAN</span></div><div class="match-vs">VS</div><div class="match-team"><img src="2026/photos/Subhakar_logo.jpeg" alt=""><span class="match-team-name">Rising Warriors</span><span class="match-team-meta">F · V Sai Subhakar</span></div></div>
+          <div class="match-item"><span class="match-label">M1</span><span class="match-time">8:00 AM</span><a class="match-flyer" href="2026/match-flyers.html#m1">Match flyer</a><a class="match-link" target="_blank" rel="noopener" href="#">cricheros match page</a><a class="match-team" href="2026.html?view=teams&amp;team=59"><img src="2026/photos/Bhanu_logo.jpeg" alt=""><span class="match-team-name">Bakaabeka Strikers</span><span class="match-team-meta">A · CV BHANU</span></a><div class="match-vs">VS</div><a class="match-team light" href="2026.html?view=teams&amp;team=26"><img src="2026/photos/Charan_logo.jpg" alt=""><span class="match-team-name">RBR Returns</span><span class="match-team-meta">B · R Charan</span></a></div>
+          <div class="match-item"><span class="match-label">M2</span><span class="match-time">11:00 AM</span><a class="match-flyer" href="2026/match-flyers.html#m2">Match flyer</a><a class="match-link" target="_blank" rel="noopener" href="#">cricheros match page</a><a class="match-team" href="2026.html?view=teams&amp;team=47"><img src="2026/photos/Sairam_logo.jpeg" alt=""><span class="match-team-name">BULLS</span><span class="match-team-meta">C · V Sairam</span></a><div class="match-vs">VS</div><a class="match-team light" href="2026.html?view=teams&amp;team=11"><img src="2026/photos/Rajaram_logo.jpeg" alt=""><span class="match-team-name">King Fighters 2.0</span><span class="match-team-meta">D · Nallapati Rajaram</span></a></div>
+          <div class="match-item"><span class="match-label">M3</span><span class="match-time">2:00 PM</span><a class="match-flyer" href="2026/match-flyers.html#m3">Match flyer</a><a class="match-link" target="_blank" rel="noopener" href="#">cricheros match page</a><a class="match-team" href="2026.html?view=teams&amp;team=18"><img src="2026/photos/gnanasai_logo.jpg" alt=""><span class="match-team-name">Black Panthers</span><span class="match-team-meta">E · SA GNANA SAI MOHAN</span></a><div class="match-vs">VS</div><a class="match-team" href="2026.html?view=teams&amp;team=32"><img src="2026/photos/Subhakar_logo.jpeg" alt=""><span class="match-team-name">Rising Warriors</span><span class="match-team-meta">F · V Sai Subhakar</span></a></div>
         </div>
       </div>
       <div class="day-schedule">
@@ -346,9 +355,9 @@
           <div class="day-date">Thursday, 03-12-2026</div>
         </div>
         <div class="matches-list">
-          <div class="match-item"><span class="match-label">M4</span><span class="match-time">8:00 AM</span><a class="match-link" target="_blank" rel="noopener" href="#">cricheros match page</a><div class="match-team light"><img src="2026/photos/Charan_logo.jpg" alt=""><span class="match-team-name">RBR Returns</span><span class="match-team-meta">B · R Charan</span></div><div class="match-vs">VS</div><div class="match-team"><img src="2026/photos/Sairam_logo.jpeg" alt=""><span class="match-team-name">BULLS</span><span class="match-team-meta">C · V Sairam</span></div></div>
-          <div class="match-item"><span class="match-label">M5</span><span class="match-time">11:00 AM</span><a class="match-link" target="_blank" rel="noopener" href="#">cricheros match page</a><div class="match-team"><img src="2026/photos/Bhanu_logo.jpeg" alt=""><span class="match-team-name">Bakaabeka Strikers</span><span class="match-team-meta">A · CV BHANU</span></div><div class="match-vs">VS</div><div class="match-team"><img src="2026/photos/Subhakar_logo.jpeg" alt=""><span class="match-team-name">Rising Warriors</span><span class="match-team-meta">F · V Sai Subhakar</span></div></div>
-          <div class="match-item"><span class="match-label">M6</span><span class="match-time">2:00 PM</span><a class="match-link" target="_blank" rel="noopener" href="#">cricheros match page</a><div class="match-team light"><img src="2026/photos/Rajaram_logo.jpeg" alt=""><span class="match-team-name">King Fighters 2.0</span><span class="match-team-meta">D · Nallapati Rajaram</span></div><div class="match-vs">VS</div><div class="match-team"><img src="2026/photos/gnanasai_logo.jpg" alt=""><span class="match-team-name">Black Panthers</span><span class="match-team-meta">E · SA GNANA SAI MOHAN</span></div></div>
+          <div class="match-item"><span class="match-label">M4</span><span class="match-time">8:00 AM</span><a class="match-flyer" href="2026/match-flyers.html#m4">Match flyer</a><a class="match-link" target="_blank" rel="noopener" href="#">cricheros match page</a><a class="match-team light" href="2026.html?view=teams&amp;team=26"><img src="2026/photos/Charan_logo.jpg" alt=""><span class="match-team-name">RBR Returns</span><span class="match-team-meta">B · R Charan</span></a><div class="match-vs">VS</div><a class="match-team" href="2026.html?view=teams&amp;team=47"><img src="2026/photos/Sairam_logo.jpeg" alt=""><span class="match-team-name">BULLS</span><span class="match-team-meta">C · V Sairam</span></a></div>
+          <div class="match-item"><span class="match-label">M5</span><span class="match-time">11:00 AM</span><a class="match-flyer" href="2026/match-flyers.html#m5">Match flyer</a><a class="match-link" target="_blank" rel="noopener" href="#">cricheros match page</a><a class="match-team" href="2026.html?view=teams&amp;team=59"><img src="2026/photos/Bhanu_logo.jpeg" alt=""><span class="match-team-name">Bakaabeka Strikers</span><span class="match-team-meta">A · CV BHANU</span></a><div class="match-vs">VS</div><a class="match-team" href="2026.html?view=teams&amp;team=32"><img src="2026/photos/Subhakar_logo.jpeg" alt=""><span class="match-team-name">Rising Warriors</span><span class="match-team-meta">F · V Sai Subhakar</span></a></div>
+          <div class="match-item"><span class="match-label">M6</span><span class="match-time">2:00 PM</span><a class="match-flyer" href="2026/match-flyers.html#m6">Match flyer</a><a class="match-link" target="_blank" rel="noopener" href="#">cricheros match page</a><a class="match-team light" href="2026.html?view=teams&amp;team=11"><img src="2026/photos/Rajaram_logo.jpeg" alt=""><span class="match-team-name">King Fighters 2.0</span><span class="match-team-meta">D · Nallapati Rajaram</span></a><div class="match-vs">VS</div><a class="match-team" href="2026.html?view=teams&amp;team=18"><img src="2026/photos/gnanasai_logo.jpg" alt=""><span class="match-team-name">Black Panthers</span><span class="match-team-meta">E · SA GNANA SAI MOHAN</span></a></div>
         </div>
       </div>
       <div class="day-schedule">
@@ -1033,7 +1042,7 @@ End section: Closing note -->
       });
     });
   </script>
-  <script src="2026/teams.js?v=14"></script>
+  <script src="2026/teams.js?v=15"></script>
   <script src="2026/menu.js?v=17"></script>
 </body>
 </html>
