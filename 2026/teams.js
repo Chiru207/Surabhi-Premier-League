@@ -252,6 +252,10 @@
     if (!team) return;
     document.getElementById("teams-list").hidden = true;
     document.getElementById("team-detail").hidden = false;
+    var url = new URL(window.location.href);
+    url.searchParams.set("view", "teams");
+    url.searchParams.set("team", String(serial));
+    history.replaceState(null, "", url);
     document.getElementById("team-detail-logo").innerHTML = logoSlot(team);
     document.getElementById("team-detail-title").textContent = team.teamName;
     var request = ++sheetRequest;
@@ -283,9 +287,15 @@
     back.addEventListener("click", function () {
       document.getElementById("team-detail").hidden = true;
       document.getElementById("teams-list").hidden = false;
+      var url = new URL(window.location.href);
+      url.searchParams.set("view", "teams");
+      url.searchParams.delete("team");
+      history.replaceState(null, "", url);
       window.scrollTo(0, 0);
     });
   }
   renderList();
   renderPoints();
+  var requestedTeam = Number(new URLSearchParams(window.location.search).get("team"));
+  if (requestedTeam) showTeam(requestedTeam);
 })();
