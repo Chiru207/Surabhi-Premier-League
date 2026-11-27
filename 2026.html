@@ -270,10 +270,24 @@
       display: block; margin: 14px auto 0; padding: 0; border: 0; background: none; cursor: pointer;
       color: #6a35a8; font: inherit; font-weight: 700; text-decoration: underline;
     }
+    .sponsors-slideshow-bar[hidden] { display: none !important; }
     @media (max-width: 800px) {
-      #sponsors { margin-left: -12px; margin-right: -12px; padding-bottom: 72px; }
-      .sponsors-grid.slideshow { grid-template-columns: minmax(0, 1fr); margin-left: 0; margin-right: 0; }
-      .sponsors-slideshow-bar { position: static; justify-content: center; gap: 16px; margin-top: 10px; }
+      #sponsors.view.active {
+        display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; column-gap: 16px;
+        margin-left: -12px; margin-right: -12px;
+      }
+      #sponsors > h2 { grid-column: 1 / -1; grid-row: 1; }
+      #sponsors > p.blank:not(.sponsors-thanks) { grid-column: 1 / -1; grid-row: 2; margin-bottom: 0; }
+      .sponsors-stage, .sponsors-slideshow-bar { display: contents; }
+      #sponsors-prev { grid-column: 1; grid-row: 3; justify-self: end; }
+      .sponsors-show-all { grid-column: 2; grid-row: 3; justify-self: center; margin: 8px 0; }
+      #sponsors-next { grid-column: 3; grid-row: 3; justify-self: start; }
+      .sponsors-grid { grid-column: 1 / -1; grid-row: 4; }
+      .sponsors-thanks { grid-column: 1 / -1; grid-row: 5; }
+      .sponsors-grid.slideshow {
+        grid-template-columns: minmax(0, 1fr); align-content: start;
+        margin: 4px 0 0;
+      }
       .sponsors-nav { width: 30px; height: 30px; font-size: 18px; border-width: 1px; }
       .sponsors-grid.slideshow .sponsor-card { padding: 8px 4px 12px; }
       .sponsors-grid.slideshow .sponsor-photo { margin-bottom: 8px; }
@@ -291,6 +305,18 @@
     .sponsor-photo { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: contain; object-position: center; margin: 0 0 clamp(14px, 2vh, 18px); border: 1px solid #eadff5; border-radius: 10px; background: #ffffff; }
     .sponsor-photo.sheet { aspect-ratio: 11 / 13; }
     .sponsor-photo.card { aspect-ratio: 7 / 4; }
+    @media (min-width: 801px) {
+      .sponsors-grid.slideshow:not(.measuring):has(.sponsor-card:not(.is-off) .sponsor-photo.card) {
+        display: flex; align-items: stretch;
+      }
+      .sponsors-grid.slideshow:not(.measuring):has(.sponsor-card:not(.is-off) .sponsor-photo.card) > .sponsor-card:not(.is-off):not(:has(.sponsor-photo.card)) {
+        flex: 0 0 200px; width: 200px;
+      }
+      .sponsors-grid.slideshow:not(.measuring):has(.sponsor-card:not(.is-off) .sponsor-photo.card) > .sponsor-card:not(.is-off):has(.sponsor-photo.card) {
+        flex: 1 1 auto; min-width: 0; padding: 10px 10px 14px;
+      }
+      .sponsors-grid.slideshow .sponsor-photo.card { margin-bottom: 8px; }
+    }
     .sponsor-name { margin: 0 0 clamp(12px, 2vh, 18px); color: #5b2d91; font-size: clamp(16px, 2.5vw, 20px); font-weight: 700; line-height: 1.4; }
     .sponsor-desc { margin: 0; color: #3c2460; font-size: clamp(14px, 2vw, 16px); line-height: 1.6; }
     .sponsor-desc strong { color: #6a35a8; font-weight: 600; }
@@ -986,11 +1012,13 @@ End section: Closing note -->
         var hidden = cards.map(function (card) { return card.classList.contains("is-off"); });
         cards.forEach(function (card) { card.classList.remove("is-off"); });
         grid.classList.add("slideshow");
+        grid.classList.add("measuring");
         var previous = grid.style.minHeight;
         grid.style.minHeight = "0px";
         var max = 0;
         cards.forEach(function (card) { if (card.offsetHeight > max) max = card.offsetHeight; });
         grid.style.minHeight = previous;
+        grid.classList.remove("measuring");
         cards.forEach(function (card, i) { if (hidden[i]) card.classList.add("is-off"); });
         if (max > 0) slotHeight[key] = max;
         return slotHeight[key];
@@ -1039,16 +1067,6 @@ End section: Closing note -->
         resizeTimer = setTimeout(refreshSlot, 150);
       });
       window.addEventListener("load", refreshSlot);
-      function keepShowAllVisible() {
-        if (wide.matches) return;
-        var section = document.getElementById("sponsors");
-        if (!section || !section.classList.contains("active")) return;
-        var rect = showAll.getBoundingClientRect();
-        var limit = window.innerHeight - 72;
-        if (rect.bottom > limit) window.scrollBy(0, rect.bottom - limit);
-      }
-      setTimeout(keepShowAllVisible, 0);
-      window.addEventListener("load", keepShowAllVisible);
       grid.addEventListener("mouseenter", function () { clearInterval(timer); });
       grid.addEventListener("mouseleave", restart);
       render();
