@@ -271,7 +271,10 @@
       color: #6a35a8; font: inherit; font-weight: 700; text-decoration: underline;
     }
     @media (max-width: 800px) {
-      .sponsors-grid.slideshow { grid-template-columns: minmax(0, 1fr); }
+      .sponsors-grid.slideshow { grid-template-columns: minmax(0, 1fr); margin-left: 34px; margin-right: 34px; }
+      .sponsors-nav { width: 30px; height: 30px; font-size: 18px; border-width: 1px; }
+      .sponsors-grid.slideshow .sponsor-card { padding: 8px 6px 12px; }
+      .sponsors-grid.slideshow .sponsor-photo { margin-bottom: 8px; }
     }
     .sponsor-card {
       background: linear-gradient(135deg, #ffffff 0%, #f8f4fb 100%);
@@ -423,8 +426,7 @@
     </section>
     <section class="view" id="sponsors">
       <h2>Sponsors</h2>
-      <p class="blank">Details of the sponsors of SPL-2026 as of now. This list gets updated as soon as we get new sponsors.</p>
-      <!-- Each sponsor below is hidden. When a donor confirms, delete the "Sponsor:" line and the "End sponsor" line for that donor only. Then delete the "Details will be updated" line above if a sponsor is now visible. -->
+      <p class="blank">This list gets updated as soon as we get new sponsors.</p>
       <div class="sponsors-stage" id="sponsors-stage">
       <div class="sponsors-grid">
         <div class="sponsor-card">
