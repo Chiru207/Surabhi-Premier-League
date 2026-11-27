@@ -273,20 +273,21 @@
     .sponsors-slideshow-bar[hidden] { display: none !important; }
     @media (max-width: 800px) {
       #sponsors.view.active {
-        display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; column-gap: 16px;
+        display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; align-content: safe center;
+        column-gap: 16px; row-gap: 0; min-height: calc(100dvh - 136px);
         margin-left: -12px; margin-right: -12px;
       }
-      #sponsors > h2 { grid-column: 1 / -1; grid-row: 1; }
-      #sponsors > p.blank:not(.sponsors-thanks) { grid-column: 1 / -1; grid-row: 2; margin-bottom: 0; }
+      #sponsors > h2 { grid-column: 1 / -1; grid-row: 1; margin-bottom: 4px; }
+      #sponsors > p.blank:not(.sponsors-thanks) { grid-column: 1 / -1; grid-row: 2; margin: 0; }
       .sponsors-stage, .sponsors-slideshow-bar { display: contents; }
       #sponsors-prev { grid-column: 1; grid-row: 3; justify-self: end; }
-      .sponsors-show-all { grid-column: 2; grid-row: 3; justify-self: center; margin: 8px 0; }
+      .sponsors-show-all { grid-column: 2; grid-row: 3; justify-self: center; margin: 4px 0; }
       #sponsors-next { grid-column: 3; grid-row: 3; justify-self: start; }
       .sponsors-grid { grid-column: 1 / -1; grid-row: 4; }
-      .sponsors-thanks { grid-column: 1 / -1; grid-row: 5; }
+      .sponsors-thanks { grid-column: 1 / -1; grid-row: 5; margin: 8px 0 0; }
       .sponsors-grid.slideshow {
-        grid-template-columns: minmax(0, 1fr); align-content: start;
-        margin: 4px 0 0;
+        grid-template-columns: minmax(0, 1fr); align-content: center; justify-items: center;
+        margin: 0;
       }
       .sponsors-nav { width: 30px; height: 30px; font-size: 18px; border-width: 1px; }
       .sponsors-grid.slideshow .sponsor-card { padding: 8px 4px 12px; }
@@ -1031,7 +1032,7 @@ End section: Closing note -->
           card.classList.toggle("is-off", !expanded && (i < index || i >= index + count));
         });
         grid.classList.toggle("slideshow", !expanded);
-        grid.style.minHeight = expanded ? "" : (measureSlot() ? measureSlot() + "px" : "");
+        grid.style.minHeight = expanded || !wide.matches ? "" : (measureSlot() ? measureSlot() + "px" : "");
         bar.hidden = expanded;
         showAll.textContent = expanded ? "Show slideshow" : "Show all";
       }
