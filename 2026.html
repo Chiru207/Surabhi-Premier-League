@@ -273,8 +273,8 @@
     .sponsors-slideshow-bar[hidden] { display: none !important; }
     @media (max-width: 800px) {
       #sponsors.view.active {
-        display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; align-content: safe center;
-        column-gap: 16px; row-gap: 0; min-height: calc(100dvh - 136px);
+        display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; align-content: start;
+        column-gap: 16px; row-gap: 0; padding-bottom: 72px;
         margin-left: -12px; margin-right: -12px;
       }
       #sponsors > h2 { grid-column: 1 / -1; grid-row: 1; margin-bottom: 4px; }
@@ -294,6 +294,9 @@
       .sponsors-nav { width: 30px; height: 30px; font-size: 18px; border-width: 1px; }
       .sponsors-grid.slideshow .sponsor-card { padding: 8px 4px 12px; }
       .sponsors-grid.slideshow .sponsor-photo { max-height: 300px; width: auto; max-width: 100%; margin: 0 auto 8px; }
+      .sponsors-grid.slideshow .sponsor-photo.visiting {
+        width: 100%; max-width: 100%; max-height: none; aspect-ratio: 1400 / 860; object-fit: contain;
+      }
     }
     .sponsor-card {
       background: linear-gradient(135deg, #ffffff 0%, #f8f4fb 100%);
@@ -543,7 +546,7 @@
           <p class="sponsor-desc"><strong>Rs. 1116</strong>.</p>
         </div>
         <div class="sponsor-card">
-          <img class="sponsor-photo" src="2026/sponsors/kavitha.jpg?v=1" alt="Family Buddy, V. కవిత">
+          <img class="sponsor-photo visiting" src="2026/sponsors/kavitha.jpg?v=1" alt="Family Buddy, V. కవిత">
           <h3 class="sponsor-name">V. కవిత గారు </h3>
           <p class="sponsor-desc"><strong>Rs. 1500</strong>.</p>
         </div>
@@ -596,7 +599,7 @@
           <p class="sponsor-desc"><strong>Rs. 2516</strong></p>
         </div>
         <div class="sponsor-card">
-          <img class="sponsor-photo card" src="2026/sponsors/phanibhushan.jpg?v=1" alt="S.A. Phanibhushan, Surabhi Raghunath">
+          <img class="sponsor-photo card visiting" src="2026/sponsors/phanibhushan.jpg?v=1" alt="S.A. Phanibhushan, Surabhi Raghunath">
           <h3 class="sponsor-name">S.A. ఫణిభూషణ్ గారు</h3>
           <p class="sponsor-desc"><strong>Rs. 2000</strong></p>
         </div>
