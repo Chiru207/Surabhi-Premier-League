@@ -271,9 +271,11 @@
       color: #6a35a8; font: inherit; font-weight: 700; text-decoration: underline;
     }
     @media (max-width: 800px) {
-      .sponsors-grid.slideshow { grid-template-columns: minmax(0, 1fr); margin-left: 34px; margin-right: 34px; }
+      #sponsors { margin-left: -12px; margin-right: -12px; padding-bottom: 72px; }
+      .sponsors-grid.slideshow { grid-template-columns: minmax(0, 1fr); margin-left: 0; margin-right: 0; }
+      .sponsors-slideshow-bar { position: static; justify-content: center; gap: 16px; margin-top: 10px; }
       .sponsors-nav { width: 30px; height: 30px; font-size: 18px; border-width: 1px; }
-      .sponsors-grid.slideshow .sponsor-card { padding: 8px 6px 12px; }
+      .sponsors-grid.slideshow .sponsor-card { padding: 8px 4px 12px; }
       .sponsors-grid.slideshow .sponsor-photo { margin-bottom: 8px; }
     }
     .sponsor-card {
@@ -1037,6 +1039,16 @@ End section: Closing note -->
         resizeTimer = setTimeout(refreshSlot, 150);
       });
       window.addEventListener("load", refreshSlot);
+      function keepShowAllVisible() {
+        if (wide.matches) return;
+        var section = document.getElementById("sponsors");
+        if (!section || !section.classList.contains("active")) return;
+        var rect = showAll.getBoundingClientRect();
+        var limit = window.innerHeight - 72;
+        if (rect.bottom > limit) window.scrollBy(0, rect.bottom - limit);
+      }
+      setTimeout(keepShowAllVisible, 0);
+      window.addEventListener("load", keepShowAllVisible);
       grid.addEventListener("mouseenter", function () { clearInterval(timer); });
       grid.addEventListener("mouseleave", restart);
       render();
