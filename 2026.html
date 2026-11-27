@@ -286,8 +286,10 @@
       .sponsors-grid { grid-column: 1 / -1; grid-row: 4; }
       .sponsors-thanks { grid-column: 1 / -1; grid-row: 5; margin: 8px 0 0; }
       .sponsors-grid.slideshow {
-        grid-template-columns: minmax(0, 1fr); align-content: center; justify-items: center;
-        margin: 0;
+        grid-template-columns: minmax(0, 1fr); align-content: stretch; margin: 0;
+      }
+      .sponsors-grid.slideshow .sponsor-card:not(.is-off) {
+        display: flex; flex-direction: column; justify-content: center; box-sizing: border-box;
       }
       .sponsors-nav { width: 30px; height: 30px; font-size: 18px; border-width: 1px; }
       .sponsors-grid.slideshow .sponsor-card { padding: 8px 4px 12px; }
@@ -1032,7 +1034,7 @@ End section: Closing note -->
           card.classList.toggle("is-off", !expanded && (i < index || i >= index + count));
         });
         grid.classList.toggle("slideshow", !expanded);
-        grid.style.minHeight = expanded || !wide.matches ? "" : (measureSlot() ? measureSlot() + "px" : "");
+        grid.style.minHeight = expanded ? "" : (measureSlot() ? measureSlot() + "px" : "");
         bar.hidden = expanded;
         showAll.textContent = expanded ? "Show slideshow" : "Show all";
       }
