@@ -22,14 +22,27 @@
     .year-link { color: #6a35a8; }
     .home-layout { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: clamp(24px, 4vw, 48px); }
     .flyer-frame { flex: 1 1 280px; min-width: 0; display: flex; justify-content: center; align-items: center; }
-    .home-flyer {
-      display: block; width: auto; height: auto; max-width: 100%;
+    .home-slideshow {
+      position: relative; overflow: hidden; margin: 0 auto; background: #ffffff;
+      border: 1px solid #eadff5; border-radius: 16px;
+      width: min(100%, calc(min(80vh, calc(100vh - 160px)) * 1792 / 2400));
+      aspect-ratio: 1792 / 2400;
       max-height: min(80vh, calc(100vh - 160px));
-      object-fit: contain; margin: 0; border: 1px solid #eadff5; border-radius: 16px; background: #ffffff;
     }
+    .home-slide {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: contain; object-position: center; margin: 0; border: 0; border-radius: 0;
+      background: #ffffff; opacity: 0; transform: translateX(100%);
+      transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    }
+    .home-slide.active { opacity: 1; transform: translateX(0); z-index: 1; }
+    .home-slide.leave { opacity: 0; transform: translateX(-100%); z-index: 2; }
     @media (max-width: 720px) {
       .home-layout { align-items: center; }
-      .home-flyer { max-height: min(78vh, calc(100vh - 140px)); }
+      .home-slideshow {
+        width: min(100%, calc(min(78vh, calc(100vh - 140px)) * 1792 / 2400));
+        max-height: min(78vh, calc(100vh - 140px));
+      }
     }
     .teams-title { text-align: center; font-size: clamp(24px, 4vw, 36px); margin-bottom: clamp(16px, 3vh, 28px); }
     .teams-grid, .players-grid {
@@ -359,7 +372,12 @@
     <section class="view active" id="home">
       <div class="home-layout">
         <div class="flyer-frame">
-          <img class="home-flyer" src="2026/SPL-2026%20flyer.png" alt="Surabhi Premier League 2026 flyer">
+          <div class="home-slideshow" id="home-slideshow">
+            <img class="home-slide active" src="2026/SPL-2026%20flyer.png" alt="Surabhi Premier League 2026 flyer">
+            <img class="home-slide" src="2026/matches/m1.jpg?v=1" alt="Bakaabeka Strikers vs RBR Returns, Wednesday 2 December, 8:00 AM">
+            <img class="home-slide" src="2026/matches/m2.jpg?v=1" alt="King Fighters 2.0 vs Bulls, Wednesday 2 December, 11:00 AM">
+            <img class="home-slide" src="2026/matches/m3.jpg?v=1" alt="Black Panthers vs Rising Warriors, Wednesday 2 December, 2:00 PM">
+          </div>
         </div>
       </div>
     </section>
@@ -1004,6 +1022,48 @@ End section: Closing note -->
       </div>
     </section>
   </main>
+  <script>
+    (function () {
+      var root = document.getElementById("home-slideshow");
+      var home = document.getElementById("home");
+      if (!root || !home) return;
+      var slides = root.querySelectorAll(".home-slide");
+      if (slides.length < 2) return;
+      var index = 0;
+      var timer = 0;
+      function show(next) {
+        next = (next + slides.length) % slides.length;
+        if (next === index) return;
+        var current = slides[index];
+        var incoming = slides[next];
+        incoming.classList.remove("leave");
+        incoming.style.transition = "none";
+        incoming.style.transform = "translateX(100%)";
+        incoming.style.opacity = "0";
+        void incoming.offsetWidth;
+        incoming.style.transition = "";
+        incoming.style.transform = "";
+        incoming.style.opacity = "";
+        current.classList.remove("active");
+        current.classList.add("leave");
+        incoming.classList.add("active");
+        index = next;
+        setTimeout(function () { current.classList.remove("leave"); }, 520);
+      }
+      function start() {
+        clearInterval(timer);
+        timer = setInterval(function () {
+          if (home.classList.contains("active")) show(index + 1);
+        }, 3000);
+      }
+      function stop() { clearInterval(timer); }
+      new MutationObserver(function () {
+        if (home.classList.contains("active")) start();
+        else stop();
+      }).observe(home, { attributes: true, attributeFilter: ["class"] });
+      if (home.classList.contains("active")) start();
+    })();
+  </script>
   <script>
     (function () {
       var grid = document.querySelector("#sponsors .sponsors-grid");
